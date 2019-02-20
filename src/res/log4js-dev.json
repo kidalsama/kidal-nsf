@@ -1,0 +1,21 @@
+{
+  "appenders": {
+    "console": {
+      "type": "console",
+      "level": "trace",
+      "maxLevel": "error",
+      "layout": {
+        "type": "pattern",
+        "pattern": "%d{yyyy-MM-dd hh:mm:ss.SSS} %[%5p%] --- [%8z] %m --- %[%c%]"
+      }
+    }
+  },
+  "categories": {
+    "default": {
+      "appenders": [
+        "console"
+      ],
+      "level": "all"
+    }
+  }
+}
