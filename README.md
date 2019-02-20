@@ -1,2 +1,2 @@
-# server-foundation
+# Server Foundation
 
