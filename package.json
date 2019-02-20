@@ -1,11 +1,13 @@
 {
   "name": "server-foundation",
   "version": "0.1.1",
+  "main": "index.ts",
   "repository": "http://gitlab.dev.happyhouse.club/mcg-game/server-foundation",
   "author": "MCG RND DEPARTMENT",
   "private": true,
   "scripts": {
-    "lint": "tslint -c tslint.json 'src/**/*.ts'"
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "create-index": "create-index ./src -r -x js js.map"
   },
   "dependencies": {
     "cls-hooked": "^4.2.2",
@@ -37,8 +39,5 @@
     "@types/uuid": "^3.4.4",
     "@types/ws": "^6.0.1",
     "@types/yaml": "^1.0.1"
-  },
-  "files": [
-    "src/"
-  ]
+  }
 }
