@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
-  "dependencies": {
+  "peerDependencies": {
     "cls-hooked": "^4.2.2",
     "express": "^4.16.4",
     "express-graphql": "^0.7.1",
