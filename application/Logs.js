@@ -41,7 +41,7 @@ class Logs {
     getFoundationLogger(dirname, className) {
         const env = Environment_1.default.INSTANCE;
         const category = dirname
-            .substring((path.dirname(env.bootDir) + "/node_modules/foundation").length)
+            .substring(path.join(env.bootDir, "node_modules", "foundation").length)
             .replace(/[\/]/g, ".")
             + "."
             + className;
