@@ -5,8 +5,7 @@
   "author": "MCG RND DEPARTMENT",
   "private": true,
   "scripts": {
-    "lint": "tslint -c tslint.json 'src/**/*.ts'",
-    "release": "release-it --no-npm"
+    "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "dependencies": {
     "cls-hooked": "^4.2.2",
