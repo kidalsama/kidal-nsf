@@ -35,5 +35,12 @@
     "@types/uuid": "^3.4.4",
     "@types/ws": "^6.0.1",
     "@types/yaml": "^1.0.1"
-  }
+  },
+  "files": [
+    "application/",
+    "cluster/",
+    "data/",
+    "error/",
+    "server/"
+  ]
 }
