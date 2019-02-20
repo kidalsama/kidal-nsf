@@ -8,6 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
+// @ts-ignore
 const log4js = __importStar(require("log4js"));
 const path = __importStar(require("path"));
 const yaml = __importStar(require("yaml"));
@@ -23,8 +24,8 @@ class Environment {
         // 设置核心启动配置
         this.bootDir = argv[1];
         this.profiles = argv[2].split(",");
-        this.srcDir = path.join(this.bootDir, "src", argv[3], "src");
-        this.resDir = path.join(this.bootDir, "src", argv[3], "res");
+        this.srcDir = path.join(this.bootDir, "services", argv[3], "src");
+        this.resDir = path.join(this.bootDir, "services", argv[3], "res");
         // 配置日志
         try {
             log4js.configure(path.join(this.resDir, `log4js-${this.profiles[0]}.json`));

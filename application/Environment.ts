@@ -1,4 +1,5 @@
 import * as fs from "fs";
+// @ts-ignore
 import * as log4js from "log4js";
 import * as path from "path";
 import * as yaml from "yaml";
@@ -46,8 +47,8 @@ export default class Environment {
     // 设置核心启动配置
     this.bootDir = argv[1];
     this.profiles = argv[2].split(",");
-    this.srcDir = path.join(this.bootDir, "src", argv[3], "src");
-    this.resDir = path.join(this.bootDir, "src", argv[3], "res");
+    this.srcDir = path.join(this.bootDir, "services", argv[3], "src");
+    this.resDir = path.join(this.bootDir, "services", argv[3], "res");
 
     // 配置日志
     try {

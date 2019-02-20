@@ -10,6 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// @ts-ignore
 const log4js = __importStar(require("log4js"));
 const Environment_1 = __importDefault(require("./Environment"));
 /**
@@ -39,7 +40,7 @@ class Logs {
     getFoundationLogger(dirname, className) {
         const env = Environment_1.default.INSTANCE;
         const category = dirname
-            .substring(env.bootDir.length + "/services/".length)
+            // .substring(env.bootDir.length + "/services/".length)
             .replace(/[\/]/g, ".")
             + "."
             + className;
