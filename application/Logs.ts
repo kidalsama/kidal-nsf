@@ -1,6 +1,7 @@
 // @ts-ignore
 import * as log4js from "log4js";
 import Environment from "./Environment";
+import * as path from "path";
 
 /**
  * @author tengda
@@ -35,7 +36,7 @@ export default class Logs {
   public getFoundationLogger(dirname: string, className: string): log4js.Logger {
     const env = Environment.INSTANCE;
     const category = dirname
-        // .substring(env.bootDir.length + "/services/".length)
+        .substring((path.dirname(env.bootDir) + "/node_modules/foundation").length)
         .replace(/[\/]/g, ".")
       + "."
       + className;

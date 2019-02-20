@@ -13,6 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // @ts-ignore
 const log4js = __importStar(require("log4js"));
 const Environment_1 = __importDefault(require("./Environment"));
+const path = __importStar(require("path"));
 /**
  * @author tengda
  */
@@ -40,7 +41,7 @@ class Logs {
     getFoundationLogger(dirname, className) {
         const env = Environment_1.default.INSTANCE;
         const category = dirname
-            // .substring(env.bootDir.length + "/services/".length)
+            .substring((path.dirname(env.bootDir) + "/node_modules/foundation").length)
             .replace(/[\/]/g, ".")
             + "."
             + className;
