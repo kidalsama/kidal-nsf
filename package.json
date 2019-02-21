@@ -1,6 +1,6 @@
 {
   "name": "server-foundation",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "main": "services/Bootstrap.js",
   "repository": "http://gitlab.dev.happyhouse.club/mcg-game/server-foundation",
   "author": "MCG RND DEPARTMENT",
