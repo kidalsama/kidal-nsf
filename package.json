@@ -1,11 +1,13 @@
 {
   "name": "server-foundation",
   "version": "0.2.10",
+  "main": "services/Bootstrap.js",
   "repository": "http://gitlab.dev.happyhouse.club/mcg-game/server-foundation",
   "author": "MCG RND DEPARTMENT",
   "private": true,
   "scripts": {
-    "lint": "tslint -c tslint.json 'src/**/*.ts'"
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "d.999.td": "node $NODE_DEBUG_OPTION . dev,td,foundation:dev 999-best-practices"
   },
   "dependencies": {
     "cls-hooked": "^4.2.2",

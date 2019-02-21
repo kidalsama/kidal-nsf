@@ -114,6 +114,30 @@ export default class Environment {
   }
 
   /**
+   * 是否拥有某个环境
+   */
+  public hasAnyProfile(...needles: string[]): boolean {
+    for (const needle of needles) {
+      if (this.profiles.includes(needle)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * 是否拥有全部环境
+   */
+  public hasAllProfile(...needles: string[]): boolean {
+    for (const needle of needles) {
+      if (!this.profiles.includes(needle)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
    * 检查启动参数
    */
   private checkArgv(argv: string[]): void {

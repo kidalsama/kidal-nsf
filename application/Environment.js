@@ -89,6 +89,28 @@ class Environment {
         return this.profiles.join(".");
     }
     /**
+     * 是否拥有某个环境
+     */
+    hasAnyProfile(...needles) {
+        for (const needle of needles) {
+            if (this.profiles.includes(needle)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * 是否拥有全部环境
+     */
+    hasAllProfile(...needles) {
+        for (const needle of needles) {
+            if (!this.profiles.includes(needle)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    /**
      * 检查启动参数
      */
     checkArgv(argv) {

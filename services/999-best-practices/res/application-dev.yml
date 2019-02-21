@@ -1,0 +1,6 @@
+application:
+  id: "999"
+  configServer:
+    type: "gitlab"
+    uri: "http://gitlab.dev.happyhouse.club/api/v4/projects/22/repository/files"
+    token: "bp5Db7trR2YmLJB_5rct"

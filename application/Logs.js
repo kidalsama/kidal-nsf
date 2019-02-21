@@ -40,11 +40,18 @@ class Logs {
      */
     getFoundationLogger(dirname, className) {
         const env = Environment_1.default.INSTANCE;
-        const category = dirname
-            .substring(path.join(env.bootDir, "node_modules").length + 1)
-            .replace(/[\/]/g, ".")
-            + "."
-            + className;
+        const category = env.hasAnyProfile("foundation:dev")
+            ? ("foundation" +
+                dirname
+                    .substring(env.bootDir.length)
+                    .replace(/[\/]/g, ".")
+                + "."
+                + className)
+            : (dirname
+                .substring(path.join(env.bootDir, "node_modules").length + 1)
+                .replace(/[\/]/g, ".")
+                + "."
+                + className);
         return log4js.getLogger(category);
     }
 }
