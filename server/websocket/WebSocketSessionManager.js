@@ -46,7 +46,7 @@ class WebSocketSessionManager {
             }
             try {
                 // 分发载荷
-                const { reply, sync } = await PayloadDispatcher_1.default.S.dispatch(session, payload);
+                const { reply, sync } = await PayloadDispatcher_1.default.S.dispatchWS(session, payload);
                 // 推送同步消息
                 if (sync.partial.length + sync.full.length > 0) {
                     await session.push("sync", sync);

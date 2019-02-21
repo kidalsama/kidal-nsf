@@ -8,7 +8,7 @@ export default class RankService {
     // 监听字段改变事件
     Rank.cache.on("field-updated", (id: number, key: string, value: any) => {
       // 添加到自动同步
-      // PayloadDispatcher.S.addSyncPartial("Rank", id, key, value);
+      PayloadDispatcher.S.addSyncPartial("Rank", id, key, value);
     });
   }
 

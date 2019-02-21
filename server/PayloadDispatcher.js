@@ -58,10 +58,31 @@ class PayloadDispatcher {
             PayloadDispatcher.LOG.info(`Registered api: ${type}`);
         }
     }
+    async dispatchGQL(middleware, request, response) {
+        // 钩住处理器
+        return new Promise((resolve, reject) => {
+            this.handlerCls.run(() => {
+                // 同步
+                const sync = {
+                    full: [],
+                    partial: [],
+                };
+                // 设置参数
+                this.handlerCls.set("sync", sync);
+                // 调用
+                middleware(request, response)
+                    .then(resolve)
+                    .catch(reject);
+            });
+        });
+    }
+    getSync() {
+        return this.handlerCls.get("sync");
+    }
     /**
      * 分发载荷
      */
-    async dispatch(session, payload) {
+    async dispatchWS(session, payload) {
         // 检查必要数据
         if (!payload.type) {
             throw new LudmilaError_1.default(LudmilaErrors_1.default.SERVER_WEBSOCKET_INVALID_PAYLOAD);
@@ -86,7 +107,6 @@ class PayloadDispatcher {
                     partial: [],
                 };
                 // 设置参数
-                this.handlerCls.set("context", context);
                 this.handlerCls.set("sync", sync);
                 // 执行
                 registry.handle(context)

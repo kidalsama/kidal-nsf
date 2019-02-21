@@ -8,6 +8,8 @@ import Environment from "../../application/Environment";
 import Logs from "../../application/Logs";
 import LudmilaError from "../../error/LudmilaError";
 import LudmilaErrors from "../../error/LudmilaErrors";
+import {Request, Response} from "express";
+import PayloadDispatcher from "../PayloadDispatcher";
 
 /**
  * @author tengda
@@ -43,7 +45,7 @@ export default class GraphQLServer {
     }
 
     // GraphQL终端
-    httpServer.expressApp.use(config.endpoint, graphqlHTTP({
+    const graphQLMiddleware = graphqlHTTP({
       schema,
       rootValue: resolvers,
       graphiql: true,
@@ -56,7 +58,13 @@ export default class GraphQLServer {
           return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
         }
       },
-    }));
+      extensions: () => {
+        return {foundation: {sync: PayloadDispatcher.S.getSync()}}
+      },
+    });
+    httpServer.expressApp.use(config.endpoint, async (request: Request, response: Response): Promise<undefined> => {
+      return PayloadDispatcher.S.dispatchGQL(graphQLMiddleware, request, response);
+    });
 
     // log
     GraphQLServer.LOG.info(`Using GraphQL at endpoint ${config.endpoint}`);

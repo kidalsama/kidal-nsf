@@ -13,6 +13,7 @@ const Environment_1 = __importDefault(require("../../application/Environment"));
 const Logs_1 = __importDefault(require("../../application/Logs"));
 const LudmilaError_1 = __importDefault(require("../../error/LudmilaError"));
 const LudmilaErrors_1 = __importDefault(require("../../error/LudmilaErrors"));
+const PayloadDispatcher_1 = __importDefault(require("../PayloadDispatcher"));
 /**
  * @author tengda
  */
@@ -38,7 +39,7 @@ class GraphQLServer {
             return;
         }
         // GraphQL终端
-        httpServer.expressApp.use(config.endpoint, express_graphql_1.default({
+        const graphQLMiddleware = express_graphql_1.default({
             schema,
             rootValue: resolvers,
             graphiql: true,
@@ -52,7 +53,13 @@ class GraphQLServer {
                     return Object.assign({}, formattedError, { code: LudmilaErrors_1.default.FAIL });
                 }
             },
-        }));
+            extensions: () => {
+                return { foundation: { sync: PayloadDispatcher_1.default.S.getSync() } };
+            },
+        });
+        httpServer.expressApp.use(config.endpoint, async (request, response) => {
+            return PayloadDispatcher_1.default.S.dispatchGQL(graphQLMiddleware, request, response);
+        });
         // log
         GraphQLServer.LOG.info(`Using GraphQL at endpoint ${config.endpoint}`);
     }

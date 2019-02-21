@@ -3,13 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const PayloadDispatcher_1 = __importDefault(require("../../../../../server/PayloadDispatcher"));
 const Rank_1 = __importDefault(require("../rank/entity/Rank"));
 class RankService {
     constructor() {
         // 监听字段改变事件
         Rank_1.default.cache.on("field-updated", (id, key, value) => {
             // 添加到自动同步
-            // PayloadDispatcher.S.addSyncPartial("Rank", id, key, value);
+            PayloadDispatcher_1.default.S.addSyncPartial("Rank", id, key, value);
         });
     }
     async get(userId) {

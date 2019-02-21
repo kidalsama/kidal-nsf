@@ -7,6 +7,8 @@ import LudmilaErrors from "../error/LudmilaErrors";
 import IApiRegistry from "./IApiRegistry";
 import Environment from "../application/Environment";
 import * as clsHooked from "cls-hooked";
+import * as graphqlHTTP from "express-graphql";
+import {Request, Response} from "express";
 
 /**
  * @author tengda
@@ -64,10 +66,35 @@ export default class PayloadDispatcher {
     }
   }
 
+  public async dispatchGQL(middleware: graphqlHTTP.Middleware, request: Request, response: Response): Promise<undefined> {
+    // 钩住处理器
+    return new Promise<undefined>((resolve, reject) => {
+      this.handlerCls.run(() => {
+        // 同步
+        const sync = {
+          full: [],
+          partial: [],
+        };
+
+        // 设置参数
+        this.handlerCls.set("sync", sync);
+
+        // 调用
+        middleware(request, response)
+          .then(resolve)
+          .catch(reject);
+      });
+    });
+  }
+
+  public getSync(): any {
+    return this.handlerCls.get("sync");
+  }
+
   /**
    * 分发载荷
    */
-  public async dispatch(session: ISession, payload: Payload): Promise<{ reply: any, sync: any }> {
+  public async dispatchWS(session: ISession, payload: Payload): Promise<{ reply: any, sync: any }> {
     // 检查必要数据
     if (!payload.type) {
       throw new LudmilaError(LudmilaErrors.SERVER_WEBSOCKET_INVALID_PAYLOAD);
@@ -96,7 +123,6 @@ export default class PayloadDispatcher {
         };
 
         // 设置参数
-        this.handlerCls.set("context", context);
         this.handlerCls.set("sync", sync);
 
         // 执行
