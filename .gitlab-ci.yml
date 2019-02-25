@@ -15,7 +15,7 @@ stop_rc:
   script:
   - pm2 stop game-999-server-foundation-tests
   only:
-  - master
+  - pre-production
   allow_failure: true
 
 deploy_rc:
@@ -28,4 +28,4 @@ deploy_rc:
   - yarn
   - pm2 start services/999-tests/pm2/rc.json
   only:
-  - master
+  - pre-production
