@@ -6,10 +6,22 @@
   "author": "MCG RND DEPARTMENT",
   "private": true,
   "scripts": {
-    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "lint": "tslint './**/*.ts' -c tslint.json -e './node_modules/**/*.ts'",
     "d.999.td": "node $NODE_DEBUG_OPTION . dev,td,foundation:dev 999-foundation-tests"
   },
   "dependencies": {
+    "@types/cls-hooked": "^4.2.1",
+    "@types/express": "^4.16.0",
+    "@types/express-graphql": "^0.6.2",
+    "@types/glob": "^7.1.1",
+    "@types/graphql": "^14.0.5",
+    "@types/node": "^10.12.18",
+    "@types/node-fetch": "^2.1.4",
+    "@types/node-zookeeper-client": "^0.2.6",
+    "@types/sequelize": "^4.27.34",
+    "@types/uuid": "^3.4.4",
+    "@types/ws": "^6.0.1",
+    "@types/yaml": "^1.0.1",
     "cls-hooked": "^4.2.2",
     "express": "^4.16.4",
     "express-graphql": "^0.7.1",
@@ -24,18 +36,6 @@
     "sequelize": "^4.42.0",
     "uuid": "^3.3.2",
     "ws": "^6.1.2",
-    "yaml": "^1.2.1",
-    "@types/cls-hooked": "^4.2.1",
-    "@types/express": "^4.16.0",
-    "@types/express-graphql": "^0.6.2",
-    "@types/glob": "^7.1.1",
-    "@types/graphql": "^14.0.5",
-    "@types/node": "^10.12.18",
-    "@types/node-fetch": "^2.1.4",
-    "@types/node-zookeeper-client": "^0.2.6",
-    "@types/sequelize": "^4.27.34",
-    "@types/uuid": "^3.4.4",
-    "@types/ws": "^6.0.1",
-    "@types/yaml": "^1.0.1"
+    "yaml": "^1.2.1"
   }
 }

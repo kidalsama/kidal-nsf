@@ -55,25 +55,25 @@ export default class Environment {
       log4js.configure(path.join(this.resDir, `log4js-${this.profiles[0]}.json`));
     } catch (e) {
       log4js.configure({
-        "appenders": {
-          "console": {
-            "type": "console",
-            "level": "trace",
-            "maxLevel": "error",
-            "layout": {
-              "type": "pattern",
-              "pattern": "%d{yyyy-MM-dd hh:mm:ss.SSS} %[%5p%] --- [%8z] %m --- %[%c%]"
-            }
-          }
+        appenders: {
+          console: {
+            type: "console",
+            level: "trace",
+            maxLevel: "error",
+            layout: {
+              type: "pattern",
+              pattern: "%d{yyyy-MM-dd hh:mm:ss.SSS} %[%5p%] --- [%8z] %m --- %[%c%]",
+            },
+          },
         },
-        "categories": {
-          "default": {
-            "appenders": [
-              "console"
+        categories: {
+          default: {
+            appenders: [
+              "console",
             ],
-            "level": "all"
-          }
-        }
+            level: "all",
+          },
+        },
       });
     }
     this.log = log4js.getLogger("foundation.application.Environment");

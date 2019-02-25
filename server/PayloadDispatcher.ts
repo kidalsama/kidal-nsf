@@ -66,7 +66,8 @@ export default class PayloadDispatcher {
     }
   }
 
-  public async dispatchGQL(middleware: graphqlHTTP.Middleware, request: Request, response: Response): Promise<undefined> {
+  public async dispatchGQL(middleware: graphqlHTTP.Middleware,
+                           request: Request, response: Response): Promise<undefined> {
     // 钩住处理器
     return new Promise<undefined>((resolve, reject) => {
       this.handlerCls.run(() => {

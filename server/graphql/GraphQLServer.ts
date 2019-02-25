@@ -59,7 +59,7 @@ export default class GraphQLServer {
         }
       },
       extensions: () => {
-        return {foundation: {sync: PayloadDispatcher.S.getSync()}}
+        return {foundation: {sync: PayloadDispatcher.S.getSync()}};
       },
     });
     httpServer.expressApp.use(config.endpoint, async (request: Request, response: Response): Promise<undefined> => {

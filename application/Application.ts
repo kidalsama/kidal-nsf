@@ -144,7 +144,7 @@ export default class Application {
       }
       return text;
     } else if (configServer.type === "local") {
-      return fs.readFileSync(path.join(env.resDir, `bootstrap-${env.profile}.yml`)).toString("utf8")
+      return fs.readFileSync(path.join(env.resDir, `bootstrap-${env.profile}.yml`)).toString("utf8");
     } else {
       throw new Error(`无效的配置服务器类型 ${configServer.type}`);
     }
