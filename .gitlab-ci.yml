@@ -26,6 +26,6 @@ deploy_rc:
   - chmod -R 755 /gitlab-ci-cd/game-server-foundation
   - cd /gitlab-ci-cd/game-server-foundation
   - yarn
-  - pm2 start services/Bootstrap.js --name game-999-server-foundation-tests --node-args="rc,foundation:dev 999-foundation-tests"
+  - pm2 start services/Bootstrap.js --name game-999-server-foundation-tests --node-args=". rc,foundation:dev 999-foundation-tests"
   only:
   - master
