@@ -45,7 +45,7 @@ export default class Environment {
     this.checkArgv(argv);
 
     // 设置核心启动配置
-    this.bootDir = argv[1];
+    this.bootDir = process.cwd();
     this.profiles = argv[2].split(",");
     this.srcDir = path.join(this.bootDir, "services", argv[3], "src");
     this.resDir = path.join(this.bootDir, "services", argv[3], "res");
