@@ -1,0 +1,9 @@
+stages:
+- lint
+
+lint_master:
+  stage: lint
+  script:
+  - yarn run lint
+  only:
+  - master
