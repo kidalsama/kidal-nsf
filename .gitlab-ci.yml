@@ -25,6 +25,7 @@ deploy_rc:
   - cp -r . /gitlab-ci-cd/game-server-foundation
   - chmod -R 755 /gitlab-ci-cd/game-server-foundation
   - cd /gitlab-ci-cd/game-server-foundation
+  - yarn
   - pm2 start services/Bootstrap.js --name game-999-server-foundation-tests
   only:
   - master
