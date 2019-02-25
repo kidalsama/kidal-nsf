@@ -1,9 +1,22 @@
 stages:
 - lint
+- deploy_rc
 
 lint_master:
   stage: lint
   script:
   - yarn run lint
+  only:
+  - master
+
+deploy_rc:
+  stage: deploy_rc
+  script:
+  - pm2 stop game-999-server-foundation-tests
+  - rm -rf /gitlab-ci-cd/game-server-foundation
+  - cp -r . /gitlab-ci-cd/game-server-foundation
+  - chmod -R 755 /gitlab-ci-cd/game-server-foundation
+  - cd /gitlab-ci-cd/game-server-foundation
+  - pm2 start services/Bootstrap.js --name game-999-server-foundation-tests
   only:
   - master
