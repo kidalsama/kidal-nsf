@@ -2,9 +2,9 @@
   "apps": [
     {
       "name": "game-999-foundation-tests",
-      "script": "services/Bootstrap.js",
+      "script": ".",
       "args": [
-        "dev,td,foundation:dev",
+        "rc,foundation:dev",
         "999-foundation-tests"
       ],
       "merge_logs": true,
