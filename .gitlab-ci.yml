@@ -24,8 +24,7 @@ deploy_rc:
   - rm -rf /gitlab-ci-cd/game-server-foundation
   - cp -r . /gitlab-ci-cd/game-server-foundation
   - chmod -R 755 /gitlab-ci-cd/game-server-foundation
-  - cd /gitlab-ci-cd/game-server-foundation
   - yarn
-  - pm2 start services/999-tests/pm2/rc.json
+  - pm2 start /gitlab-ci-cd/game-server-foundation/services/999-tests/pm2/rc.json
   only:
   - pre-production
