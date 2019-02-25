@@ -23,6 +23,8 @@ const PayloadDispatcher_1 = __importDefault(require("../server/PayloadDispatcher
 const HttpServer_1 = __importDefault(require("../server/HttpServer"));
 const DiscoveryRpcClient_1 = __importDefault(require("../cluster/DiscoveryRpcClient"));
 const IRpcPayload_1 = require("../cluster/IRpcPayload");
+const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
 /**
  * @author tengda
  */
@@ -46,6 +48,30 @@ class Application {
      * 启动
      */
     static async run() {
+        // noinspection TsLint
+        console.log(`
+============================================================
+                      _ooOoo_
+                     o8888888o
+                     88" . "88
+                     (| -_- |)
+                     O\\  =  /O
+                  ____/\`---'\\____
+                .'  \\\\|     |//  \`.
+               /  \\\\|||  :  |||//  \\
+              /  _||||| -:- |||||-  \\
+              |   | \\\\\\  -  /// |   |
+              | \\_|  ''\\---/''  |   |
+              \\  .-\\__  \`-\`  ___/-. /
+            ___\`. .'  /--.--\\  \`. . __
+         ."" '<  \`.___\\_<|>_/___.'  >'"".
+        | | :  \`- \\\`.;\`\\ _ /\`;.\`/ - \` : | |
+        \\  \\ \`-.   \\_ __\\ /__ _/   .-\` /  /
+   ======\`-.____\`-.___\\_____/___.-\`____.-'======
+                      \`=---='
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 佛祖保佑       永无BUG
+============================================================`);
         // 日志
         this.LOG = Logs_1.default.INSTANCE.getFoundationLogger(__dirname, "Application");
         // 实例化
@@ -101,6 +127,9 @@ class Application {
                 throw new Error(`无法从 ${url} 读取 Bootstrap 配置: ${text}`);
             }
             return text;
+        }
+        else if (configServer.type === "local") {
+            return fs.readFileSync(path.join(env.resDir, `bootstrap-${env.profile}.yml`)).toString("utf8");
         }
         else {
             throw new Error(`无效的配置服务器类型 ${configServer.type}`);

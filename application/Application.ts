@@ -12,6 +12,8 @@ import PayloadDispatcher from "../server/PayloadDispatcher";
 import HttpServer from "../server/HttpServer";
 import DiscoveryRpcClient from "../cluster/DiscoveryRpcClient";
 import {RpcPayloadDispatcher} from "../cluster/IRpcPayload";
+import * as fs from "fs";
+import * as path from "path";
 
 /**
  * @author tengda
@@ -48,6 +50,31 @@ export default class Application {
    * 启动
    */
   public static async run() {
+    // noinspection TsLint
+    console.log(`
+============================================================
+                      _ooOoo_
+                     o8888888o
+                     88" . "88
+                     (| -_- |)
+                     O\\  =  /O
+                  ____/\`---'\\____
+                .'  \\\\|     |//  \`.
+               /  \\\\|||  :  |||//  \\
+              /  _||||| -:- |||||-  \\
+              |   | \\\\\\  -  /// |   |
+              | \\_|  ''\\---/''  |   |
+              \\  .-\\__  \`-\`  ___/-. /
+            ___\`. .'  /--.--\\  \`. . __
+         ."" '<  \`.___\\_<|>_/___.'  >'"".
+        | | :  \`- \\\`.;\`\\ _ /\`;.\`/ - \` : | |
+        \\  \\ \`-.   \\_ __\\ /__ _/   .-\` /  /
+   ======\`-.____\`-.___\\_____/___.-\`____.-'======
+                      \`=---='
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 佛祖保佑       永无BUG
+============================================================`);
+
     // 日志
     this.LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "Application");
 
@@ -116,6 +143,8 @@ export default class Application {
         throw new Error(`无法从 ${url} 读取 Bootstrap 配置: ${text}`);
       }
       return text;
+    } else if (configServer.type === "local") {
+      return fs.readFileSync(path.join(env.resDir, `bootstrap-${env.profile}.yml`)).toString("utf8")
     } else {
       throw new Error(`无效的配置服务器类型 ${configServer.type}`);
     }

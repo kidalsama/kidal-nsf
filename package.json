@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
-    "d.999.td": "node $NODE_DEBUG_OPTION . dev,td,foundation:dev 999-best-practices"
+    "d.999.td": "node $NODE_DEBUG_OPTION . dev,td,foundation:dev 999-foundation-tests"
   },
   "dependencies": {
     "cls-hooked": "^4.2.2",
@@ -37,12 +37,5 @@
     "@types/uuid": "^3.4.4",
     "@types/ws": "^6.0.1",
     "@types/yaml": "^1.0.1"
-  },
-  "files": [
-    "application/",
-    "cluster/",
-    "data/",
-    "error/",
-    "server/"
-  ]
+  }
 }
