@@ -1,11 +1,11 @@
 {
   "apps": [
     {
-      "name": "game-999-foundation-tests",
-      "script": ".",
+      "name": "game-999-server-foundation-tests",
+      "script": "/gitlab-ci-cd/game-server-foundation",
       "args": [
         "rc,foundation:dev",
-        "999-foundation-tests"
+        "999-tests"
       ],
       "merge_logs": true,
       "cwd": "/gitlab-ci-cd/game-server-foundation",
