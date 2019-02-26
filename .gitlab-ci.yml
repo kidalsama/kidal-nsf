@@ -2,7 +2,6 @@ stages:
 - lint
 - stop
 - deploy
-- start
 
 lint:
   stage: lint
@@ -27,12 +26,9 @@ deploy_rc:
   - chmod -R 755 /gitlab-ci-cd/game-server-foundation
   - cd /gitlab-ci-cd/game-server-foundation
   - yarn
-  only:
-  - pre-production
-  
-start_rc:
-  stage: start
-  script:
   - pm2 start services/999-tests/pm2/rc.json
+  ennvironment:
+    name: rc
+    url: http://39.106.136.198:29991/graphql
   only:
   - pre-production
