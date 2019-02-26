@@ -27,7 +27,7 @@ deploy_rc:
   - cd /gitlab-ci-cd/game-server-foundation
   - yarn
   - pm2 start services/999-tests/pm2/rc.json
-  ennvironment:
+  environment:
     name: rc
     url: http://39.106.136.198:29991/graphql
   only:
