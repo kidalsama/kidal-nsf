@@ -146,7 +146,7 @@ export default class Environment {
       // noinspection TsLint
       console.error(`Invalid bootstrap argv: ${argv.slice(2).join(" ")}`);
       // noinspection TsLint
-      console.log("Bootstrap Command: node . <profiles> <server>");
+      console.log("Bootstrap Command: node . <profiles> <server>")
       // noinspection TsLint
       console.log("  Example: node . dev 101-config");
       process.exit(0);

@@ -16,7 +16,8 @@
     "no-console": {
       "severity": "warning"
     },
-    "max-classes-per-file": true
+    "max-classes-per-file": true,
+    "semicolon": false
   },
   "rulesDirectory": []
 }

@@ -1,9 +1,9 @@
 stages:
 - lint
-- stop_rc
-- deploy_rc
+- stop
+- deploy
 
-lint_master:
+lint:
   stage: lint
   script:
   - yarn run lint
@@ -11,7 +11,7 @@ lint_master:
   - master
 
 stop_rc:
-  stage: stop_rc
+  stage: stop
   script:
   - pm2 stop game-999-server-foundation-tests
   only:
@@ -19,13 +19,16 @@ stop_rc:
   allow_failure: true
 
 deploy_rc:
-  stage: deploy_rc
+  stage: deploy
   script:
   - rm -rf /gitlab-ci-cd/game-server-foundation
   - cp -r . /gitlab-ci-cd/game-server-foundation
   - chmod -R 755 /gitlab-ci-cd/game-server-foundation
   - cd /gitlab-ci-cd/game-server-foundation
   - yarn
-  - pm2 start services/999-tests/pm2/rc.json
+  - pm2 start services/999-tests/pm2/pm2-rc.json
+  environment:
+    name: rc
+    url: http://39.106.136.198:29991/graphql
   only:
   - pre-production
