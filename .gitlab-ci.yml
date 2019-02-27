@@ -12,29 +12,3 @@ x:
   stage: x
   script:
   - "echo ${PWD}"
-
-build:
-  <<: *vars
-  stage: build
-  script:
-  - "rm -rf ${WORKING_DIR}"
-  - "mkdir -p ${WORKING_DIR}"
-  - "cp -r . ${WORKING_DIR}"
-  - "chmod -R 755 ${WORKING_DIR}"
-  - "cd ${WORKING_DIR}"
-  - "yarn"
-  #- pm2 start services/tests/pm2-rc.json
-  #- /^v[0-9]+(?:.[0-9]+)+/
-
-lint:
-  <<: *vars
-  stage: test
-  script:
-  - "cd ${WORKING_DIR}"
-  - "yarn run lint"
-
-cleanup:
-  <<: *vars
-  stage: cleanup
-  script:
-  - "rm -rf ${WORKING_DIR}"
