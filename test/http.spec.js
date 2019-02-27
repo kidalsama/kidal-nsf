@@ -11,10 +11,7 @@ const should = chai_1.default.should();
 chai_1.default.use(chai_http_1.default);
 describe("Http", () => {
     before(async () => {
-        await Application_1.default.run(["", "", "dev,td", "test-server"]);
-        await new Promise((resolve) => {
-            setTimeout(resolve, 1000);
-        });
+        return Application_1.default.run(["", "", "dev,td", "test-server"]);
     });
     it("Should get status 200", (done) => {
         chai_1.default.request(HttpServer_1.default.S.server)

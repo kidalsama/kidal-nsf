@@ -8,10 +8,7 @@ chai.use(chaiHttp);
 
 describe("GraphQL Query Time", () => {
   before(async () => {
-    await Application.run(["", "", "dev,td", "test-server"]);
-    await new Promise((resolve) => {
-      setTimeout(resolve, 1000)
-    })
+    return Application.run(["", "", "dev,td", "test-server"]);
   })
 
   it("Time", (done) => {
