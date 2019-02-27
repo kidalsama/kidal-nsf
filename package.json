@@ -1,5 +1,5 @@
 {
-  "name": "server-foundation",
+  "name": "node-server-foundation",
   "version": "0.2.12",
   "main": "services/Bootstrap.js",
   "repository": "http://gitlab.dev.happyhouse.club/mcg-game/server-foundation",
