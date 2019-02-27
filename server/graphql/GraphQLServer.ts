@@ -33,8 +33,8 @@ export default class GraphQLServer {
     const httpServer = HttpServer.S;
 
     // 配置
-    const app = Application.INSTANCE;
-    const env = Environment.INSTANCE;
+    const app = Application.S;
+    const env = Environment.S;
     const config = app.bootstrapConfig.server.graphQL;
 
     // 读取

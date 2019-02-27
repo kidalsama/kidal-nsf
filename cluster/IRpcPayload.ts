@@ -60,7 +60,7 @@ export class RpcPayloadDispatcher {
    * 初始化处理器
    */
   public async init() {
-    const env = Environment.INSTANCE;
+    const env = Environment.S;
 
     // 注册接口
     const contexts: Array<{ path: string, registry: IRpcRegistry<any, any> }> = glob

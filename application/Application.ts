@@ -49,7 +49,7 @@ export default class Application {
   /**
    * 启动
    */
-  public static async run() {
+  public static async run(argv: string[]): Promise<Application> {
     // noinspection TsLint
     console.log(`
 ============================================================
@@ -82,14 +82,17 @@ export default class Application {
     this._INSTANCE = new Application();
 
     // 启动
-    await this._INSTANCE.boot();
+    await this._INSTANCE.boot(argv);
+
+    // done
+    return this._INSTANCE;
   }
 
   /**
    * 启动
    */
-  private async boot() {
-    const env = Environment.INSTANCE;
+  private async boot(argv: string[]) {
+    const env = new Environment(argv);
 
     // timer
     const startTs = Date.now();
@@ -124,7 +127,7 @@ export default class Application {
    * 加载启动配置
    */
   private async loadBootstrapConfig(): Promise<string> {
-    const env = Environment.INSTANCE;
+    const env = Environment.S;
     const configName = `${env.id}-${env.profile}.yml`;
     const configServer = env.configServer;
 

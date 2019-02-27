@@ -9,6 +9,7 @@ import * as path from "path";
 export default class Logs {
   // 单例
   public static readonly INSTANCE = new Logs();
+  private static readonly FAKE_TARGET: any = {};
 
   /**
    *
@@ -21,7 +22,7 @@ export default class Logs {
    * 获取日至期
    */
   public getLogger(dirname: string, className: string): log4js.Logger {
-    const env = Environment.INSTANCE;
+    const env = Environment.S;
     const category = dirname
         .substring(env.srcDir.length + 1)
         .replace(/[\/]/g, ".")
@@ -34,7 +35,26 @@ export default class Logs {
    * 获取核心日期指
    */
   public getFoundationLogger(dirname: string, className: string): log4js.Logger {
-    const env = Environment.INSTANCE;
+    let logger: log4js.Logger | null = null;
+    return new Proxy(Logs.FAKE_TARGET, {
+      get: (target, p, receiver) => {
+        if (!logger) {
+          logger = this.createLogger(dirname, className)
+        }
+        return Reflect.get(logger, p, receiver)
+      },
+      apply: (target, thisArg, argArray) => {
+        if (!logger) {
+          logger = this.createLogger(dirname, className)
+        }
+        return Reflect.apply(target, logger, argArray);
+      },
+    });
+
+  }
+
+  private createLogger(dirname: string, className: string): log4js.Logger {
+    const env = Environment.S;
     const category = env.foundationConfig.testingFoundation
       ? ("foundation" +
         dirname

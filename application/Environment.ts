@@ -30,10 +30,10 @@ export interface IConfigServer {
  */
 export default class Environment {
   // 单例
-  public static readonly INSTANCE: Environment = new Environment(process.argv);
+  private static _INSTANCE?: Environment;
 
   public static get S() {
-    return this.INSTANCE;
+    return this._INSTANCE!;
   }
 
   // 启动目录
@@ -56,8 +56,10 @@ export default class Environment {
   /**
    *
    */
-  private constructor(argv: string[]) {
+  public constructor(argv: string[]) {
     this.checkArgv(argv);
+
+    Environment._INSTANCE = this;
 
     // 设置核心启动配置
     this.bootDir = process.cwd();

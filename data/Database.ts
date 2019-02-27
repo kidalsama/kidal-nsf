@@ -136,7 +136,7 @@ export default class Database extends events.EventEmitter {
    * 注册缓存
    */
   private async registerCaches() {
-    const env = Environment.INSTANCE;
+    const env = Environment.S;
 
     // 注册缓存
     const registryList: Array<IEntityRegistry<any, any>> = glob

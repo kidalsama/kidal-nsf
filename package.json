@@ -7,8 +7,9 @@
   "scripts": {
     "postinstall": "tsc -p .",
     "lint": "tslint './**/*.ts' -c tslint.json -e './node_modules/**/*.ts'",
-    "d.tests.td@mac": "node $NODE_DEBUG_OPTION tests/Bootstrap.js dev,td tests",
-    "d.tests.td@win": "node %NODE_DEBUG_OPTION% tests/Bootstrap.js dev,td tests"
+    "test": "mocha",
+    "d.test-server.td@mac": "node $NODE_DEBUG_OPTION test-server/Bootstrap.js dev,td test-server",
+    "d.test-server.td@win": "node %NODE_DEBUG_OPTION% test-server/Bootstrap.js dev,td test-server"
   },
   "dependencies": {
     "@types/cls-hooked": "4.2.1",
@@ -41,8 +42,14 @@
   },
   "devDependencies": {
     "@types/chai": "4.1.7",
+    "@types/chai-http": "3.0.5",
     "@types/mocha": "5.2.6",
     "chai": "4.2.0",
-    "mocha": "6.0.2"
+    "chai-http": "4.2.1",
+    "mocha": "6.0.2",
+    "nyc": "13.3.0",
+    "source-map-support": "0.5.10",
+    "ts-node": "^8.0.2",
+    "typescript": "^3.3.3333"
   }
 }
