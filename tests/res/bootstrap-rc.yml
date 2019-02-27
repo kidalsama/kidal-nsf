@@ -1,6 +1,0 @@
-server:
-  port: 29991
-cluster:
-  enabled: false
-data:
-  enabled: false

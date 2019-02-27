@@ -1,4 +1,0 @@
-application:
-  id: "999"
-  configServer:
-    type: "local"
