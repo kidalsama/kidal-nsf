@@ -53,6 +53,9 @@
     "typescript": "^3.3.3333"
   },
   "nyc": {
+    "require": [
+      "ts-node/register"
+    ],
     "extension": [
       ".js"
     ],
