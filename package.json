@@ -61,7 +61,8 @@
     ],
     "reporter": [
       "text",
-      "text-summary"
+      "text-summary",
+      "html"
     ],
     "sourceMap": true,
     "instrument": false,

@@ -45,6 +45,11 @@ test:
   coverage: '/^Lines *: (\d+\.\d+%) \( \d+\/\d+ \)/'
   script:
   - "yarn run test"
+  artifacts:
+    name: coverage
+    expire_in: 31d
+    paths:
+    - coverage/
 
 drop mysql:
   <<: *excepts
