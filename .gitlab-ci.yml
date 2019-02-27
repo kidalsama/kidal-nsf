@@ -10,7 +10,7 @@ lint:
 deploy:rc:
   stage: deploy
   variables:
-    DEPLOY_DIR: /gitlab-ci-cd/mcg-rnd/node-server-foundation/${CI_COMMIT_SHORT_SHA}
+    DEPLOY_DIR: "/gitlab-ci-cd/mcg-rnd/node-server-foundation/${CI_COMMIT_SHORT_SHA}"
   script:
   - rm -rf $DEPLOY_DIR
   - mkdir -p $DEPLOY_DIR
