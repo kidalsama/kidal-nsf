@@ -1,14 +1,20 @@
-.vars: &vars
-  variables:
-    WORKING_DIR: "/gitlab-ci-cd/mcg-rnd/node-server-foundation/${CI_COMMIT_SHORT_SHA}"
-
 stages:
-- x
-#- build
-#- test
-#- cleanup
+- build
+- test
+- cleanup
 
-x:
-  stage: x
+build:
+  stage: build
   script:
-  - "echo ${PWD}"
+  - "yarn"
+
+lint:
+  stage: test
+  script:
+  - "yarn run lint"
+
+cleanup:
+  stage: cleanup
+  script:
+  - "TODO: cleanup"
+  
