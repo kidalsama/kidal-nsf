@@ -10,7 +10,7 @@ lint:
 deploy:rc:
   stage: deploy
   variables:
-    DEPLOY_DIR: /gitlab-ci-cd/mcg-rnd/node-server-foundation/$CI_COMMIT_SHA
+    DEPLOY_DIR: /gitlab-ci-cd/mcg-rnd/node-server-foundation/${CI_COMMIT_SHORT_SHA}
   script:
   - rm -rf $DEPLOY_DIR
   - mkdir -p $DEPLOY_DIR
@@ -18,7 +18,7 @@ deploy:rc:
   - chmod -R 755 $DEPLOY_DIR
   - cd $DEPLOY_DIR
   - yarn
-  - pm2 start services/999-tests/pm2-rc.json
+  - pm2 start services/tests/pm2-rc.json
   environment:
     name: rc
     url: http://39.106.136.198:29991/graphql
