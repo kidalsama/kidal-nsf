@@ -7,6 +7,7 @@ build:
   stage: build
   script:
   - "yarn"
+  - "tsc -p ."
 
 lint:
   stage: test
