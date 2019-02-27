@@ -41,7 +41,7 @@ lint:
 test:
   <<: *excepts
   stage: test
-  coverage: "/^Lines *: (\d+\.\d+%) \( \d+\/\d+ \)/"
+  coverage: '/^Lines *: (\d+\.\d+%) \( \d+\/\d+ \)/'
   script:
   - "yarn run test"
 
