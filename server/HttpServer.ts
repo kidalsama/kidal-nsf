@@ -86,7 +86,7 @@ export default class HttpServer {
     // 监听http
     return new Promise((resolve) => {
       this.server.listen(config.port, "0.0.0.0", () => {
-        const address = this.server!.address();
+        const address = this.server.address();
         if (typeof address === "string") {
           HttpServer.LOG.info(`Listen at ${address}`);
         } else {
