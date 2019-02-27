@@ -7,7 +7,7 @@
   "scripts": {
     "postinstall": "tsc -p .",
     "lint": "tslint './**/*.ts' -c tslint.json -e './node_modules/**/*.ts'",
-    "test": "mocha",
+    "test": "node_modules/.bin/nyc node_modules/.bin/mocha",
     "d.test-server.td@mac": "node $NODE_DEBUG_OPTION test-server/Bootstrap.js dev,td test-server",
     "d.test-server.td@win": "node %NODE_DEBUG_OPTION% test-server/Bootstrap.js dev,td test-server"
   },
@@ -51,5 +51,17 @@
     "source-map-support": "0.5.10",
     "ts-node": "^8.0.2",
     "typescript": "^3.3.3333"
+  },
+  "nyc": {
+    "extension": [
+      ".js"
+    ],
+    "reporter": [
+      "text",
+      "text-summary"
+    ],
+    "sourceMap": true,
+    "instrument": false,
+    "all": false
   }
 }

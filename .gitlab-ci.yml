@@ -38,6 +38,13 @@ lint:
   script:
   - "yarn run lint"
 
+test:
+  <<: *excepts
+  stage: test
+  coverage: /^Lines *: (\d+\.\d+%) \( \d+\/\d+ \)/
+  script:
+  - "yarn run test"
+
 cleanup:
   <<: *excepts
   stage: cleanup

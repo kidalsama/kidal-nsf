@@ -6,7 +6,7 @@ import HttpServer from "../server/HttpServer";
 const should = chai.should();
 chai.use(chaiHttp);
 
-describe("HttpServer", () => {
+describe("Http", () => {
   before(async () => {
     await Application.run(["", "", "dev,td", "test-server"]);
     await new Promise((resolve) => {
