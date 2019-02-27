@@ -1,6 +1,9 @@
 .excepts: &excepts
   except:
-  - tags
+    refs:
+    - /^v[0-9]+(?:.[0-9]+)+/
+    changes:
+    - package.json
 
 stages:
 - build
