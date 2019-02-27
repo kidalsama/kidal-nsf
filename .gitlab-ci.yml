@@ -1,6 +1,5 @@
 stages:
 - lint
-- stop
 - deploy
 
 lint:
@@ -8,27 +7,20 @@ lint:
   script:
   - yarn run lint
   except:
-  - /^[0-9]+(?:.[0-9]+)+.rc[0-9]+/
+  - master
 
-stop_rc:
-  stage: stop
-  script:
-  - pm2 stop game-999-server-foundation-tests
-  only:
-  - /^[0-9]+(?:.[0-9]+)+.rc[0-9]+/
-  allow_failure: true
-
-deploy_rc:
+deploy rc:
   stage: deploy
   script:
-  - rm -rf /gitlab-ci-cd/game-server-foundation
-  - cp -r . /gitlab-ci-cd/game-server-foundation
-  - chmod -R 755 /gitlab-ci-cd/game-server-foundation
-  - cd /gitlab-ci-cd/game-server-foundation
+  - rm -rf /gitlab-ci-cd/mcg-rnd/node-server-foundation
+  - mkdir -p /gitlab-ci-cd/mcg-rnd/node-server-foundation
+  - cp -r . /gitlab-ci-cd/mcg-rnd/node-server-foundation
+  - chmod -R 755 /gitlab-ci-cd/mcg-rnd/node-server-foundation
+  - cd /gitlab-ci-cd/mcg-rnd/node-server-foundation
   - yarn
   - pm2 start services/999-tests/pm2-rc.json
   environment:
     name: rc
     url: http://39.106.136.198:29991/graphql
   only:
-  - /^[0-9]+(?:.[0-9]+)+.rc[0-9]+/
+  - /^v[0-9]+(?:.[0-9]+)+/
