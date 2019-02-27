@@ -27,11 +27,11 @@ build:
   - "yarn"
   - "tsc -p ."
 
-prepareTest:
+init mysql:
   <<: *excepts
   stage: prepareTest
   script:
-  - "pm2 start tests/Bootstrap.js --name ${CI_COMMIT_SHA}"
+  - 'echo "TODO: init mysql"'
 
 lint:
   <<: *excepts
@@ -46,9 +46,8 @@ test:
   script:
   - "yarn run test"
 
-cleanup:
+drop mysql:
   <<: *excepts
   stage: cleanup
   script:
-  - "pm2 stop ${CI_COMMIT_SHA}"
-  - "pm2 delete ${CI_COMMIT_SHA}"
+  - 'echo "TODO: drop mysql"'
