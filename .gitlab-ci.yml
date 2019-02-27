@@ -11,8 +11,8 @@ cache:
     refs:
     - tags
 #    - /^v[0-9]+(?:.[0-9]+)+/
-    changes:
-    - package.json
+#    changes:
+#    - package.json
 
 stages:
 - build
@@ -25,7 +25,7 @@ build:
   stage: build
   script:
   - "yarn"
-  - "tsc -p ."
+#  - "tsc -p ."
 
 init mysql:
   <<: *excepts
