@@ -3,16 +3,12 @@ cache:
   key: "$CI_BUILD_REF_NAME"
   paths:
   - "node_modules/"
-  - "*.js"
-  - "*.js.map"
 
 .excepts: &excepts
   except:
     refs:
     - tags
 #    - /^v[0-9]+(?:.[0-9]+)+/
-#    changes:
-#    - package.json
 
 stages:
 - build
@@ -25,7 +21,7 @@ build:
   stage: build
   script:
   - "yarn"
-#  - "tsc -p ."
+  - "yarn run lint"
 
 init mysql:
   <<: *excepts
@@ -33,17 +29,12 @@ init mysql:
   script:
   - 'echo "TODO: init mysql"'
 
-lint:
-  <<: *excepts
-  stage: test
-  script:
-  - "yarn run lint"
-
 test:
   <<: *excepts
   stage: test
   coverage: '/^Lines *: (\d+\.\d+%) \( \d+\/\d+ \)/'
   script:
+  - "tsc -p ."
   - "yarn run test"
   artifacts:
     name: coverage
