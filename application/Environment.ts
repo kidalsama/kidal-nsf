@@ -4,6 +4,19 @@ import * as log4js from "log4js";
 import * as path from "path";
 import * as yaml from "yaml";
 
+/**
+ * 框架配置
+ */
+export interface IFoundationConfig {
+  testingFoundation: boolean;
+  serviceRootDir: string;
+  resourceDirName: string;
+  sourceDirName: string;
+}
+
+/**
+ * 配置服务器
+ */
 export interface IConfigServer {
   type: string;
   uri: string;
@@ -27,6 +40,8 @@ export default class Environment {
   public readonly bootDir: string;
   // 环境
   public readonly profiles: string[];
+  // 框架配置
+  public readonly foundationConfig: IFoundationConfig;
   // 源代码目录
   public readonly srcDir: string;
   // 资源目录
@@ -47,8 +62,21 @@ export default class Environment {
     // 设置核心启动配置
     this.bootDir = process.cwd();
     this.profiles = argv[2].split(",");
-    this.srcDir = path.join(this.bootDir, "services", argv[3], "src");
-    this.resDir = path.join(this.bootDir, "services", argv[3], "res");
+
+    // 加载框架配置
+    this.foundationConfig = this.loadFoundationConfig();
+    this.srcDir = path.join(
+      this.bootDir,
+      this.foundationConfig.serviceRootDir,
+      argv[3],
+      this.foundationConfig.sourceDirName,
+    );
+    this.resDir = path.join(
+      this.bootDir,
+      this.foundationConfig.serviceRootDir,
+      argv[3],
+      this.foundationConfig.resourceDirName,
+    );
 
     // 配置日志
     try {
@@ -135,6 +163,25 @@ export default class Environment {
       }
     }
     return true;
+  }
+
+  /**
+   * 读取环境数据
+   */
+  private loadFoundationConfig(): IFoundationConfig {
+    const defaults: IFoundationConfig = {
+      testingFoundation: false,
+      serviceRootDir: "services",
+      resourceDirName: "res",
+      sourceDirName: "src",
+    }
+    let config: any = {};
+    try {
+      config = JSON.parse(fs.readFileSync(path.join(this.bootDir, `.foundation.json`)).toString("utf8"))
+    } catch (e) {
+      // ignored
+    }
+    return Object.assign({}, defaults, config)
   }
 
   /**

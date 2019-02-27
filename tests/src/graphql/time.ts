@@ -1,4 +1,4 @@
-import GraphQLUnits from "../../../../server/graphql/GraphQLUnits";
+import GraphQLUnits from "../../../server/graphql/GraphQLUnits";
 
 class ServerTime {
   private readonly _now = new Date();

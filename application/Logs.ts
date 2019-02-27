@@ -35,7 +35,7 @@ export default class Logs {
    */
   public getFoundationLogger(dirname: string, className: string): log4js.Logger {
     const env = Environment.INSTANCE;
-    const category = env.hasAnyProfile("foundation:dev")
+    const category = env.foundationConfig.testingFoundation
       ? ("foundation" +
         dirname
           .substring(env.bootDir.length)
