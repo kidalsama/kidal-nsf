@@ -9,12 +9,14 @@ lint:
 
 deploy:rc:
   stage: deploy
+  variables:
+    DEPLOY_DIR: /gitlab-ci-cd/mcg-rnd/node-server-foundation/$CI_COMMIT_SHA
   script:
-  - rm -rf /gitlab-ci-cd/mcg-rnd/node-server-foundation
-  - mkdir -p /gitlab-ci-cd/mcg-rnd/node-server-foundation
-  - cp -r . /gitlab-ci-cd/mcg-rnd/node-server-foundation
-  - chmod -R 755 /gitlab-ci-cd/mcg-rnd/node-server-foundation
-  - cd /gitlab-ci-cd/mcg-rnd/node-server-foundation
+  - rm -rf $DEPLOY_DIR
+  - mkdir -p $DEPLOY_DIR
+  - cp -r . $DEPLOY_DIR
+  - chmod -R 755 $DEPLOY_DIR
+  - cd $DEPLOY_DIR
   - yarn
   - pm2 start services/999-tests/pm2-rc.json
   environment:
