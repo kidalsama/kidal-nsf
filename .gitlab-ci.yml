@@ -8,7 +8,7 @@ stages:
 - cleanup
 
 build:
-  <<: $vars
+  <<: *vars
   stage: build
   script:
   - "rm -rf ${WORKING_DIR}"
@@ -21,14 +21,14 @@ build:
   #- /^v[0-9]+(?:.[0-9]+)+/
 
 lint:
-  <<: $vars
+  <<: *vars
   stage: test
   script:
   - "cd ${WORKING_DIR}"
   - "yarn run lint"
 
 cleanup:
-  <<: $vars
+  <<: *vars
   stage: cleanup
   script:
   - "rm -rf ${WORKING_DIR}"
