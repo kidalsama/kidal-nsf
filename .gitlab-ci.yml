@@ -3,9 +3,15 @@
     WORKING_DIR: "/gitlab-ci-cd/mcg-rnd/node-server-foundation/${CI_COMMIT_SHORT_SHA}"
 
 stages:
-- build
-- test
-- cleanup
+- x
+#- build
+#- test
+#- cleanup
+
+x:
+  stage: x
+  script:
+  - "echo ${PWD}"
 
 build:
   <<: *vars
