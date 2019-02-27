@@ -84,10 +84,12 @@ export default class HttpServer {
     });
 
     // 监听http
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.server.listen(config.port, "0.0.0.0", () => {
         const address = this.server.address();
-        if (typeof address === "string") {
+        if (address === null) {
+          reject(new Error("Server's address is null"));
+        } else if (typeof address === "string") {
           HttpServer.LOG.info(`Listen at ${address}`);
         } else {
           HttpServer.LOG.info(`Listen at ${address.address}:${address.port}`);

@@ -7,14 +7,19 @@ build:
   stage: build
   script:
   - "yarn"
+  except:
+  - tags
 
 lint:
   stage: test
   script:
   - "yarn run lint"
+  except:
+  - tags
 
 cleanup:
   stage: cleanup
   script:
-  - "TODO: cleanup"
-  
+  - "echo \"TODO: cleanup\""
+  except:
+  - tags
