@@ -8,7 +8,7 @@ class ServerTime {
   }
 
   public timestamp() {
-    return this._now.getTime();
+    return GraphQLUnits.dateUnit(new Date(), {unit: "timestamp"});
   }
 
   public date() {
@@ -17,6 +17,10 @@ class ServerTime {
 
   public datetime() {
     return GraphQLUnits.dateUnit(this._now, {unit: "datetime"});
+  }
+
+  public testingNull() {
+    return GraphQLUnits.dateUnit(null, {});
   }
 }
 
@@ -31,6 +35,7 @@ type ServerTime {
   timestamp: Float!
   date: String!
   datetime: String!
+  testingNull: String
 }
 `,
   resolver: {

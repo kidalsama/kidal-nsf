@@ -12,13 +12,16 @@ class ServerTime {
         return GraphQLUnits_1.default.dateUnit(new Date(), args);
     }
     timestamp() {
-        return this._now.getTime();
+        return GraphQLUnits_1.default.dateUnit(new Date(), { unit: "timestamp" });
     }
     date() {
         return GraphQLUnits_1.default.dateUnit(this._now, { unit: "date" });
     }
     datetime() {
         return GraphQLUnits_1.default.dateUnit(this._now, { unit: "datetime" });
+    }
+    testingNull() {
+        return GraphQLUnits_1.default.dateUnit(null, {});
     }
 }
 exports.default = {
@@ -32,6 +35,7 @@ type ServerTime {
   timestamp: Float!
   date: String!
   datetime: String!
+  testingNull: String
 }
 `,
     resolver: {

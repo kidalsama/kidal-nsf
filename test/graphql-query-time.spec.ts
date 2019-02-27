@@ -24,6 +24,7 @@ query time {
     timestamp
     date
     datetime
+    testingNull
   }
 }`,
       })

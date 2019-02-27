@@ -1,3 +1,5 @@
+import Maybe from "graphql/tsutils/Maybe";
+
 const formatTime = (date: Date, fmt: string = "yyyy-MM-dd hh:mm:ss") => {
   if (/(y+)/.test(fmt)) {
     const _$1 = RegExp.$1;
@@ -18,7 +20,7 @@ const formatTime = (date: Date, fmt: string = "yyyy-MM-dd hh:mm:ss") => {
 };
 
 export default {
-  dateUnit(result: Date, args?: { unit?: string }) {
+  dateUnit(result: Maybe<Date>, args?: { unit?: string }) {
     if (!result) {
       return null;
     }
