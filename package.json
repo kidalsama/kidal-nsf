@@ -5,9 +5,8 @@
   "author": "MCG RND DEPARTMENT",
   "private": true,
   "scripts": {
-    "postinstall": "tsc -p .",
     "lint": "tslint './**/*.ts' -c tslint.json -e './node_modules/**/*.ts'",
-    "test": "node_modules/.bin/nyc node_modules/.bin/mocha",
+    "test": "nyc mocha",
     "d.test-server.td@mac": "node $NODE_DEBUG_OPTION test-server/Bootstrap.js dev,td test-server",
     "d.test-server.td@win": "node %NODE_DEBUG_OPTION% test-server/Bootstrap.js dev,td test-server"
   },
@@ -50,12 +49,9 @@
     "nyc": "13.3.0",
     "source-map-support": "0.5.10",
     "ts-node": "^8.0.2",
-    "typescript": "^3.3.3333"
+    "typescript": "3.3.3333"
   },
   "nyc": {
-    "require": [
-      "ts-node/register"
-    ],
     "extension": [
       ".js"
     ],
