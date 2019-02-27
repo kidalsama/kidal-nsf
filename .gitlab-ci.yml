@@ -7,19 +7,13 @@ build:
   stage: build
   script:
   - "yarn"
-  except:
-  - /^v[0-9]+(?:.[0-9]+)+$/
 
 lint:
   stage: test
   script:
   - "yarn run lint"
-  except:
-  - /^v[0-9]+(?:.[0-9]+)+$/
 
 cleanup:
   stage: cleanup
   script:
   - "echo \"TODO: cleanup\""
-  except:
-  - /^v[0-9]+(?:.[0-9]+)+$/
