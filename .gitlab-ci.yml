@@ -8,21 +8,21 @@ build:
   variables:
     PWD: "/gitlab-ci-cd/mcg-rnd/node-server-foundation/${CI_COMMIT_SHORT_SHA}"
   script:
-  - rm -rf $DEPLOY_DIR
-  - mkdir -p $DEPLOY_DIR
-  - cp -r . $DEPLOY_DIR
-  - chmod -R 755 $DEPLOY_DIR
-  - cd $DEPLOY_DIR
-  - yarn
+  - "rm -rf ${DEPLOY_DIR}"
+  - "mkdir -p ${DEPLOY_DIR}"
+  - "cp -r . ${DEPLOY_DIR}"
+  - "chmod -R 755 ${DEPLOY_DIR}"
+  - "cd ${DEPLOY_DIR}"
+  - "yarn"
   #- pm2 start services/tests/pm2-rc.json
   #- /^v[0-9]+(?:.[0-9]+)+/
 
 test:lint:
   stage: test
   script:
-  - yarn run lint
+  - "yarn run lint"
 
 cleanup:
   stage: cleanup
   script:
-  - rm -rf $DEPLOY_DIR
+  - "rm -rf ${DEPLOY_DIR}"
