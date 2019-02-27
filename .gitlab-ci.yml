@@ -7,8 +7,8 @@ lint:
   stage: lint
   script:
   - yarn run lint
-  only:
-  - master
+  except:
+  - /^[0-9]+(?:.[0-9]+)+.rc[0-9]+/
 
 stop_rc:
   stage: stop
