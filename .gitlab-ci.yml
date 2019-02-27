@@ -1,28 +1,34 @@
+.vars: &vars
+  variables:
+    WORKING_DIR: "/gitlab-ci-cd/mcg-rnd/node-server-foundation/${CI_COMMIT_SHORT_SHA}"
+
 stages:
 - build
 - test
 - cleanup
 
 build:
+  <<: *vars
   stage: build
-  variables:
-    PWD: "/gitlab-ci-cd/mcg-rnd/node-server-foundation/${CI_COMMIT_SHORT_SHA}"
   script:
-  - "rm -rf ${PWD}"
-  - "mkdir -p ${PWD}"
-  - "cp -r . ${PWD}"
-  - "chmod -R 755 ${PWD}"
-  - "cd ${PWD}"
+  - "rm -rf ${WORKING_DIR}"
+  - "mkdir -p ${WORKING_DIR}"
+  - "cp -r . ${WORKING_DIR}"
+  - "chmod -R 755 ${WORKING_DIR}"
+  - "cd ${WORKING_DIR}"
   - "yarn"
   #- pm2 start services/tests/pm2-rc.json
   #- /^v[0-9]+(?:.[0-9]+)+/
 
-test:lint:
+lint:
+  <<: *vars
   stage: test
   script:
+  - "cd ${WORKING_DIR}"
   - "yarn run lint"
 
 cleanup:
+  <<: *vars
   stage: cleanup
   script:
-  - "rm -rf ${PWD}"
+  - "rm -rf ${WORKING_DIR}"
