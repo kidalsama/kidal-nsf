@@ -3,8 +3,16 @@ cache:
   key: "$CI_BUILD_REF_NAME"
   paths:
   - "node_modules/"
-  - "**/*.js"
-  - "**/*.js.map"
+  - "application/**/*.js"
+  - "application/**/**/*.js.map"
+  - "cluster/**/*.js"
+  - "cluster/**/**/*.js.map"
+  - "data/**/*.js"
+  - "data/**/**/*.js.map"
+  - "error/**/*.js"
+  - "error/**/**/*.js.map"
+  - "server/**/*.js"
+  - "server/**/**/*.js.map"
 
 .excepts: &excepts
   except:
