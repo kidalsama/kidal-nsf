@@ -15,6 +15,7 @@ cache:
 
 stages:
 - build
+- prepareTest
 - test
 - cleanup
 
@@ -24,6 +25,12 @@ build:
   script:
   - "yarn"
   - "tsc -p ."
+
+prepareTest:
+  <<: *excepts
+  stage: prepareTest
+  script:
+  - "pm2 start tests/Bootstrap.js --name ${CI_COMMIT_SHA}"
 
 lint:
   <<: *excepts
@@ -35,4 +42,5 @@ cleanup:
   <<: *excepts
   stage: cleanup
   script:
-  - "echo \"TODO: cleanup\""
+  - "pm2 stop ${CI_COMMIT_SHA}"
+  - "pm2 delete ${CI_COMMIT_SHA}"
