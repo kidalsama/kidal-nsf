@@ -48,8 +48,9 @@ class Application {
      * 启动
      */
     static async run(argv) {
-        // noinspection TsLint
-        console.log(`
+        if (argv[2].indexOf("test") === -1) {
+            // noinspection TsLint
+            console.log(`
 ============================================================
                       _ooOoo_
                      o8888888o
@@ -72,6 +73,7 @@ class Application {
    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                  佛祖保佑       永无BUG
 ============================================================`);
+        }
         // 日志
         this.LOG = Logs_1.default.INSTANCE.getFoundationLogger(__dirname, "Application");
         // 实例化

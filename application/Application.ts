@@ -50,8 +50,9 @@ export default class Application {
    * 启动
    */
   public static async run(argv: string[]): Promise<Application> {
-    // noinspection TsLint
-    console.log(`
+    if (argv[2].indexOf("test") === -1) {
+      // noinspection TsLint
+      console.log(`
 ============================================================
                       _ooOoo_
                      o8888888o
@@ -74,6 +75,7 @@ export default class Application {
    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                  佛祖保佑       永无BUG
 ============================================================`);
+    }
 
     // 日志
     this.LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "Application");

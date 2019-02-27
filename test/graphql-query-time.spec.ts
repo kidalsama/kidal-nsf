@@ -8,7 +8,7 @@ chai.use(chaiHttp);
 
 describe("GraphQL Query Time", () => {
   before(async () => {
-    return Application.run(["", "", "dev,td", "test-server"]);
+    return Application.run(["", "", "test", "test-server"]);
   })
 
   it("Time", (done) => {

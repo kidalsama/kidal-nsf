@@ -8,7 +8,7 @@ chai.use(chaiHttp);
 
 describe("Http", () => {
   before(async () => {
-    return Application.run(["", "", "dev,td", "test-server"]);
+    return Application.run(["", "", "test", "test-server"]);
   })
 
   it("Should get status 200", (done) => {
