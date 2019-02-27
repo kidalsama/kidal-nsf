@@ -1,9 +1,9 @@
 stages:
-- lint
+- link
 - deploy
 
 lint:
-  stage: lint
+  stage: link
   script:
   - yarn run lint
 
@@ -20,5 +20,4 @@ deploy:rc:
   environment:
     name: rc
     url: http://39.106.136.198:29991/graphql
-  only:
-  - /^v[0-9]+(?:.[0-9]+)+/
+# - /^v[0-9]+(?:.[0-9]+)+/
