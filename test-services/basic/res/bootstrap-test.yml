@@ -7,4 +7,4 @@ data:
     host: 192.168.93.222 # DATABASE_HOST
     username: mcg # DATABASE_USERNAME
     password: Mcg!2345 # DATABASE_PASSWORD
-    database: mcg_games_servers # DATABASE_DATABASE
+    database: node_server_foundation_test # DATABASE_DATABASE

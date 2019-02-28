@@ -48,5 +48,6 @@ test:
 cleanup test:
   <<: *excepts
   stage: cleanup
+  when: always
   script:
   - . scripts/cleanup_test.sh $CI_PIPELINE_ID
