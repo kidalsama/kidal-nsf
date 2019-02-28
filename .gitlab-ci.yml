@@ -35,6 +35,7 @@ test:
   stage: test
   coverage: '/^Lines *: (\d+\.\d+%) \( \d+\/\d+ \)/'
   script:
+  - "tsc -p ."
   - "yarn run test"
   artifacts:
     name: coverage
