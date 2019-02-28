@@ -36,6 +36,12 @@ class Database extends events.EventEmitter {
         return this._sequelize;
     }
     /**
+     * 是否启用
+     */
+    get enabled() {
+        return Application_1.default.INSTANCE.bootstrapConfig.data.enabled;
+    }
+    /**
      * 初始化
      */
     async init() {
@@ -124,6 +130,14 @@ class Database extends events.EventEmitter {
         Database.LOG.info(`Connect database ${options.dialect}://${options.host}:${options.port}/${options.database} successful`);
         // 注册缓存
         await this.registerCaches();
+    }
+    /**
+     * 关闭
+     */
+    async shutdown() {
+        if (this.enabled) {
+            await this.sequelize.close();
+        }
     }
     /**
      * 注册缓存

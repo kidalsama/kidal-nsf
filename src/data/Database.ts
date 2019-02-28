@@ -36,6 +36,13 @@ export default class Database extends events.EventEmitter {
   }
 
   /**
+   * 是否启用
+   */
+  public get enabled() {
+    return Application.INSTANCE.bootstrapConfig.data.enabled
+  }
+
+  /**
    * 初始化
    */
   public async init(): Promise<void> {
@@ -130,6 +137,15 @@ export default class Database extends events.EventEmitter {
 
     // 注册缓存
     await this.registerCaches();
+  }
+
+  /**
+   * 关闭
+   */
+  public async shutdown() {
+    if (this.enabled) {
+      await this.sequelize.close()
+    }
   }
 
   /**

@@ -126,6 +126,13 @@ export default class Application {
   }
 
   /**
+   * 关闭
+   */
+  public async shutdown() {
+    await Database.S.shutdown()
+  }
+
+  /**
    * 加载启动配置
    */
   private async loadBootstrapConfig(): Promise<string> {

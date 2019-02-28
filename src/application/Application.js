@@ -110,6 +110,12 @@ class Application {
         Application.LOG.info(`Started ${env.id} in ${sec} seconds`);
     }
     /**
+     * 关闭
+     */
+    async shutdown() {
+        await Database_1.default.S.shutdown();
+    }
+    /**
      * 加载启动配置
      */
     async loadBootstrapConfig() {

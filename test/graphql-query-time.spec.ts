@@ -7,6 +7,10 @@ describe("GraphQL Query Time", () => {
     return Application.run(["", "", "test", "test-server"]);
   })
 
+  afterAll(async () => {
+    await Application.S.shutdown()
+  })
+
   it("Time", async () => {
     const resp = await supertest(HttpServer.S.expressApp)
       .post("/graphql")

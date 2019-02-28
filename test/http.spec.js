@@ -10,6 +10,9 @@ describe("Http", () => {
     beforeAll(async () => {
         return Application_1.default.run(["", "", "test", "test-server"]);
     });
+    afterAll(async () => {
+        await Application_1.default.S.shutdown();
+    });
     it("Should get status 200", async () => {
         const resp = await supertest_1.default(HttpServer_1.default.S.expressApp)
             .get("/");

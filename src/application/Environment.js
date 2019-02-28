@@ -63,7 +63,8 @@ class Environment {
         // 读取用户启动配置
         const environmentConfigPath = path.join(this.resDir, `application-${this.profiles[0]}.yml`);
         if (!fs.existsSync(environmentConfigPath)) {
-            this.log.error(`无法加载启动配置 ${environmentConfigPath}`);
+            // noinspection TsLint
+            console.error(`无法加载启动配置 ${environmentConfigPath}`);
             process.exit(0);
         }
         const environmentConfigText = fs.readFileSync(environmentConfigPath).toString("utf8");
