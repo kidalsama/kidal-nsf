@@ -1,6 +1,6 @@
 cache:
   untracked: true
-  key: $CI_COMMIT_SHORT_SHA
+  key: $CI_PIPELINE_ID
   paths:
   - node_modules/
 
@@ -32,7 +32,7 @@ prepare test:
   <<: *excepts
   stage: prepare
   script:
-  - . scripts/prepare_test.sh $CI_COMMIT_SHORT_SHA
+  - . scripts/prepare_test.sh $CI_PIPELINE_ID
   - cat test-services/basic/res/bootstrap-test.yml
 
 test:
@@ -53,4 +53,4 @@ cleanup test:
   <<: *excepts
   stage: cleanup
   script:
-  - . scripts/cleanup_test.sh $CI_COMMIT_SHORT_SHA
+  - . scripts/cleanup_test.sh $CI_PIPELINE_ID
