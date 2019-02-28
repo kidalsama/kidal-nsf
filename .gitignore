@@ -2,8 +2,12 @@
 yarn.lock
 yarn-error.log
 build/*
-#src/**/*.js
-#src/**/*.js.map
+src/**/*.js
+src/**/*.js.map
+test/**/*.js
+test/**/*.js.map
+test-services/**/*.js
+test-services/**/*.js.map
 
 # Logs
 logs

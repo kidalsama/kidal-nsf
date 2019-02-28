@@ -5,6 +5,7 @@
   "author": "MCG RND DEPARTMENT",
   "private": true,
   "scripts": {
+    "postinstall": "tsc -p .",
     "lint": "tslint './**/*.ts' -c tslint.json -e './node_modules/**/*.ts'",
     "test": "jest",
     "d.test-server.td@mac": "node $NODE_DEBUG_OPTION test-server/Bootstrap.js dev,td test-server",
