@@ -4,6 +4,10 @@ cache:
   paths:
   - node_modules/
 
+before_script:
+- source scripts/prepare_test.sh
+- source scripts/cleanup_test.sh
+
 .excepts: &excepts
   except:
     refs:
@@ -13,7 +17,7 @@ cache:
 
 stages:
 - build
-- prepareTest
+- prepare
 - test
 - cleanup
 
@@ -24,20 +28,11 @@ build:
   - yarn
   - yarn run lint
 
-create database:
+prepare test:
   <<: *excepts
-  stage: prepareTest
+  stage: prepare
   script:
-  - mysql -h172.17.56.181 -ugitlab-runner -pgitlab-runner -e"create database unit_test_${CI_COMMIT_SHORT_SHA} default character set utf8mb4 collate utf8mb4_unicode_ci;""
-
-modify bootstrap-test.yml:
-  <<: *excepts
-  stage: prepareTest
-  script:
-  - sed -i 's/host: 192.168.93.222 \# DATABASE_HOST/host: 172.17.56.181/g' test-services/basic/res/bootstrap-test.yml
-  - sed -i 's/username: mcg \# DATABASE_USERNAME/username: gitlab-runner/g' test-services/basic/res/bootstrap-test.yml
-  - sed -i 's/password: Mcg!2345 \# DATABASE_PASSWORD/password: gitlab-runner/g' test-services/basic/res/bootstrap-test.yml
-  - sed -i 's/database: mcg_games_servers \# DATABASE_DATABASE/database: unit_test_${CI_COMMIT_SHORT_SHA}/g' test-services/basic/res/bootstrap-test.yml
+  - . scripts/prepare_test.sh $CI_COMMIT_SHORT_SHA
   - cat test-services/basic/res/bootstrap-test.yml
 
 test:
@@ -54,8 +49,8 @@ test:
     paths:
     - coverage/
 
-drop database:
+cleanup test:
   <<: *excepts
   stage: cleanup
   script:
-  - mysql -h172.17.56.181 -ugitlab-runner -pgitlab-runner -e"drop database if exists unit_test_${CI_COMMIT_SHORT_SHA};"
+  - . scripts/cleanup_test.sh $CI_COMMIT_SHORT_SHA
