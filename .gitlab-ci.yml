@@ -4,10 +4,6 @@ cache:
   paths:
   - node_modules/
 
-before_script:
-- source scripts/prepare_test.sh
-- source scripts/cleanup_test.sh
-
 .excepts: &excepts
   except:
     refs:
