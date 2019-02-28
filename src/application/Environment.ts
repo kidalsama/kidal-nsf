@@ -106,7 +106,7 @@ export default class Environment {
         },
       });
     }
-    this.log = log4js.getLogger("foundation.application.Environment");
+    this.log = log4js.getLogger("foundation.src.application.Environment");
 
     // 读取用户启动配置
     const environmentConfigPath = path.join(this.resDir, `application-${this.profiles[0]}.yml`);
