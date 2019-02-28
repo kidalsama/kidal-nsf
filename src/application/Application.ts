@@ -136,6 +136,7 @@ export default class Application {
    * 关闭
    */
   public async shutdown() {
+    await new Promise((resolve) => setTimeout(resolve, 1000))
     await Database.S.shutdown()
   }
 
