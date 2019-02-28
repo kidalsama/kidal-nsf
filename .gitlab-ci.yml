@@ -1,8 +1,8 @@
 cache:
   untracked: true
-  key: "$CI_BUILD_REF_NAME"
+  key: $CI_PIPELINE_ID
   paths:
-  - "node_modules/"
+  - node_modules/
 
 .excepts: &excepts
   except:
@@ -13,7 +13,7 @@ cache:
 
 stages:
 - build
-- prepareTest
+- prepare
 - test
 - cleanup
 
@@ -21,30 +21,32 @@ build:
   <<: *excepts
   stage: build
   script:
-  - "yarn"
-  - "yarn run lint"
+  - yarn
+  - yarn run lint
 
-init mysql:
+prepare test:
   <<: *excepts
-  stage: prepareTest
+  stage: prepare
   script:
-  - 'echo "TODO: init mysql"'
+  - . scripts/prepare_test.sh $CI_PIPELINE_ID
 
 test:
   <<: *excepts
   stage: test
   coverage: '/^Lines *: (\d+\.\d+%) \( \d+\/\d+ \)/'
   script:
-  - "tsc -p ."
-  - "yarn run test"
+  - . scripts/apply_test_bootstrap.sh $CI_PIPELINE_ID
+  - cat test-services/basic/res/bootstrap-test.yml
+  - tsc -p .
+  - yarn run test
   artifacts:
     name: coverage
     expire_in: 31d
     paths:
     - coverage/
 
-drop mysql:
+cleanup test:
   <<: *excepts
   stage: cleanup
   script:
-  - 'echo "TODO: drop mysql"'
+  - . scripts/cleanup_test.sh $CI_PIPELINE_ID
