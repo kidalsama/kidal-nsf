@@ -154,7 +154,7 @@ export default class Application {
       const url = `${configServer.uri}/${configName}/raw?ref=master`;
       const response = await fetch(url, {
         headers: {
-          "PRIVATE-TOKEN": configServer.token,
+          "PRIVATE-TOKEN":configServer.token,
         },
       });
       const status = response.status;
