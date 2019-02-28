@@ -3,6 +3,7 @@ server:
 cluster:
   enabled: false
 data:
+  forceSync: true
   dataSourceMysql:
     host: 192.168.93.222 # DATABASE_HOST
     username: mcg # DATABASE_USERNAME

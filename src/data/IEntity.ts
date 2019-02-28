@@ -85,8 +85,8 @@ export interface IEntityRegistry<TKey extends number | string, TEntity extends I
    */
   readonly model: Sequelize.Model<TEntity, any>;
 
-  /**
-   * 初始化
-   */
-  init: (cache: IEntityCache<TKey, TEntity>) => Promise<any>;
+  // /**
+  //  * 初始化
+  //  */
+  // init: (cache: IEntityCache<TKey, TEntity>) => Promise<any>;
 }

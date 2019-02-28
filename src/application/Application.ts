@@ -50,9 +50,8 @@ export default class Application {
    * 启动
    */
   public static async run(argv: string[]): Promise<Application> {
-    if (argv[2].indexOf("test") === -1) {
-      // noinspection TsLint
-      console.log(`
+    // noinspection TsLint
+    console.log(`
 ============================================================
                       _ooOoo_
                      o8888888o
@@ -75,8 +74,18 @@ export default class Application {
    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                  佛祖保佑       永无BUG
 ============================================================`);
-    }
 
+    return this.runBoot(argv)
+  }
+
+  /**
+   * 测试启动
+   */
+  public static async runTest(serviceName: string): Promise<Application> {
+    return this.runBoot(["", "", "test", serviceName])
+  }
+
+  private static async runBoot(argv: string[]): Promise<Application> {
     // 日志
     this.LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "Application");
 
@@ -88,13 +97,6 @@ export default class Application {
 
     // done
     return this._INSTANCE;
-  }
-
-  /**
-   * 测试启动
-   */
-  public static async runTest(serviceName: string): Promise<Application> {
-    return this.run(["", "", "test", serviceName])
   }
 
   /**
@@ -154,7 +156,7 @@ export default class Application {
       const url = `${configServer.uri}/${configName}/raw?ref=master`;
       const response = await fetch(url, {
         headers: {
-          "PRIVATE-TOKEN":configServer.token,
+          "PRIVATE-TOKEN": configServer.token,
         },
       });
       const status = response.status;

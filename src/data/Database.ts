@@ -153,6 +153,7 @@ export default class Database extends events.EventEmitter {
    */
   private async registerCaches() {
     const env = Environment.S;
+    const app = Application.S;
 
     // 注册缓存
     const registryList: Array<IEntityRegistry<any, any>> = glob
@@ -174,7 +175,8 @@ export default class Database extends events.EventEmitter {
       this.caches.set(name, cache);
 
       // 初始化
-      await registry.init(cache);
+      Reflect.set(registry, "_cache", cache)
+      await registry.model.sync({force: app.bootstrapConfig.data.forceSync})
 
       // log
       Database.LOG.info(`Registered cache: ${name}`);
