@@ -22,7 +22,7 @@ module.exports = {
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
   collectCoverageFrom: [
-    "**/*.js"
+    "src/**/*.js"
   ],
 
   // The directory where Jest should output its coverage files
@@ -40,6 +40,11 @@ module.exports = {
   //   "lcov",
   //   "clover"
   // ],
+  coverageReporters: [
+    "text",
+    "text-summary",
+    "html"
+  ],
 
   // An object that configures minimum threshold enforcement for coverage results
   // coverageThreshold: null,
