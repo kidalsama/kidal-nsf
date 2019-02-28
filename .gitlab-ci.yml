@@ -28,7 +28,7 @@ create database:
   <<: *excepts
   stage: prepareTest
   script:
-  - 'mysql -h172.17.56.181 -ugitlab-runner -pgitlab-runner -e"CREATE DATABASE unit_test_${CI_COMMIT_SHORT_SHA} default character set utf8mb4 collate utf8mb4_unicode_ci;"'
+  - "mysql -h172.17.56.181 -ugitlab-runner -pgitlab-runner -e\"CREATE DATABASE unit_test_${CI_COMMIT_SHORT_SHA} default character set utf8mb4 collate utf8mb4_unicode_ci;\""
 
 modify bootstrap-test.yml:
   <<: *excepts
@@ -58,4 +58,4 @@ drop database:
   <<: *excepts
   stage: cleanup
   script:
-  - 'mysql -h172.17.56.181 -ugitlab-runner -pgitlab-runner -e"DROP DATABASE IF EXISTS unit_test_${CI_COMMIT_SHORT_SHA};"'
+  - "mysql -h172.17.56.181 -ugitlab-runner -pgitlab-runner -e\"DROP DATABASE IF EXISTS unit_test_${CI_COMMIT_SHORT_SHA};\""
