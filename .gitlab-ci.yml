@@ -9,7 +9,7 @@ cache:
     refs:
     - tags
     variables:
-    - $CI_COMMIT_MESSAGE =~ ^(?!(Release [0-9]+(?:.[0-9]+)+))
+    - $CI_COMMIT_MESSAGE =~ /^(?!(Release [0-9]+(?:.[0-9]+)+))/
 
 #    - /^v[0-9]+(?:.[0-9]+)+/
 
