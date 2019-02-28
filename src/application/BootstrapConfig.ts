@@ -35,6 +35,7 @@ export interface IServerWebSocketConfig {
  */
 export interface IDataConfig {
   enabled: boolean;
+  forceSync: boolean;
   dataSourceMysql: IDataSourceMysqlConfig;
 }
 
@@ -86,6 +87,7 @@ const DEFAULTS: IBootstrapConfig = {
   },
   data: {
     enabled: true,
+    forceSync: false,
     dataSourceMysql: {
       host: "192.168.93.222",
       port: 3306,

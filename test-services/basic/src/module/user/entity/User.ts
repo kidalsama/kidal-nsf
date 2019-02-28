@@ -46,10 +46,8 @@ export const model = Database.S.sequelize.define<IUser, any>(
   });
 
 class Registry implements IEntityRegistry<number, IUser> {
-  public readonly model: Sequelize.Model<IUser, any>;
-
-  constructor(m: Sequelize.Model<IUser, any>) {
-    this.model = m;
+  public get model(): Sequelize.Model<IUser, any> {
+    return model;
   }
 
   private _cache?: IEntityCache<number, IUser>;
@@ -58,13 +56,10 @@ class Registry implements IEntityRegistry<number, IUser> {
     return this._cache!;
   }
 
-  public async init(cache: IEntityCache<number, IUser>): Promise<any> {
-    // 保存缓存
-    this._cache = cache;
-
-    // 初始化数据库
-    await this.model.sync();
-  }
+  // public async init(cache: IEntityCache<number, IUser>): Promise<any> {
+  //   // 保存缓存
+  //   this._cache = cache;
+  // }
 }
 
-export default new Registry(model);
+export default new Registry();
