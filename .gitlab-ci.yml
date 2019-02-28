@@ -28,7 +28,7 @@ init mysql:
   <<: *excepts
   stage: prepareTest
   script:
-  - 'echo "TODO: init mysql"'
+  - 'mysql -h172.17.56.181 -ugitlab-runner -pgitlab-runner -e"CREATE DATABASE unit_test_${CI_COMMIT_SHORT_SHA} default character set utf8mb4 collate utf8mb4_unicode_ci;"'
 
 test:
   <<: *excepts
@@ -47,4 +47,4 @@ drop mysql:
   <<: *excepts
   stage: cleanup
   script:
-  - 'echo "TODO: drop mysql"'
+  - 'mysql -h172.17.56.181 -ugitlab-runner -pgitlab-runner -e"DROP DATABASE IF EXISTS unit_test_${CI_COMMIT_SHORT_SHA};"'
