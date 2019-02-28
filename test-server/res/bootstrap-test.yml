@@ -1,5 +1,5 @@
 server:
-  port: 29991
+  port: -1
 cluster:
   enabled: false
 data:

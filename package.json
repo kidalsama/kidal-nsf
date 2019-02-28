@@ -6,8 +6,7 @@
   "private": true,
   "scripts": {
     "lint": "tslint './**/*.ts' -c tslint.json -e './node_modules/**/*.ts'",
-    "test": "nyc mocha",
-    "coverage": "nyc report",
+    "test": "jest",
     "d.test-server.td@mac": "node $NODE_DEBUG_OPTION test-server/Bootstrap.js dev,td test-server",
     "d.test-server.td@win": "node %NODE_DEBUG_OPTION% test-server/Bootstrap.js dev,td test-server"
   },
@@ -41,26 +40,14 @@
     "yaml": "1.3.2"
   },
   "devDependencies": {
-    "@types/chai": "4.1.7",
-    "@types/chai-http": "3.0.5",
-    "@types/mocha": "5.2.6",
-    "chai": "4.2.0",
-    "chai-http": "4.2.1",
-    "mocha": "6.0.2",
-    "nyc": "13.3.0",
-    "source-map-support": "0.5.10"
-  },
-  "nyc": {
-    "include": [
-      "src/**"
-    ],
-    "reporter": [
-      "text",
-      "text-summary",
-      "html"
-    ],
-    "sourceMap": true,
-    "instrument": true,
-    "all": false
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "@babel/preset-typescript": "7.3.3",
+    "@types/jest": "^24.0.9",
+    "@types/supertest": "2.0.7",
+    "babel-jest": "^24.1.0",
+    "jest": "^24.1.0",
+    "superagent": "4.1.0",
+    "supertest": "3.4.2"
   }
 }

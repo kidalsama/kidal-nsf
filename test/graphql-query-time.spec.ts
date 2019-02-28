@@ -1,18 +1,14 @@
-import chai from "chai";
-import chaiHttp from "chai-http";
+import supertest from "supertest";
 import Application from "../src/application/Application"
 import HttpServer from "../src/server/HttpServer";
 
-const should = chai.should();
-chai.use(chaiHttp);
-
 describe("GraphQL Query Time", () => {
-  before(async () => {
+  beforeAll(async () => {
     return Application.run(["", "", "test", "test-server"]);
   })
 
-  it("Time", (done) => {
-    chai.request(HttpServer.S.server)
+  it("Time", async () => {
+    const resp = await supertest(HttpServer.S.expressApp)
       .post("/graphql")
       .send({
         query: `
@@ -28,9 +24,6 @@ query time {
   }
 }`,
       })
-      .end((err, res) => {
-        res.should.have.status(200);
-        done();
-      });
+    expect(resp.status).toBe(200)
   });
 });

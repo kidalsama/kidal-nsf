@@ -1,4 +1,0 @@
---recursive
---full-trace
---bail
-test/**/*.spec.js

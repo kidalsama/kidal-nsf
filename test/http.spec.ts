@@ -1,31 +1,21 @@
-import chai from "chai";
-import chaiHttp from "chai-http";
-import Application from "../src/application/Application"
+import supertest from "supertest";
+import Application from "../src/application/Application";
 import HttpServer from "../src/server/HttpServer";
 
-const should = chai.should();
-chai.use(chaiHttp);
-
 describe("Http", () => {
-  before(async () => {
+  beforeAll(async () => {
     return Application.run(["", "", "test", "test-server"]);
   })
 
-  it("Should get status 200", (done) => {
-    chai.request(HttpServer.S.server)
+  it("Should get status 200", async () => {
+    const resp = await supertest(HttpServer.S.expressApp)
       .get("/")
-      .end((err, res) => {
-        res.should.have.status(200);
-        done();
-      });
+
+    expect(resp.status).toBe(200)
   });
-  it("Should get status 404", (done) => {
-    chai.request(HttpServer.S.server)
+  it("Should get status 404", async () => {
+    const resp = await supertest(HttpServer.S.expressApp)
       .get("/wrongUrl2018")
-      .end((err, res) => {
-        res.should.have.status(404);
-        // res.text.should.eql('respond with the user list here');
-        done();
-      });
+    expect(resp.status).toBe(404)
   });
 });
