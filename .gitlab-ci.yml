@@ -29,13 +29,13 @@ prepare test:
   stage: prepare
   script:
   - . scripts/prepare_test.sh $CI_PIPELINE_ID
-  - cat test-services/basic/res/bootstrap-test.yml
 
 test:
   <<: *excepts
   stage: test
   coverage: '/^Lines *: (\d+\.\d+%) \( \d+\/\d+ \)/'
   script:
+  - . scripts/apply_test_bootstrap.sh $CI_PIPELINE_ID
   - cat test-services/basic/res/bootstrap-test.yml
   - tsc -p .
   - yarn run test
