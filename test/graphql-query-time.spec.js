@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = __importDefault(require("chai"));
 const chai_http_1 = __importDefault(require("chai-http"));
-const Application_1 = __importDefault(require("../application/Application"));
-const HttpServer_1 = __importDefault(require("../server/HttpServer"));
+const Application_1 = __importDefault(require("../src/application/Application"));
+const HttpServer_1 = __importDefault(require("../src/server/HttpServer"));
 const should = chai_1.default.should();
 chai_1.default.use(chai_http_1.default);
 describe("GraphQL Query Time", () => {

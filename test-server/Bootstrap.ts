@@ -1,4 +1,4 @@
-import Application from "../application/Application";
+import Application from "../src/application/Application";
 
 // run
 export default (async () => {

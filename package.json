@@ -51,6 +51,9 @@
     "source-map-support": "0.5.10"
   },
   "nyc": {
+    "include": [
+      "src/**"
+    ],
     "reporter": [
       "text",
       "text-summary",
