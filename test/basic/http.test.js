@@ -4,11 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const supertest_1 = __importDefault(require("supertest"));
-const Application_1 = __importDefault(require("../src/application/Application"));
-const HttpServer_1 = __importDefault(require("../src/server/HttpServer"));
-describe("Http", () => {
+const Application_1 = __importDefault(require("../../src/application/Application"));
+const HttpServer_1 = __importDefault(require("../../src/server/HttpServer"));
+describe("Basic: Http", () => {
     beforeAll(async () => {
-        return Application_1.default.run(["", "", "test", "test-server"]);
+        return Application_1.default.runTest("basic");
     });
     afterAll(async () => {
         await Application_1.default.S.shutdown();
@@ -24,4 +24,4 @@ describe("Http", () => {
         expect(resp.status).toBe(404);
     });
 });
-//# sourceMappingURL=http.spec.js.map
+//# sourceMappingURL=http.test.js.map

@@ -84,6 +84,12 @@ class Application {
         return this._INSTANCE;
     }
     /**
+     * 测试启动
+     */
+    static async runTest(serviceName) {
+        return this.run(["", "", "test", serviceName]);
+    }
+    /**
      * 启动
      */
     async boot(argv) {

@@ -1,10 +1,10 @@
-import supertest from "supertest";
-import Application from "../src/application/Application"
-import HttpServer from "../src/server/HttpServer";
+import request from "supertest";
+import Application from "../../src/application/Application"
+import HttpServer from "../../src/server/HttpServer";
 
-describe("GraphQL Query Time", () => {
+describe("Basic: GraphQL", () => {
   beforeAll(async () => {
-    return Application.run(["", "", "test", "test-server"]);
+    return Application.runTest("basic");
   })
 
   afterAll(async () => {
@@ -12,7 +12,7 @@ describe("GraphQL Query Time", () => {
   })
 
   it("Time", async () => {
-    const resp = await supertest(HttpServer.S.expressApp)
+    const resp = await request(HttpServer.S.expressApp)
       .post("/graphql")
       .send({
         query: `

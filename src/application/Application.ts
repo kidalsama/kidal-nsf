@@ -91,6 +91,13 @@ export default class Application {
   }
 
   /**
+   * 测试启动
+   */
+  public static async runTest(serviceName: string): Promise<Application> {
+    return this.run(["", "", "test", serviceName])
+  }
+
+  /**
    * 启动
    */
   private async boot(argv: string[]) {

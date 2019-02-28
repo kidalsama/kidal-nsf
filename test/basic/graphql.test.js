@@ -4,11 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const supertest_1 = __importDefault(require("supertest"));
-const Application_1 = __importDefault(require("../src/application/Application"));
-const HttpServer_1 = __importDefault(require("../src/server/HttpServer"));
-describe("GraphQL Query Time", () => {
+const Application_1 = __importDefault(require("../../src/application/Application"));
+const HttpServer_1 = __importDefault(require("../../src/server/HttpServer"));
+describe("Basic: GraphQL", () => {
     beforeAll(async () => {
-        return Application_1.default.run(["", "", "test", "test-server"]);
+        return Application_1.default.runTest("basic");
     });
     afterAll(async () => {
         await Application_1.default.S.shutdown();
@@ -33,4 +33,4 @@ query time {
         expect(resp.status).toBe(200);
     });
 });
-//# sourceMappingURL=graphql-query-time.spec.js.map
+//# sourceMappingURL=graphql.test.js.map
