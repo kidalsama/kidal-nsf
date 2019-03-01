@@ -36,7 +36,7 @@ test:
   coverage: '/^Lines *: (\d+\.\d+%) \( \d+\/\d+ \)/'
   script:
   - . scripts/modify_config.sh $CI_PIPELINE_ID
-  - cat test-services/basic/res/application-test.yml
+  - cat test-services/basic/resource/application-test.yml
   - tsc -p .
   - yarn run test
   artifacts:
