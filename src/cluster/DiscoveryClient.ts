@@ -18,6 +18,8 @@ export default class DiscoveryClient extends events.EventEmitter {
     return this._zk!;
   }
 
+  private _shutdown: boolean = false;
+
   /**
    * 单例
    */
@@ -60,6 +62,9 @@ export default class DiscoveryClient extends events.EventEmitter {
         resolve();
       };
       const onDisconnected = () => {
+        if (this._shutdown) {
+          return
+        }
         DiscoveryClient.LOG.warn("Disconnected with zookeeper, try re-init");
         this.zk.off("connected", onConnected);
         this.zk.off("disconnected", onDisconnected);
@@ -174,10 +179,16 @@ export default class DiscoveryClient extends events.EventEmitter {
     this.zk.getChildren(
       dir,
       (event) => {
+        if (this._shutdown) {
+          return
+        }
         DiscoveryClient.LOG.info("Got watcher event: %s", event);
         this._retrieveNodes(dir);
       },
       async (error, children) => {
+        if (this._shutdown) {
+          return
+        }
         if (error) {
           DiscoveryClient.LOG.error("Failed to list children of %s due to: %s.", dir, error);
           return;
@@ -265,6 +276,16 @@ export default class DiscoveryClient extends events.EventEmitter {
 
     // 开始获取其他节点
     this._retrieveNodes(dir);
+  }
+
+  /**
+   * 关闭
+   */
+  public async shutdown() {
+    this._shutdown = true
+    if (this._zk) {
+      this._zk.close()
+    }
   }
 
   /**

@@ -1,0 +1,15 @@
+id: "901"
+profiles:
+- "dev"
+- "lan"
+configServer:
+  type: "local"
+server:
+  port: 29011
+data:
+  enabled: true
+  dataSourceMysql:
+    host: 192.168.93.222
+    database: lan_dev_node_server_foundation
+cluster:
+  enabled: true

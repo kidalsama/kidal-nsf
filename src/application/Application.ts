@@ -110,7 +110,18 @@ export default class Application {
    * 关闭应用
    */
   public async shutdown() {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    // 在测试模式延迟关闭
+    if (this.testing) {
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+    }
+
+    // 关闭服务器
+    await HttpServer.S.shutdown()
+
+    // 关闭发现服务
+    await DiscoveryClient.S.shutdown()
+
+    // 关闭数据库
     await Database.S.shutdown()
   }
 }
