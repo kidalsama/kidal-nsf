@@ -1,3 +1,8 @@
+id: "901"
+profiles:
+- test
+configServer:
+  type: "local"
 server:
   port: -1
 cluster:

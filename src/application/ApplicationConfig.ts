@@ -1,10 +1,24 @@
 /**
  * 应用配置
  */
-export interface IBootstrapConfig {
+export interface IApplicationConfig {
+  id: string;
+  profiles: string[];
+  configServer: IConfigServer;
   server: IServerConfig;
   data: IDataConfig;
   cluster: IClusterConfig;
+}
+
+/**
+ * 配置服务器配置
+ */
+export interface IConfigServer {
+  type: string;
+  uri?: string;
+  username?: string;
+  password?: string;
+  token?: string;
 }
 
 /**
@@ -70,7 +84,12 @@ export interface IClusterZookeeperConfig {
 /**
  * 默认配置
  */
-export const DEFAULT_CONFIG: IBootstrapConfig = {
+export const DEFAULT_APPLICATION_CONFIG: IApplicationConfig = {
+  id: "?",
+  profiles: ["dev"],
+  configServer: {
+    type: "local",
+  },
   server: {
     port: 8080,
     graphQL: {

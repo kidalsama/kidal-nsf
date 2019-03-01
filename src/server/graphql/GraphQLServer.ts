@@ -1,6 +1,5 @@
 import {buildSchema, formatError} from "graphql";
 import HttpServer from "../HttpServer";
-import Application from "../../application/Application";
 import graphqlHTTP from "express-graphql";
 import glob from "glob";
 import {mergeResolvers, mergeTypes} from "merge-graphql-schemas";
@@ -33,9 +32,8 @@ export default class GraphQLServer {
     const httpServer = HttpServer.S;
 
     // 配置
-    const app = Application.S;
     const env = Environment.S;
-    const config = app.bootstrapConfig.server.graphQL;
+    const config = env.applicationConfig.server.graphQL;
 
     // 读取
     const {schema, resolvers} = this.loadSchemaAndResolvers(env);

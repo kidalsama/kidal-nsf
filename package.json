@@ -9,7 +9,7 @@
     "lint": "tslint './**/*.ts' -c tslint.json -e './node_modules/**/*.ts'",
     "test": "jest --runInBand",
     "lint & test": "yarn run lint & yarn run test",
-    "d.basic.td@mac": "node $NODE_DEBUG_OPTION test-services/Bootstrap.js dev,td basic"
+    "d.basic.td@mac": "node $NODE_DEBUG_OPTION test-services/Bootstrap.js basic td"
   },
   "dependencies": {
     "@types/cls-hooked": "4.2.1",

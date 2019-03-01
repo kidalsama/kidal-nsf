@@ -1,4 +1,4 @@
 {
   "testingFoundation": true,
-  "serviceRootDir": "test-services"
+  "servicesRootDir": "test-services"
 }

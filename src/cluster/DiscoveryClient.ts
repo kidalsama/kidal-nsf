@@ -1,7 +1,6 @@
 import * as os from "os";
 import * as zookeeper from "node-zookeeper-client";
 import Logs from "../application/Logs";
-import Application from "../application/Application";
 import Environment from "../application/Environment";
 import * as events from "events";
 
@@ -36,7 +35,7 @@ export default class DiscoveryClient extends events.EventEmitter {
       return;
     }
 
-    const zookeeperConfig = Application.S.bootstrapConfig.cluster.zookeeper;
+    const zookeeperConfig = Environment.S.applicationConfig.cluster.zookeeper;
     this._zk = zookeeper.createClient(zookeeperConfig.connectionString,
       {
         sessionTimeout: 3000,
@@ -217,7 +216,7 @@ export default class DiscoveryClient extends events.EventEmitter {
    */
   public async init(): Promise<void> {
     // 检查是否启用
-    if (!Application.S.bootstrapConfig.cluster.enabled) {
+    if (!Environment.S.applicationConfig.cluster.enabled) {
       DiscoveryClient.LOG.info("Cluster disabled");
       return;
     }
@@ -229,7 +228,7 @@ export default class DiscoveryClient extends events.EventEmitter {
     }
 
     // uuid
-    const port = Application.S.bootstrapConfig.server.port;
+    const port = Environment.S.applicationConfig.server.port;
     this._uuid = `${ip}:${port}`;
 
     // 准备路径
@@ -254,7 +253,7 @@ export default class DiscoveryClient extends events.EventEmitter {
     const nodeData: INodeData = {
       version: 1,
       uuid: this._uuid,
-      id: env.id,
+      id: env.applicationConfig.id,
       profiles: env.profilesString,
       ip,
       port,

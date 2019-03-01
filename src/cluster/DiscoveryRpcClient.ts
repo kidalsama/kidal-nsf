@@ -7,6 +7,7 @@ import LudmilaError from "../error/LudmilaError";
 import LudmilaErrors from "../error/LudmilaErrors";
 import {IRpcArgs} from "./IRpcPayload";
 import Application from "../application/Application";
+import Environment from "../application/Environment";
 
 /**
  * @author tengda
@@ -31,7 +32,7 @@ export default class DiscoveryRpcClient {
    */
   public async init() {
     // 检查是否启用
-    if (!Application.S.bootstrapConfig.cluster.enabled) {
+    if (!Environment.S.applicationConfig.cluster.enabled) {
       DiscoveryRpcClient.LOG.info("Cluster disabled");
       return;
     }

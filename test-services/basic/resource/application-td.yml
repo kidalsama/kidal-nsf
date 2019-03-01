@@ -1,0 +1,10 @@
+id: "901"
+profiles:
+- "dev"
+- "td"
+configServer:
+  type: "local"
+server:
+  port: 29991
+cluster:
+  enabled: false
