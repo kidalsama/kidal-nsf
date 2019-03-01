@@ -55,7 +55,7 @@ cleanup test:
 
 pages:
   <<: *excepts
-  stage: deploy
+  stage: pages
   script:
   - mkdir .public
   - cp -r docs/. .public
