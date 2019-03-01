@@ -3,6 +3,7 @@ import WebSocketSessionManager from "./WebSocketSessionManager";
 import Application from "../../application/Application";
 import HttpServer from "../HttpServer";
 import Logs from "../../application/Logs";
+import Environment from "../../application/Environment";
 
 /**
  * @author tengda
@@ -22,7 +23,7 @@ export default class WebSocketServer {
   public init() {
     const httpServer = HttpServer.S;
     const webSocketSessionManager = WebSocketSessionManager.S;
-    const config = Application.INSTANCE.bootstrapConfig.server.webSocket;
+    const config = Environment.S.applicationConfig.server.webSocket;
 
     // 服务器
     this.wss = new WebSocket.Server({

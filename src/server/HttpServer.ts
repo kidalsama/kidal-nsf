@@ -6,6 +6,7 @@ import Application from "../application/Application";
 import Logs from "../application/Logs";
 import {RpcPayloadDispatcher} from "../cluster/IRpcPayload";
 import LudmilaError from "../error/LudmilaError";
+import Environment from "../application/Environment";
 
 /**
  * @author tengda
@@ -66,7 +67,7 @@ export default class HttpServer {
   }
 
   public async start() {
-    const config = Application.INSTANCE.bootstrapConfig.server;
+    const config = Environment.S.applicationConfig.server;
 
     // 404
     this.expressApp.use("*", (req, res) => {

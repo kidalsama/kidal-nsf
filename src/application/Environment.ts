@@ -1,147 +1,159 @@
 import * as fs from "fs";
-// @ts-ignore
 import * as log4js from "log4js";
 import * as path from "path";
 import * as yaml from "yaml";
+import {log4jsConfig} from "./ApplicationConstants";
+import {DEFAULT_APPLICATION_CONFIG, IApplicationConfig, mergeConfig} from "./ApplicationConfig";
+import fetch from "node-fetch";
 
 /**
  * 框架配置
  */
 export interface IFoundationConfig {
   testingFoundation: boolean;
-  serviceRootDir: string;
+  servicesRootDir: string;
   resourceDirName: string;
   sourceDirName: string;
 }
 
 /**
- * 配置服务器
+ * 默认框架配置
  */
-export interface IConfigServer {
-  type: string;
-  uri: string;
-  username: string;
-  password: string;
-  token: string;
+export const DEFAULT_FOUNDATION_CONFIG: IFoundationConfig = {
+  testingFoundation: false,
+  servicesRootDir: "services",
+  resourceDirName: "resource",
+  sourceDirName: "src",
 }
 
 /**
  * @author tengda
  */
 export default class Environment {
-  // 单例
+  private static LOG: log4js.Logger;
   private static _INSTANCE?: Environment;
+  private _applicationConfig?: IApplicationConfig;
 
+  /**
+   * 单例
+   */
   public static get S() {
     return this._INSTANCE!;
   }
 
-  // 启动目录
-  public readonly bootDir: string;
-  // 环境
-  public readonly profiles: string[];
-  // 框架配置
+  /**
+   * 当前工作目录
+   * 通常情况下为 process.cwd() 的返回值
+   */
+  public readonly cwd: string;
+
+  /**
+   * 服务名
+   */
+  public readonly serviceName: string;
+
+  /**
+   * 应用配置名
+   */
+  public readonly applicationConfigName: string;
+
+  /**
+   * 环境配置
+   */
   public readonly foundationConfig: IFoundationConfig;
-  // 源代码目录
+
+  /**
+   * 源代码目录
+   */
   public readonly srcDir: string;
-  // 资源目录
-  public readonly resDir: string;
-  // 应用ID
-  public readonly id: string;
-  // 配置服务配置
-  public readonly configServer: IConfigServer;
-  // 日志
-  private readonly log: log4js.Logger;
+
+  /**
+   * 资源目录
+   */
+  public readonly resourceDir: string;
+
+  /**
+   * 应用配置
+   */
+  public get applicationConfig(): IApplicationConfig {
+    return this._applicationConfig!;
+  }
 
   /**
    *
    */
   public constructor(argv: string[]) {
+    // 检查参数
     this.checkArgv(argv);
 
+    // 单例
     Environment._INSTANCE = this;
 
-    // 设置核心启动配置
-    this.bootDir = process.cwd();
-    this.profiles = argv[2].split(",");
+    // 启动参数
+    this.cwd = process.cwd();
+    this.serviceName = argv[2];
+    this.applicationConfigName = argv[3];
 
     // 加载框架配置
     this.foundationConfig = this.loadFoundationConfig();
+
+    // 源代码位置
     this.srcDir = path.join(
-      this.bootDir,
-      this.foundationConfig.serviceRootDir,
-      argv[3],
+      this.cwd,
+      this.foundationConfig.servicesRootDir,
+      this.serviceName,
       this.foundationConfig.sourceDirName,
     );
-    this.resDir = path.join(
-      this.bootDir,
-      this.foundationConfig.serviceRootDir,
-      argv[3],
+
+    // 资源位置
+    this.resourceDir = path.join(
+      this.cwd,
+      this.foundationConfig.servicesRootDir,
+      this.serviceName,
       this.foundationConfig.resourceDirName,
     );
 
-    // 配置日志
+    // 配置log4js
     try {
-      log4js.configure(path.join(this.resDir, `log4js-${this.profiles[0]}.json`));
+      log4js.configure(path.join(this.resourceDir, `log4js-${this.applicationConfigName}.json`));
     } catch (e) {
-      log4js.configure({
-        appenders: {
-          console: {
-            type: "console",
-            level: "trace",
-            maxLevel: "error",
-            layout: {
-              type: "pattern",
-              pattern: "%d{yyyy-MM-dd hh:mm:ss.SSS} %[%5p%] --- [%8z] %m --- %[%c%]",
-            },
-          },
-        },
-        categories: {
-          default: {
-            appenders: [
-              "console",
-            ],
-            level: "all",
-          },
-        },
-      });
+      log4js.configure(log4jsConfig);
     }
-    this.log = log4js.getLogger("foundation.src.application.Environment");
 
-    // 读取用户启动配置
-    const environmentConfigPath = path.join(this.resDir, `application-${this.profiles[0]}.yml`);
-    if (!fs.existsSync(environmentConfigPath)) {
-      // noinspection TsLint
-      console.error(`无法加载启动配置 ${environmentConfigPath}`);
-      process.exit(0);
-    }
-    const environmentConfigText = fs.readFileSync(environmentConfigPath).toString("utf8");
-    const environmentConfig: any = yaml.parse(environmentConfigText);
-    this.log.info(`Environment\n${JSON.stringify(environmentConfig, null, 2)}`);
+    // 创建日志器
+    Environment.LOG = log4js.getLogger("foundation.src.application.Environment");
+  }
 
-    // 解析配置
-    this.id = environmentConfig.application.id;
-    this.configServer = {
-      type: environmentConfig.application.configServer.type,
-      uri: environmentConfig.application.configServer.uri,
-      password: environmentConfig.application.configServer.password,
-      username: environmentConfig.application.configServer.username,
-      token: environmentConfig.application.configServer.token,
-    };
+  // 进一步启动
+  public async boot() {
+    // 读取应用配置
+    this._applicationConfig = await this.loadApplicationConfig()
+
+    // 打印参数
+    Environment.LOG.info(`CurrentWorkingDirectory: ${this.cwd}
+ServiceName: ${this.serviceName}
+ApplicationConfigName: ${this.applicationConfigName}
+SourceDirectory: ${this.srcDir}
+ResourceDirectory: ${this.resourceDir}
+FoundationConfig ---------------------
+${JSON.stringify(this.foundationConfig, null, 2)}
+ApplicationConfig ---------------------
+${JSON.stringify(this.applicationConfig, null, 2)}
+`);
   }
 
   /**
    * 主要环境
    */
-  public get profile(): string {
-    return this.profiles[0];
+  public get majorProfile(): string {
+    return this.applicationConfig.profiles[0];
   }
 
   /**
    * 环境字符串
    */
   public get profilesString(): string {
-    return this.profiles.join(".");
+    return this.applicationConfig.profiles.join(".");
   }
 
   /**
@@ -149,7 +161,7 @@ export default class Environment {
    */
   public hasAnyProfile(...needles: string[]): boolean {
     for (const needle of needles) {
-      if (this.profiles.includes(needle)) {
+      if (this.applicationConfig.profiles.includes(needle)) {
         return true;
       }
     }
@@ -161,35 +173,75 @@ export default class Environment {
    */
   public hasAllProfile(...needles: string[]): boolean {
     for (const needle of needles) {
-      if (!this.profiles.includes(needle)) {
+      if (!this.applicationConfig.profiles.includes(needle)) {
         return false;
       }
     }
     return true;
   }
 
-  /**
-   * 读取环境数据
-   */
+  // 读取矿建配置
   private loadFoundationConfig(): IFoundationConfig {
-    const defaults: IFoundationConfig = {
-      testingFoundation: false,
-      serviceRootDir: "services",
-      resourceDirName: "res",
-      sourceDirName: "src",
-    }
     let config: any = {};
     try {
-      config = JSON.parse(fs.readFileSync(path.join(this.bootDir, `.foundation.json`)).toString("utf8"))
+      const filename = path.join(this.cwd, `.foundation.json`)
+      const text = fs.readFileSync(filename).toString("utf8")
+      config = JSON.parse(text)
     } catch (e) {
       // ignored
     }
-    return Object.assign({}, defaults, config)
+    mergeConfig(config, DEFAULT_FOUNDATION_CONFIG)
+    return config;
   }
 
-  /**
-   * 检查启动参数
-   */
+  // 读取应用配置
+  private async loadApplicationConfig(): Promise<IApplicationConfig> {
+    // 加载本地配置
+    const filename = path.join(this.resourceDir, `application-${this.applicationConfigName}.yml`)
+    if (!fs.existsSync(filename)) {
+      // noinspection TsLint
+      console.error(`无法加载启动配置 ${filename}`);
+      process.exit(0);
+    }
+    const localConfigText = fs.readFileSync(filename).toString("utf8");
+    const localConfig: IApplicationConfig = yaml.parse(localConfigText);
+
+    // 合并应用配置
+    return await this.mergeApplicationConfig(localConfig)
+  }
+
+  // 合并应用配置
+  private async mergeApplicationConfig(localConfig: IApplicationConfig): Promise<IApplicationConfig> {
+    const configServer = localConfig.configServer;
+
+    if (configServer.type === "local") {
+      mergeConfig(localConfig, DEFAULT_APPLICATION_CONFIG)
+      return localConfig;
+    } else if (configServer.type === "gitlab") {
+      // 如何从gitlab读取raw文件
+      //  https://docs.gitlab.com/ee/api/repository_files.html#get-raw-file-from-repository
+      const url = `${configServer.uri}/${localConfig.id}-${localConfig.profiles[0]}.yml/raw?ref=master`;
+      const response = await fetch(url, {
+        headers: {
+          "PRIVATE-TOKEN": configServer.token!,
+        },
+      });
+      const status = response.status;
+      const text = await response.text();
+      if (status !== 200) {
+        throw new Error(`无法从 ${url} 读取 Bootstrap 配置: ${text}`);
+      }
+
+      // 解析配置
+      const gitlabConfig = yaml.parse(text)
+      mergeConfig(gitlabConfig, localConfig)
+      return gitlabConfig
+    } else {
+      throw new Error(`无效的配置服务器类型 ${configServer.type}`);
+    }
+  }
+
+  // 检查启动参数
   private checkArgv(argv: string[]): void {
     // 读取启动参数
     if (argv.length !== 4) {

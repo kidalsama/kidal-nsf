@@ -1,5 +1,4 @@
 import Sequelize = require("sequelize");
-import Application from "../application/Application";
 import Logs from "../application/Logs";
 import glob from "glob";
 import Environment from "../application/Environment";
@@ -39,7 +38,7 @@ export default class Database extends events.EventEmitter {
    * 是否启用
    */
   public get enabled() {
-    return Application.INSTANCE.bootstrapConfig.data.enabled
+    return Environment.S.applicationConfig.data.enabled
   }
 
   /**
@@ -47,7 +46,7 @@ export default class Database extends events.EventEmitter {
    */
   public async init(): Promise<void> {
     // 配置
-    const config = Application.INSTANCE.bootstrapConfig.data;
+    const config = Environment.S.applicationConfig.data;
     if (!config.enabled) {
       Database.LOG.info("Database disabled");
       return;
@@ -153,7 +152,6 @@ export default class Database extends events.EventEmitter {
    */
   private async registerCaches() {
     const env = Environment.S;
-    const app = Application.S;
 
     // 注册缓存
     const registryList: Array<IEntityRegistry<any, any>> = glob
@@ -176,7 +174,7 @@ export default class Database extends events.EventEmitter {
 
       // 初始化
       Reflect.set(registry, "_cache", cache)
-      await registry.model.sync({force: app.bootstrapConfig.data.forceSync})
+      await registry.model.sync({force: env.applicationConfig.data.forceSync})
 
       // log
       Database.LOG.info(`Registered cache: ${name}`);
