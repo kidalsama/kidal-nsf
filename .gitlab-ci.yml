@@ -15,6 +15,7 @@ stages:
 - build
 - prepare
 - test
+- pages
 - cleanup
 
 build:
@@ -51,3 +52,16 @@ cleanup test:
   when: always
   script:
   - . scripts/cleanup_test.sh $CI_PIPELINE_ID
+
+pages:
+  <<: *excepts
+  stage: deploy
+  script:
+  - mkdir .public
+  - cp -r docs/. .public
+  - mv .public public
+  artifacts:
+    paths:
+    - public
+  only:
+  - master

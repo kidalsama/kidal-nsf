@@ -9,6 +9,7 @@
     "lint": "tslint './**/*.ts' -c tslint.json -e './node_modules/**/*.ts'",
     "test": "jest --runInBand --forceExit --detectOpenHandles",
     "lint & test": "yarn run lint & yarn run test",
+    "dev:docs@port:3000": "docsify serve ./docs --port 3000",
     "dev:lan:basic@mac": "node $NODE_DEBUG_OPTION test-services/Bootstrap.js basic dev-lan",
     "dev:lan:basic@win": "node %NODE_DEBUG_OPTION% test-services/Bootstrap.js basic dev-lan"
   },

@@ -1,9 +1,9 @@
 # Server Foundation
 
-> 基于TypeScript的游戏服务器快速开发框架
+## Coverage
 
----
+* [![Coverage](http://gitlab.dev.happyhouse.club/mcg-rnd/node-server-foundation/badges/master/coverage.svg)](http://gitlab.dev.happyhouse.club/mcg-rnd/node-server-foundation/commits/master)
 
 ## 文档
 
-* [快速开始](http://mcg-rnd.gitlab.dev.happyhouse.club/mcg-coding-guidelines-book/#/game/server/getting-started/quickstart)
+* 全部文档可以在这里查看 [http://mcg-rnd.gitlab.dev.happyhouse.club/node-server-foundation](http://mcg-rnd.gitlab.dev.happyhouse.club/node-server-foundation)
