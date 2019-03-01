@@ -31,7 +31,7 @@ export default class DiscoveryRpcClient {
    */
   public async init() {
     // 检查是否启用
-    if (!Application.INSTANCE.bootstrapConfig.cluster.enabled) {
+    if (!Application.S.bootstrapConfig.cluster.enabled) {
       DiscoveryRpcClient.LOG.info("Cluster disabled");
       return;
     }

@@ -22,7 +22,7 @@ export default class WebSocketServer {
   public init() {
     const httpServer = HttpServer.S;
     const webSocketSessionManager = WebSocketSessionManager.S;
-    const config = Application.INSTANCE.bootstrapConfig.server.webSocket;
+    const config = Application.S.bootstrapConfig.server.webSocket;
 
     // 服务器
     this.wss = new WebSocket.Server({

@@ -14,6 +14,7 @@ import DiscoveryRpcClient from "../cluster/DiscoveryRpcClient";
 import {RpcPayloadDispatcher} from "../cluster/IRpcPayload";
 import * as fs from "fs";
 import * as path from "path";
+import {applicationBanner} from "./ApplicationConstants";
 
 /**
  * @author tengda
@@ -28,10 +29,6 @@ export default class Application {
   /**
    * 单例
    */
-  public static get INSTANCE(): Application {
-    return this._INSTANCE!;
-  }
-
   public static get S(): Application {
     return this._INSTANCE!;
   }
@@ -51,29 +48,7 @@ export default class Application {
    */
   public static async run(argv: string[]): Promise<Application> {
     // noinspection TsLint
-    console.log(`
-============================================================
-                      _ooOoo_
-                     o8888888o
-                     88" . "88
-                     (| -_- |)
-                     O\\  =  /O
-                  ____/\`---'\\____
-                .'  \\\\|     |//  \`.
-               /  \\\\|||  :  |||//  \\
-              /  _||||| -:- |||||-  \\
-              |   | \\\\\\  -  /// |   |
-              | \\_|  ''\\---/''  |   |
-              \\  .-\\__  \`-\`  ___/-. /
-            ___\`. .'  /--.--\\  \`. . __
-         ."" '<  \`.___\\_<|>_/___.'  >'"".
-        | | :  \`- \\\`.;\`\\ _ /\`;.\`/ - \` : | |
-        \\  \\ \`-.   \\_ __\\ /__ _/   .-\` /  /
-   ======\`-.____\`-.___\\_____/___.-\`____.-'======
-                      \`=---='
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                 佛祖保佑       永无BUG
-============================================================`);
+    console.log(applicationBanner);
 
     return this.runBoot(argv)
   }

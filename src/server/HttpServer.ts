@@ -66,7 +66,7 @@ export default class HttpServer {
   }
 
   public async start() {
-    const config = Application.INSTANCE.bootstrapConfig.server;
+    const config = Application.S.bootstrapConfig.server;
 
     // 404
     this.expressApp.use("*", (req, res) => {

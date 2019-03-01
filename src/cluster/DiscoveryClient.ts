@@ -217,7 +217,7 @@ export default class DiscoveryClient extends events.EventEmitter {
    */
   public async init(): Promise<void> {
     // 检查是否启用
-    if (!Application.INSTANCE.bootstrapConfig.cluster.enabled) {
+    if (!Application.S.bootstrapConfig.cluster.enabled) {
       DiscoveryClient.LOG.info("Cluster disabled");
       return;
     }

@@ -1,8 +1,8 @@
 import * as fs from "fs";
-// @ts-ignore
 import * as log4js from "log4js";
 import * as path from "path";
 import * as yaml from "yaml";
+import {log4jsConfig} from "./ApplicationConstants";
 
 /**
  * 框架配置
@@ -84,27 +84,7 @@ export default class Environment {
     try {
       log4js.configure(path.join(this.resDir, `log4js-${this.profiles[0]}.json`));
     } catch (e) {
-      log4js.configure({
-        appenders: {
-          console: {
-            type: "console",
-            level: "trace",
-            maxLevel: "error",
-            layout: {
-              type: "pattern",
-              pattern: "%d{yyyy-MM-dd hh:mm:ss.SSS} %[%5p%] --- [%8z] %m --- %[%c%]",
-            },
-          },
-        },
-        categories: {
-          default: {
-            appenders: [
-              "console",
-            ],
-            level: "all",
-          },
-        },
-      });
+      log4js.configure(log4jsConfig);
     }
     this.log = log4js.getLogger("foundation.src.application.Environment");
 

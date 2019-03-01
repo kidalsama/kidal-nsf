@@ -39,7 +39,7 @@ export default class Database extends events.EventEmitter {
    * 是否启用
    */
   public get enabled() {
-    return Application.INSTANCE.bootstrapConfig.data.enabled
+    return Application.S.bootstrapConfig.data.enabled
   }
 
   /**
@@ -47,7 +47,7 @@ export default class Database extends events.EventEmitter {
    */
   public async init(): Promise<void> {
     // 配置
-    const config = Application.INSTANCE.bootstrapConfig.data;
+    const config = Application.S.bootstrapConfig.data;
     if (!config.enabled) {
       Database.LOG.info("Database disabled");
       return;

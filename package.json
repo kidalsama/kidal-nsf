@@ -8,6 +8,7 @@
     "postinstall": "tsc -p .",
     "lint": "tslint './**/*.ts' -c tslint.json -e './node_modules/**/*.ts'",
     "test": "jest --runInBand",
+    "lint & test": "yarn run lint & yarn run test",
     "d.basic.td@mac": "node $NODE_DEBUG_OPTION test-services/Bootstrap.js dev,td basic"
   },
   "dependencies": {
