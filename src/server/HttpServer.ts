@@ -2,7 +2,6 @@ import * as bodyParser from "body-parser";
 import express from "express";
 import {Request, Response} from "express-serve-static-core";
 import * as http from "http";
-import Application from "../application/Application";
 import Logs from "../application/Logs";
 import {RpcPayloadDispatcher} from "../cluster/IRpcPayload";
 import LudmilaError from "../error/LudmilaError";
@@ -66,6 +65,9 @@ export default class HttpServer {
     });
   }
 
+  /**
+   * 启动服务器
+   */
   public async start() {
     const config = Environment.S.applicationConfig.server;
 
@@ -106,5 +108,12 @@ export default class HttpServer {
         resolve()
       }
     });
+  }
+
+  /**
+   * 关闭服务器
+   */
+  public async shutdown() {
+    this.server.close()
   }
 }

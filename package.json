@@ -1,15 +1,16 @@
 {
   "name": "node-server-foundation",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "repository": "http://gitlab.dev.happyhouse.club/mcg-game/server-foundation",
   "author": "MCG RND DEPARTMENT",
   "private": true,
   "scripts": {
     "postinstall": "tsc -p .",
     "lint": "tslint './**/*.ts' -c tslint.json -e './node_modules/**/*.ts'",
-    "test": "jest --runInBand",
+    "test": "jest --runInBand --forceExit --detectOpenHandles",
     "lint & test": "yarn run lint & yarn run test",
-    "d.basic.td@mac": "node $NODE_DEBUG_OPTION test-services/Bootstrap.js basic td"
+    "dev:lan:basic@mac": "node $NODE_DEBUG_OPTION test-services/Bootstrap.js basic dev-lan",
+    "dev:lan:basic@win": "node %NODE_DEBUG_OPTION% test-services/Bootstrap.js basic dev-lan"
   },
   "dependencies": {
     "@types/cls-hooked": "4.2.1",
