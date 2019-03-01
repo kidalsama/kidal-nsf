@@ -1,7 +1,7 @@
 import * as log4js from "log4js";
 import fetch from "node-fetch";
 import * as yaml from "yaml";
-import {IBootstrapConfig, normalizeBootstrapConfig} from "./BootstrapConfig";
+import {DEFAULT_CONFIG, IBootstrapConfig, mergeConfig} from "./BootstrapConfig";
 import Environment from "./Environment";
 import Logs from "./Logs";
 import Database from "../data/Database";
@@ -20,11 +20,21 @@ import {applicationBanner} from "./ApplicationConstants";
  * @author tengda
  */
 export default class Application {
-  // 日志
   private static LOG: log4js.Logger;
-
-  // 单例
   private static _INSTANCE?: Application;
+  private _bootstrapConfig?: IBootstrapConfig;
+
+  /**
+   * 应用是否处于测试启动模式
+   */
+  public readonly testing: boolean
+
+  /**
+   *
+   */
+  public constructor(testing: boolean) {
+    this.testing = testing;
+  }
 
   /**
    * 单例
@@ -32,9 +42,6 @@ export default class Application {
   public static get S(): Application {
     return this._INSTANCE!;
   }
-
-  // 启动配置
-  private _bootstrapConfig?: IBootstrapConfig;
 
   /**
    * 启动配置
@@ -44,49 +51,60 @@ export default class Application {
   }
 
   /**
-   * 启动
+   * 运行应用
+   * @param argv 使用 process.argv 即可
    */
   public static async run(argv: string[]): Promise<Application> {
+    // 打印Banner
     // noinspection TsLint
     console.log(applicationBanner);
 
-    return this.runBoot(argv)
+    // 开始启动流程
+    return this.startBootstrapSequence(argv, false)
   }
 
   /**
    * 测试启动
+   * @param serviceName 服务名
+   * @param profile 环境
    */
-  public static async runTest(serviceName: string): Promise<Application> {
-    return this.runBoot(["", "", "test", serviceName])
+  public static async runTest(serviceName: string, profile: string = "test"): Promise<Application> {
+    // 伪造命令行参数
+    const argv = ["", "", profile, serviceName]
+
+    // 开始启动流程
+    return this.startBootstrapSequence(argv, true)
   }
 
-  private static async runBoot(argv: string[]): Promise<Application> {
-    // 日志
-    this.LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "Application");
-
-    // 实例化
-    this._INSTANCE = new Application();
-
-    // 启动
-    await this._INSTANCE.boot(argv);
-
-    // done
-    return this._INSTANCE;
-  }
-
-  /**
-   * 启动
-   */
-  private async boot(argv: string[]) {
-    const env = new Environment(argv);
-
+  // 开始启动流程
+  private static async startBootstrapSequence(argv: string[], testing: boolean): Promise<Application> {
     // timer
     const startTs = Date.now();
 
+    // （重要）第一步环境初始化
+    const env = new Environment(argv);
+
+    // 静态初始化
+    this.LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "Application");
+    this._INSTANCE = new Application(testing);
+
+    // 启动
+    await this._INSTANCE.boot();
+
+    // timer
+    const sec = ((Date.now() - startTs) / 1000).toFixed(3);
+
+    // log
+    Application.LOG.info(`Started ${env.id} in ${sec} seconds`);
+
+    // 搞定
+    return this._INSTANCE;
+  }
+
+  // 启动应用
+  private async boot() {
     // 读取启动配置
-    this._bootstrapConfig = normalizeBootstrapConfig(yaml.parse(await this.loadBootstrapConfig()));
-    Application.LOG.info("Bootstrap Configuration\n",
-      JSON.stringify(this._bootstrapConfig, null, 2));
+    await this.loadBootstrapConfig()
 
     // 启动数据库
     await Database.S.init();
@@ -101,16 +119,10 @@ export default class Application {
     await RpcPayloadDispatcher.S.init();
     await PayloadDispatcher.S.init();
     await HttpServer.S.start();
-
-    // timer
-    const sec = ((Date.now() - startTs) / 1000).toFixed(3);
-
-    // log
-    Application.LOG.info(`Started ${env.id} in ${sec} seconds`);
   }
 
   /**
-   * 关闭
+   * 关闭应用
    */
   public async shutdown() {
     await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -120,11 +132,12 @@ export default class Application {
   /**
    * 加载启动配置
    */
-  private async loadBootstrapConfig(): Promise<string> {
+  private async loadBootstrapConfig() {
     const env = Environment.S;
     const configName = `${env.id}-${env.profile}.yml`;
     const configServer = env.configServer;
 
+    let text
     if (configServer.type === "gitlab") {
       // 如何从gitlab读取raw文件
       //  https://docs.gitlab.com/ee/api/repository_files.html#get-raw-file-from-repository
@@ -135,15 +148,27 @@ export default class Application {
         },
       });
       const status = response.status;
-      const text = await response.text();
+      const respText = await response.text();
       if (status !== 200) {
-        throw new Error(`无法从 ${url} 读取 Bootstrap 配置: ${text}`);
+        throw new Error(`无法从 ${url} 读取 Bootstrap 配置: ${respText}`);
       }
-      return text;
+      text = respText;
     } else if (configServer.type === "local") {
-      return fs.readFileSync(path.join(env.resDir, `bootstrap-${env.profile}.yml`)).toString("utf8");
+      text = fs.readFileSync(path.join(env.resDir, `bootstrap-${env.profile}.yml`)).toString("utf8");
     } else {
       throw new Error(`无效的配置服务器类型 ${configServer.type}`);
     }
+
+    // 解析配置
+    this._bootstrapConfig = yaml.parse(text)
+
+    // 合并配置
+    mergeConfig(this._bootstrapConfig, DEFAULT_CONFIG)
+
+    // 打印配置
+    Application.LOG.info(
+      "Bootstrap Configuration\n",
+      JSON.stringify(this._bootstrapConfig, null, 2),
+    );
   }
 }

@@ -36,11 +36,20 @@ export default class Environment {
     return this._INSTANCE!;
   }
 
-  // 启动目录
-  public readonly bootDir: string;
-  // 环境
+  /**
+   * 当前工作目录
+   * 通常情况下为 process.cwd() 的返回值
+   */
+  public readonly cwd: string;
+
+  /**
+   * 用户设置的应用环境
+   */
   public readonly profiles: string[];
-  // 框架配置
+
+  /**
+   * 环境配置
+   */
   public readonly foundationConfig: IFoundationConfig;
   // 源代码目录
   public readonly srcDir: string;
@@ -62,19 +71,19 @@ export default class Environment {
     Environment._INSTANCE = this;
 
     // 设置核心启动配置
-    this.bootDir = process.cwd();
+    this.cwd = process.cwd();
     this.profiles = argv[2].split(",");
 
     // 加载框架配置
     this.foundationConfig = this.loadFoundationConfig();
     this.srcDir = path.join(
-      this.bootDir,
+      this.cwd,
       this.foundationConfig.serviceRootDir,
       argv[3],
       this.foundationConfig.sourceDirName,
     );
     this.resDir = path.join(
-      this.bootDir,
+      this.cwd,
       this.foundationConfig.serviceRootDir,
       argv[3],
       this.foundationConfig.resourceDirName,
@@ -160,7 +169,7 @@ export default class Environment {
     }
     let config: any = {};
     try {
-      config = JSON.parse(fs.readFileSync(path.join(this.bootDir, `.foundation.json`)).toString("utf8"))
+      config = JSON.parse(fs.readFileSync(path.join(this.cwd, `.foundation.json`)).toString("utf8"))
     } catch (e) {
       // ignored
     }

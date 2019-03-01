@@ -1,5 +1,5 @@
 /**
- * @author tengda
+ * 应用配置
  */
 export interface IBootstrapConfig {
   server: IServerConfig;
@@ -8,7 +8,7 @@ export interface IBootstrapConfig {
 }
 
 /**
- * @author tengda
+ * 服务器配置
  */
 export interface IServerConfig {
   port: number;
@@ -17,21 +17,21 @@ export interface IServerConfig {
 }
 
 /**
- * @author tengda
+ * 服务器 GraphQL 配置
  */
 export interface IServerGraphQLConfig {
   endpoint: string;
 }
 
 /**
- * @author tengda
+ * 服务器 WebSocket 配置
  */
 export interface IServerWebSocketConfig {
   endpoint: string;
 }
 
 /**
- * @author tengda
+ * 数据配置（数据库，缓存，任何数据）
  */
 export interface IDataConfig {
   enabled: boolean;
@@ -40,7 +40,7 @@ export interface IDataConfig {
 }
 
 /**
- * @author tengda
+ * MySQL 数据源配置
  */
 export interface IDataSourceMysqlConfig {
   host: string;
@@ -52,12 +52,7 @@ export interface IDataSourceMysqlConfig {
 }
 
 /**
- * 自动发现客户端乐行
- */
-export type DiscoveryClientType = "zookeeper";
-
-/**
- * @author tengda
+ * 集群配置
  */
 export interface IClusterConfig {
   enabled: boolean;
@@ -66,7 +61,7 @@ export interface IClusterConfig {
 }
 
 /**
- * Zookeeper配置
+ * Zookeeper 配置
  */
 export interface IClusterZookeeperConfig {
   connectionString: string;
@@ -75,7 +70,7 @@ export interface IClusterZookeeperConfig {
 /**
  * 默认配置
  */
-const DEFAULTS: IBootstrapConfig = {
+export const DEFAULT_CONFIG: IBootstrapConfig = {
   server: {
     port: 8080,
     graphQL: {
@@ -107,24 +102,22 @@ const DEFAULTS: IBootstrapConfig = {
 };
 
 /**
- * 标准化启动配置
- * @param root 配置根节点
+ * 合并配置
+ * @param dst 合入
+ * @param src 待并入
  */
-export function normalizeBootstrapConfig(root: any) {
-  const normalizer = (node: any, defaults: any) => {
-    const keys = Object.keys(defaults);
-    keys.forEach((key: string) => {
-      if (node.hasOwnProperty(key)) {
-        if (typeof node[key] !== typeof defaults[key]) {
-          node[key] = defaults[key];
-        } else if (typeof defaults[key] === "object") {
-          normalizer(node[key], defaults[key]);
-        }
-      } else {
-        node[key] = defaults[key];
+export function mergeConfig(dst: any, src: any) {
+  const keys = Object.keys(src);
+
+  keys.forEach((key: string) => {
+    if (dst.hasOwnProperty(key)) {
+      if (typeof dst[key] !== typeof src[key]) {
+        dst[key] = src[key];
+      } else if (typeof src[key] === "object") {
+        mergeConfig(dst[key], src[key]);
       }
-    });
-  };
-  normalizer(root, DEFAULTS);
-  return root;
+    } else {
+      dst[key] = src[key];
+    }
+  });
 }

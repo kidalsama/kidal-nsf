@@ -1,4 +1,3 @@
-// @ts-ignore
 import * as log4js from "log4js";
 import Environment from "./Environment";
 import * as path from "path";
@@ -32,10 +31,11 @@ export default class Logs {
   }
 
   /**
-   * 获取核心日期指
+   * 获取框架日志器
    */
   public getFoundationLogger(dirname: string, className: string): log4js.Logger {
     let logger: log4js.Logger | null = null;
+
     return new Proxy(Logs.FAKE_TARGET, {
       get: (target, p, receiver) => {
         if (!logger) {
@@ -53,17 +53,18 @@ export default class Logs {
 
   }
 
+  // 创建日志器
   private createLogger(dirname: string, className: string): log4js.Logger {
     const env = Environment.S;
     const category = env.foundationConfig.testingFoundation
       ? ("foundation" +
         dirname
-          .substring(env.bootDir.length)
+          .substring(env.cwd.length)
           .replace(/[\/]/g, ".")
         + "."
         + className)
       : (dirname
-          .substring(path.join(env.bootDir, "node_modules").length + 1)
+          .substring(path.join(env.cwd, "node_modules").length + 1)
           .replace(/[\/]/g, ".")
         + "."
         + className);
