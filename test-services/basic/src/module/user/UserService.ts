@@ -4,13 +4,14 @@ import LudmilaError from "../../../../../src/error/LudmilaError";
 import ISession from "./../../../../../src/server/ISession";
 import Maybe from "graphql/tsutils/Maybe";
 import PayloadDispatcher from "./../../../../../src/server/PayloadDispatcher";
+import {EntityEvents} from "../../../../../src/data/IEntity";
 
 export default class UserService {
   public static readonly S = new UserService();
 
   private constructor() {
     // 自动同步
-    User.cache.on("field-updated", (id: number, key: string, value: any) => {
+    User.cache.on(EntityEvents.FIELD_UPDATED, (id: number, key: string, value: any) => {
       PayloadDispatcher.S.addSyncPartial("User", id, key, value);
     });
   }

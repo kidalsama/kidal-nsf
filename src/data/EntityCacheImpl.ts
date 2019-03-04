@@ -1,7 +1,8 @@
-import {EntityLoadManyFunction, EntityLoadOneFunction, IEntityBase, IEntityCache} from "./IEntity";
+import {EntityEvents, EntityLoadManyFunction, EntityLoadOneFunction, IEntityBase, IEntityCache} from "./IEntity";
 import Database from "./Database";
 import Logs from "../application/Logs";
 import * as events from "events";
+import Environment from "../application/Environment";
 import Sequelize = require("sequelize");
 
 /**
@@ -102,15 +103,17 @@ export default class EntityCacheImpl<TKey extends number | string, TEntity exten
    */
   private _onSingleFieldUpdated(id: TKey, propertyKey: string, value: any): void {
     // 回写到数据库
-    const partial: any = {};
-    partial[propertyKey] = value;
-    this.model.update(partial, {where: {id}})
-      .catch((e) => {
-        EntityCacheImpl.LOG.error(`Write back entity ${this.model.name}.${id} failed`, e);
-      });
+    if (Environment.S.applicationConfig.data.autoUpdateChangedFields) {
+      const partial: any = {};
+      partial[propertyKey] = value;
+      this.model.update(partial, {where: {id}})
+        .catch((e) => {
+          EntityCacheImpl.LOG.error(`Write back entity ${this.model.name}.${id} failed`, e);
+        });
+    }
 
     // 提交事件通知改变
-    this.emit("field-updated", id, propertyKey, value);
+    this.emit(EntityEvents.FIELD_UPDATED, id, propertyKey, value);
   }
 
   /**

@@ -174,7 +174,7 @@ export default class Database extends events.EventEmitter {
 
       // 初始化
       Reflect.set(registry, "_cache", cache)
-      await registry.model.sync({force: env.applicationConfig.data.forceSync})
+      await registry.model.sync({force: env.applicationConfig.data.dropTableOnInit})
 
       // log
       Database.LOG.info(`Registered cache: ${name}`);

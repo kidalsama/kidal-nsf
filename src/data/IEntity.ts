@@ -4,6 +4,13 @@ import * as events from "events";
 /**
  * @author tengda
  */
+export enum EntityEvents {
+  FIELD_UPDATED = "FIELD_UPDATED",
+}
+
+/**
+ * @author tengda
+ */
 export interface IEntityBase<TKey extends number | string> {
   /**
    * 主键
@@ -68,7 +75,7 @@ export interface IEntityCache<TKey extends number | string, TEntity extends IEnt
   /**
    * 字段变更事件
    */
-  on(event: "field-updated", cb: (id: TKey, key: string, value: any) => void): this;
+  on(event: EntityEvents.FIELD_UPDATED, cb: (id: TKey, key: string, value: any) => void): this;
 }
 
 /**
