@@ -1,6 +1,5 @@
 import WebSocket from "ws";
 import WebSocketSessionManager from "./WebSocketSessionManager";
-import Application from "../../application/Application";
 import HttpServer from "../HttpServer";
 import Logs from "../../application/Logs";
 import Environment from "../../application/Environment";

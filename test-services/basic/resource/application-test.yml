@@ -4,11 +4,11 @@ profiles:
 configServer:
   type: "local"
 server:
-  port: -1
+  port: 0
 data:
   dropTableOnInit: true
   dataSourceMysql:
-    host: 192.168.93.222 # DATABASE_HOST
+    host: 39.105.87.12 # DATABASE_HOST
     username: mcg # DATABASE_USERNAME
     password: Mcg!2345 # DATABASE_PASSWORD
     database: test_node_server_foundation # DATABASE_DATABASE
