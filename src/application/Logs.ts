@@ -43,12 +43,13 @@ export default class Logs {
         }
         return Reflect.get(logger, p, receiver)
       },
-      apply: (target, thisArg, argArray) => {
-        if (!logger) {
-          logger = this.createLogger(dirname, className)
-        }
-        return Reflect.apply(target, logger, argArray);
-      },
+      // FIXME: 貌似不用，可以移除，观察下
+      // apply: (target, thisArg, argArray) => {
+      //   if (!logger) {
+      //     logger = this.createLogger(dirname, className)
+      //   }
+      //   return Reflect.apply(target, logger, argArray);
+      // },
     });
 
   }
