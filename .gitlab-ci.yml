@@ -45,6 +45,11 @@ test:
     expire_in: 31d
     paths:
     - coverage/
+  cache:
+    untracked: true
+    key: "${CI_PIPELINE_ID}_coverage"
+    paths:
+    - coverage/
 
 cleanup test:
   <<: *excepts
@@ -58,10 +63,17 @@ pages:
   stage: pages
   script:
   - mkdir .public
+  - mkdir .public/coverage
   - cp -r docs/. .public
+  - cp -r coverage/. .public/coverage
   - mv .public public
   artifacts:
     paths:
     - public
+  cache:
+    untracked: true
+    key: "${CI_PIPELINE_ID}_coverage"
+    paths:
+    - coverage/
   only:
   - master
