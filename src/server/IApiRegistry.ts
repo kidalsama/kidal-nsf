@@ -1,5 +1,6 @@
 import IPayload from "./IPayload";
 import ISession from "./ISession";
+import Maybe from "graphql/tsutils/Maybe";
 
 /**
  * @author tengda
@@ -7,7 +8,7 @@ import ISession from "./ISession";
 export interface IHandlePayloadContext<TArgs, TResults> {
   data: TArgs;
   payload: IPayload;
-  session: ISession;
+  session: Maybe<ISession>;
 }
 
 /**
@@ -18,10 +19,6 @@ export default interface IApiRegistry<TArgs, TResults> {
    * API类型.
    */
   readonly type: string;
-  /**
-   * 初始化
-   */
-  init: (type: string) => Promise<any>;
 
   /**
    * 载荷处理器

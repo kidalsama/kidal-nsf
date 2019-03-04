@@ -194,7 +194,7 @@ export default class Database extends events.EventEmitter {
       this.models.set(name, registry.model)
 
       // 初始化
-      Reflect.set(registry, "_cache", cache)
+      Reflect.set(registry, "cache", cache)
       await registry.model.sync({force: env.applicationConfig.data.dropTableOnInit})
 
       // log

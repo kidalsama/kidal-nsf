@@ -9,6 +9,7 @@ describe("Basic: IEntityCache", () => {
   beforeAll(async () => {
     await Application.runTest("basic");
     userCache = Database.S.getCache("999_user")
+    Database.S.getModel("999_user")
   })
 
   afterAll(async () => {

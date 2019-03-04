@@ -1,4 +1,4 @@
-import {IEntityBase, IEntityRegistry} from "../../../../../../src/data/IEntity";
+import {IEntityBase, IEntityCache, IEntityRegistry} from "../../../../../../src/data/IEntity";
 import Database from "../../../../../../src/data/Database";
 import Sequelize from "sequelize";
 
@@ -49,6 +49,8 @@ class Registry implements IEntityRegistry<number, IUser> {
   public get model(): Sequelize.Model<IUser, any> {
     return model;
   }
+
+  public readonly cache: IEntityCache<number, IUser> = null!
 }
 
 export default new Registry();

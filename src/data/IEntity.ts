@@ -91,4 +91,9 @@ export interface IEntityRegistry<TKey extends number | string, TEntity extends I
    * 数据模型
    */
   readonly model: Sequelize.Model<TEntity, any>;
+
+  /**
+   * 缓存
+   */
+  readonly cache: IEntityCache<TKey, TEntity>;
 }

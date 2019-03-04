@@ -20,7 +20,7 @@ const formatTime = (date: Date, fmt: string = "yyyy-MM-dd hh:mm:ss") => {
 };
 
 export default {
-  dateUnit(result: Maybe<Date>, args?: { unit?: string }) {
+  dateUnit(result: Maybe<Date>, args?: { unit?: string }): string | number | null {
     if (!result) {
       return null;
     }

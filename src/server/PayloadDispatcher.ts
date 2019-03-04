@@ -9,6 +9,7 @@ import Environment from "../application/Environment";
 import * as clsHooked from "cls-hooked";
 import * as graphqlHTTP from "express-graphql";
 import {Request, Response} from "express";
+import Maybe from "graphql/tsutils/Maybe";
 
 /**
  * @author tengda
@@ -56,18 +57,26 @@ export default class PayloadDispatcher {
       }
 
       // 缓存
+      Reflect.set(context.registry, "type", type)
       this.apis.set(type, context.registry);
-
-      // 初始化
-      await context.registry.init(type);
 
       // log
       PayloadDispatcher.LOG.info(`Registered api: ${type}`);
     }
   }
 
-  public async dispatchGQL(middleware: graphqlHTTP.Middleware,
-                           request: Request, response: Response): Promise<undefined> {
+  /**
+   * 获取同步数据
+   */
+  public getSync(): any {
+    return this.handlerCls.get("sync");
+  }
+
+  /**
+   * 分发GraphQL载荷
+   */
+  public async dispatchGraphQL(middleware: graphqlHTTP.Middleware,
+                               request: Request, response: Response): Promise<undefined> {
     // 钩住处理器
     return new Promise<undefined>((resolve, reject) => {
       this.handlerCls.run(() => {
@@ -88,14 +97,10 @@ export default class PayloadDispatcher {
     });
   }
 
-  public getSync(): any {
-    return this.handlerCls.get("sync");
-  }
-
   /**
-   * 分发载荷
+   * 分发WebSocket载荷
    */
-  public async dispatchWS(session: ISession, payload: Payload): Promise<{ reply: any, sync: any }> {
+  public async dispatchWebSocket(session: Maybe<ISession>, payload: Payload): Promise<{ reply: any, sync: any }> {
     // 检查必要数据
     if (!payload.type) {
       throw new LudmilaError(LudmilaErrors.SERVER_WEBSOCKET_INVALID_PAYLOAD);
