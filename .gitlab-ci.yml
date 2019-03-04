@@ -3,6 +3,7 @@ cache:
   key: $CI_PIPELINE_ID
   paths:
   - node_modules/
+  - coverage/
 
 .excepts: &excepts
   except:
@@ -45,11 +46,6 @@ test:
     expire_in: 31d
     paths:
     - coverage/
-  cache:
-    untracked: true
-    key: "${CI_PIPELINE_ID}_coverage"
-    paths:
-    - coverage/
 
 cleanup test:
   <<: *excepts
@@ -70,10 +66,5 @@ pages:
   artifacts:
     paths:
     - public
-  cache:
-    untracked: true
-    key: "${CI_PIPELINE_ID}_coverage"
-    paths:
-    - coverage/
   only:
   - master

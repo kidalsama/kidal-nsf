@@ -3,6 +3,7 @@
 ## Coverage
 
 * [![Coverage](http://gitlab.dev.happyhouse.club/mcg-rnd/node-server-foundation/badges/master/coverage.svg)](http://gitlab.dev.happyhouse.club/mcg-rnd/node-server-foundation/commits/master)
+* [Coverage Report](http://mcg-rnd.gitlab.dev.happyhouse.club/node-server-foundation/coverage)
 
 ## 文档
 
