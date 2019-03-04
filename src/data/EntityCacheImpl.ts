@@ -11,12 +11,10 @@ import Sequelize = require("sequelize");
 export default class EntityCacheImpl<TKey extends number | string, TEntity extends IEntityBase<TKey>>
   extends events.EventEmitter implements IEntityCache<TKey, TEntity> {
 
-  // 日志
   private static readonly LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "EntityCacheImpl");
-  // 数据库实例
   private readonly database: Database;
-  // 模型
   private readonly model: Sequelize.Model<TEntity, any>;
+  private readonly updatingCounter: Map<TKey, number> = new Map()
 
   /**
    *
@@ -63,7 +61,9 @@ export default class EntityCacheImpl<TKey extends number | string, TEntity exten
     const entities = await loader(this.model);
 
     return entities
-      .map((entity) => this._watch(entity));
+      .map((entity) => {
+        return this._watch(entity)
+      });
   }
 
   /**
@@ -81,21 +81,25 @@ export default class EntityCacheImpl<TKey extends number | string, TEntity exten
    * @param entity
    */
   public async createOrUpdate(entity: Partial<TEntity>): Promise<TEntity> {
-    const createdEntity = await this.model.insertOrUpdate(entity, {returning: true})
-      .then((results) => results[0]);
+    // 这里貌似有个Bug，只能返回 boolean
+    const changed = await this.model.upsert(entity)
 
-    return this._watch(createdEntity);
+    // load
+    return (await this.get(entity.id as TKey))!
   }
 
   /**
    *
    */
-  public async update(entity: Partial<TEntity>): Promise<void> {
+  public async updateOne(entity: Partial<TEntity>): Promise<TEntity | null> {
     // 解除监听
     const target = this._unwatch(entity);
 
-    // 回写
-    await this.model.update(target, {where: {id: target.id}});
+    // 这里貌似有个Bug，只能返回 boolean
+    const changed = await this.model.update(target, {where: {id: target.id}})
+
+    // load
+    return changed ? await this.get(entity.id as TKey) : null
   }
 
   /**
@@ -104,11 +108,18 @@ export default class EntityCacheImpl<TKey extends number | string, TEntity exten
   private _onSingleFieldUpdated(id: TKey, propertyKey: string, value: any): void {
     // 回写到数据库
     if (Environment.S.applicationConfig.data.autoUpdateChangedFields) {
+      // 更新计数器
+      this._incDecUpdatingCounter(id, true)
+
+      // 更新
       const partial: any = {};
       partial[propertyKey] = value;
       this.model.update(partial, {where: {id}})
         .catch((e) => {
           EntityCacheImpl.LOG.error(`Write back entity ${this.model.name}.${id} failed`, e);
+        })
+        .finally(() => {
+          this._incDecUpdatingCounter(id, false)
         });
     }
 
@@ -116,16 +127,28 @@ export default class EntityCacheImpl<TKey extends number | string, TEntity exten
     this.emit(EntityEvents.FIELD_UPDATED, id, propertyKey, value);
   }
 
-  /**
-   * 监听
-   */
+  // 监听
   private _watch(entity: TEntity): TEntity {
     const keys = Object.keys(entity);
 
     return new Proxy(entity, {
-      // get: (target: TEntity, propertyKey: PropertyKey): any => {
-      //   return Reflect.get(target, propertyKey);
-      // },
+      get: (target: TEntity, propertyKey: PropertyKey): any => {
+        // 特殊方法
+        if (propertyKey === "waitAutoUpdateChangedFieldsComplete") {
+          return async () => {
+            while (true) {
+              const counter = this.updatingCounter.get(entity.id)
+              if (!counter || counter === 0) {
+                return
+              }
+              await new Promise((resolve) => {
+                setTimeout(resolve, 100)
+              })
+            }
+          }
+        }
+        return Reflect.get(target, propertyKey);
+      },
       set: (target: TEntity, propertyKey: PropertyKey, value: any): boolean => {
         // 写入目标
         const successful = Reflect.set(target, propertyKey, value);
@@ -141,10 +164,19 @@ export default class EntityCacheImpl<TKey extends number | string, TEntity exten
     });
   }
 
-  /**
-   * 取消监听
-   */
+  // 取消监听
   private _unwatch(entity: any): TEntity {
     return entity;
+  }
+
+  // 增加减少更新计数器
+  private _incDecUpdatingCounter(id: TKey, inc: boolean) {
+    let counter = this.updatingCounter.get(id) || (inc ? 0 : 1)
+    if (inc) {
+      counter++
+    } else {
+      counter--
+    }
+    this.updatingCounter.set(id, counter)
   }
 }
