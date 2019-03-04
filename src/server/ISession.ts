@@ -37,7 +37,12 @@ export default interface ISession {
   /**
    * 绑定会话
    */
-  bindUin(uin: string): Promise<void>;
+  login(uin: string): Promise<void>;
+
+  /**
+   * 登出
+   */
+  logout(): Promise<void>;
 
   /**
    * 踢下线

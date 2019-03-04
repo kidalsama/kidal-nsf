@@ -110,7 +110,7 @@ export default class WebSocketSession implements ISession {
   /**
    * @override
    */
-  public async bindUin(uin: string): Promise<void> {
+  public async login(uin: string): Promise<void> {
     // 重复绑定
     if (this.getUin() === uin) {
       return;
@@ -139,6 +139,18 @@ export default class WebSocketSession implements ISession {
     WebSocketSession.LOG.info(`Session ${this.sessionId} bound uin: ${uin}`);
   }
 
+  public async logout(): Promise<void> {
+    const uin = this.getUin()
+    this.manager.onLogout(this)
+    this.setUin(null)
+
+    // log
+    WebSocketSession.LOG.info(`Session ${this.sessionId} logout uin: ${uin}`);
+
+    // done
+    return Promise.resolve();
+  }
+
   /**
    * @override
    */
@@ -147,7 +159,7 @@ export default class WebSocketSession implements ISession {
     await this.push("_kicked", {});
 
     // 先登出才能清理uin
-    const uin = this.getUin();
+    const uin = this.getUin()
     this.manager.onLogout(this);
     this.setUin(null);
 

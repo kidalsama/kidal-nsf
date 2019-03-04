@@ -88,24 +88,24 @@ export default class HttpServer {
 
     // 监听http
     return new Promise((resolve, reject) => {
-      // 端口大于0时才进行监听
-      //  可能因为特殊原因不需要服务器监听端口
-      //    例如：单元测试
       const port = config.port
-      if (port > 0) {
-        this.server.listen(config.port, "0.0.0.0", () => {
-          const address = this.server.address();
-          if (address === null) {
-            reject(new Error("Server's address is null"));
-          } else if (typeof address === "string") {
-            HttpServer.LOG.info(`Listen at ${address}`);
-          } else {
-            HttpServer.LOG.info(`Listen at ${address.address}:${address.port}`);
-          }
-          resolve();
-        });
-      } else {
+      const listeningListener = () => {
+        const address = this.server.address();
+        if (address === null) {
+          reject(new Error("Server's address is null"));
+        } else if (typeof address === "string") {
+          HttpServer.LOG.info(`Listen at ${address}`);
+        } else {
+          HttpServer.LOG.info(`Listen at ${address.address}:${address.port}`);
+        }
+        resolve();
+      }
+      if (port < 0) {
         resolve()
+      } else if (port === 0) {
+        this.server.listen(listeningListener)
+      } else {
+        this.server.listen(config.port, "0.0.0.0", listeningListener);
       }
     });
   }
