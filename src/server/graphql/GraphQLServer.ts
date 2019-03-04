@@ -61,7 +61,7 @@ export default class GraphQLServer {
       },
     });
     httpServer.expressApp.use(config.endpoint, async (request: Request, response: Response): Promise<undefined> => {
-      return PayloadDispatcher.S.dispatchGQL(graphQLMiddleware, request, response);
+      return PayloadDispatcher.S.dispatchGraphQL(graphQLMiddleware, request, response);
     });
 
     // log
