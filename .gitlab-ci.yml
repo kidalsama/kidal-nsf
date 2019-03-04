@@ -3,6 +3,7 @@ cache:
   key: $CI_PIPELINE_ID
   paths:
   - node_modules/
+  - coverage/
 
 .excepts: &excepts
   except:
@@ -58,7 +59,9 @@ pages:
   stage: pages
   script:
   - mkdir .public
+  - mkdir .public/coverage
   - cp -r docs/. .public
+  - cp -r coverage/. .public/coverage
   - mv .public public
   artifacts:
     paths:
