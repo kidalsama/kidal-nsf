@@ -73,6 +73,11 @@ export default class Environment {
   public readonly resourceDir: string;
 
   /**
+   * 正在测试框架
+   */
+  public readonly testing: boolean;
+
+  /**
    * 应用配置
    */
   public get applicationConfig(): IApplicationConfig {
@@ -82,7 +87,7 @@ export default class Environment {
   /**
    *
    */
-  public constructor(argv: string[]) {
+  public constructor(argv: string[], testing: boolean) {
     // 检查参数
     this.checkArgv(argv);
 
@@ -90,6 +95,7 @@ export default class Environment {
     Environment._INSTANCE = this;
 
     // 启动参数
+    this.testing = testing;
     this.cwd = process.cwd();
     this.serviceName = argv[2];
     this.applicationConfigName = argv[3];

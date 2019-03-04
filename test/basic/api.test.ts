@@ -49,6 +49,9 @@ describe("Basic: Api", () => {
       type: "commons/login",
     }))
     wsc.send(JSON.stringify({
+      type: "commons/login",
+    }))
+    wsc.send(JSON.stringify({
       type: "commons/logout",
     }))
     wsc.send(JSON.stringify({

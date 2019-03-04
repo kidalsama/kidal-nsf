@@ -19,18 +19,6 @@ export default class Application {
   private static _INSTANCE?: Application;
 
   /**
-   * 应用是否处于测试启动模式
-   */
-  public readonly testing: boolean
-
-  /**
-   *
-   */
-  public constructor(testing: boolean) {
-    this.testing = testing;
-  }
-
-  /**
    * 单例
    */
   public static get S(): Application {
@@ -69,12 +57,12 @@ export default class Application {
     const startTs = Date.now();
 
     // （重要）第一步环境初始化
-    const env = new Environment(argv);
+    const env = new Environment(argv, testing);
     await env.boot()
 
     // 静态初始化
     this.LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "Application");
-    this._INSTANCE = new Application(testing);
+    this._INSTANCE = new Application();
 
     // 启动
     await this._INSTANCE.boot();
@@ -111,7 +99,7 @@ export default class Application {
    */
   public async shutdown() {
     // 在测试模式延迟关闭
-    if (this.testing) {
+    if (Environment.S.testing) {
       await new Promise((resolve) => setTimeout(resolve, 1000))
     }
 

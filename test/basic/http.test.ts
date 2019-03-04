@@ -17,6 +17,7 @@ describe("Basic: Http", () => {
 
     expect(resp.status).toBe(200)
   });
+
   it("Should get status 404", async () => {
     const resp = await request(HttpServer.S.expressApp)
       .get("/wrongUrl2018")
