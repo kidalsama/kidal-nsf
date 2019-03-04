@@ -2,7 +2,7 @@ import Sequelize = require("sequelize");
 import Logs from "../application/Logs";
 import glob from "glob";
 import Environment from "../application/Environment";
-import {IEntityCache, IEntityRegistry} from "./IEntity";
+import {IEntityBase, IEntityCache, IEntityRegistry} from "./IEntity";
 import EntityCacheImpl from "./EntityCacheImpl";
 import * as events from "events";
 
@@ -20,12 +20,10 @@ export default class Database extends events.EventEmitter {
     super();
   }
 
-  // 日志
   private static readonly LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "Database");
-  // ORM框架
   private _sequelize?: Sequelize.Sequelize;
-  // 缓存
   private readonly caches: Map<string, IEntityCache<any, any>> = new Map();
+  private readonly models: Map<string, Sequelize.Model<any, any>> = new Map();
 
   /**
    * ORM框架
@@ -148,8 +146,30 @@ export default class Database extends events.EventEmitter {
   }
 
   /**
-   * 注册缓存
+   * 获取缓存
    */
+  public getCache<TKey extends number | string, TEntity extends IEntityBase<TKey>>(name: string)
+    : IEntityCache<TKey, TEntity> {
+    const cache = this.caches.get(name)
+    if (!cache) {
+      throw new Error(`Entity cache ${name} not found`)
+    }
+    return cache
+  }
+
+  /**
+   * 获取模型
+   */
+  public getModel<TKey extends number | string, TEntity extends IEntityBase<TKey>>(name: string)
+    : Sequelize.Model<TEntity, any> {
+    const model = this.models.get(name)
+    if (!model) {
+      throw new Error(`Entity model ${name} not found`)
+    }
+    return model
+  }
+
+  // 注册缓存
   private async registerCaches() {
     const env = Environment.S;
 
@@ -171,10 +191,11 @@ export default class Database extends events.EventEmitter {
       // 创建缓存
       const cache = new EntityCacheImpl(this, registry.model);
       this.caches.set(name, cache);
+      this.models.set(name, registry.model)
 
       // 初始化
       Reflect.set(registry, "_cache", cache)
-      await registry.model.sync({force: env.applicationConfig.data.forceSync})
+      await registry.model.sync({force: env.applicationConfig.data.dropTableOnInit})
 
       // log
       Database.LOG.info(`Registered cache: ${name}`);

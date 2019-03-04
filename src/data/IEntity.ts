@@ -4,11 +4,23 @@ import * as events from "events";
 /**
  * @author tengda
  */
+export enum EntityEvents {
+  FIELD_UPDATED = "FIELD_UPDATED",
+}
+
+/**
+ * @author tengda
+ */
 export interface IEntityBase<TKey extends number | string> {
   /**
    * 主键
    */
   id: TKey;
+
+  /**
+   * 等待自动更新变更的字段完成
+   */
+  waitAutoUpdateChangedFieldsComplete(): Promise<void>
 }
 
 /**
@@ -63,12 +75,12 @@ export interface IEntityCache<TKey extends number | string, TEntity extends IEnt
   /**
    * 更新
    */
-  update(entity: Partial<TEntity>): Promise<void>;
+  updateOne(entity: Partial<TEntity>): Promise<TEntity | null>;
 
   /**
    * 字段变更事件
    */
-  on(event: "field-updated", cb: (id: TKey, key: string, value: any) => void): this;
+  on(event: EntityEvents.FIELD_UPDATED, cb: (id: TKey, key: string, value: any) => void): this;
 }
 
 /**
@@ -76,17 +88,7 @@ export interface IEntityCache<TKey extends number | string, TEntity extends IEnt
  */
 export interface IEntityRegistry<TKey extends number | string, TEntity extends IEntityBase<TKey>> {
   /**
-   * 缓存
-   */
-  readonly cache: IEntityCache<TKey, TEntity>;
-
-  /**
    * 数据模型
    */
   readonly model: Sequelize.Model<TEntity, any>;
-
-  // /**
-  //  * 初始化
-  //  */
-  // init: (cache: IEntityCache<TKey, TEntity>) => Promise<any>;
 }

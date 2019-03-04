@@ -49,7 +49,8 @@ export interface IServerWebSocketConfig {
  */
 export interface IDataConfig {
   enabled: boolean;
-  forceSync: boolean;
+  dropTableOnInit: boolean;
+  autoUpdateChangedFields: boolean;
   dataSourceMysql: IDataSourceMysqlConfig;
 }
 
@@ -101,7 +102,8 @@ export const DEFAULT_APPLICATION_CONFIG: IApplicationConfig = {
   },
   data: {
     enabled: true,
-    forceSync: false,
+    dropTableOnInit: false,
+    autoUpdateChangedFields: true,
     dataSourceMysql: {
       host: "192.168.93.222",
       port: 3306,

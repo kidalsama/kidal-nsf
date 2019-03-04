@@ -1,4 +1,4 @@
-import {IEntityBase, IEntityCache, IEntityRegistry} from "../../../../../../src/data/IEntity";
+import {IEntityBase, IEntityRegistry} from "../../../../../../src/data/IEntity";
 import Database from "../../../../../../src/data/Database";
 import Sequelize from "sequelize";
 
@@ -10,7 +10,7 @@ export interface IUser extends IEntityBase<number> {
   updatedAt: Date;
 }
 
-export const model = Database.S.sequelize.define<IUser, any>(
+const model = Database.S.sequelize.define<IUser, any>(
   "999_user",
   {
     id: {
@@ -49,17 +49,6 @@ class Registry implements IEntityRegistry<number, IUser> {
   public get model(): Sequelize.Model<IUser, any> {
     return model;
   }
-
-  private _cache?: IEntityCache<number, IUser>;
-
-  public get cache(): IEntityCache<number, IUser> {
-    return this._cache!;
-  }
-
-  // public async init(cache: IEntityCache<number, IUser>): Promise<any> {
-  //   // 保存缓存
-  //   this._cache = cache;
-  // }
 }
 
 export default new Registry();
