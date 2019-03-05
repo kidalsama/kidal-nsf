@@ -1,8 +1,8 @@
-import * as os from "os";
 import * as zookeeper from "node-zookeeper-client";
 import Logs from "../application/Logs";
 import Environment from "../application/Environment";
 import * as events from "events";
+import HttpServer from "../server/HttpServer";
 
 /**
  * @author tengda
@@ -157,24 +157,6 @@ export default class DiscoveryClient extends events.EventEmitter {
     });
   }
 
-  private _resolveIp(): string | null {
-    const networkInterfaces = os.networkInterfaces();
-
-    for (const networkInterfaceKey in networkInterfaces) {
-      if (!networkInterfaces.hasOwnProperty(networkInterfaceKey)) {
-        continue;
-      }
-      const networkInterface = networkInterfaces[networkInterfaceKey];
-      for (const alias of networkInterface) {
-        if (alias.family === "IPv4" && alias.address !== "127.0.0.1" && !alias.internal) {
-          return alias.address;
-        }
-      }
-    }
-
-    return null;
-  }
-
   private _retrieveNodes(dir: string) {
     this.zk.getChildren(
       dir,
@@ -233,13 +215,13 @@ export default class DiscoveryClient extends events.EventEmitter {
     }
 
     // 解析IP
-    const ip = this._resolveIp();
+    const ip = HttpServer.S.ip;
     if (!ip) {
       throw new Error("Resolve ip failed");
     }
 
     // uuid
-    const port = Environment.S.applicationConfig.server.port;
+    const port = HttpServer.S.port
     this._uuid = `${ip}:${port}`;
 
     // 准备路径

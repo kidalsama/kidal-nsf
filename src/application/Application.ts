@@ -7,9 +7,9 @@ import GraphQLServer from "../server/graphql/GraphQLServer";
 import WebSocketServer from "../server/websocket/WebSocketServer";
 import HttpServer from "../server/HttpServer";
 import Rpc from "../cluster/Rpc";
-import {RpcPayloadDispatcher} from "../cluster/IRpcPayload";
 import {applicationBanner} from "./ApplicationConstants";
 import WebSocketApiManager from "../server/websocket/WebSocketApiManager";
+import RpcApiManager from "../cluster/RpcApiManager";
 
 /**
  * @author tengda
@@ -82,16 +82,18 @@ export default class Application {
     // 启动数据库
     await Database.S.init();
 
-    // 启动发现服务
-    await DiscoveryClient.S.init();
-    await Rpc.S.init();
-
     // 启动服务器
     await GraphQLServer.S.init();
     await WebSocketServer.S.init();
-    await RpcPayloadDispatcher.S.init();
     await WebSocketApiManager.S.init();
     await HttpServer.S.start();
+
+    // 启动发现服务
+    await DiscoveryClient.S.init();
+
+    // Rpc
+    await RpcApiManager.S.init();
+    await Rpc.S.init();
   }
 
   /**
