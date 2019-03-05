@@ -3,9 +3,11 @@ import express from "express";
 import {Request, Response} from "express-serve-static-core";
 import * as http from "http";
 import Logs from "../application/Logs";
-import {RpcPayloadDispatcher} from "../cluster/IRpcPayload";
-import LudmilaError from "../error/LudmilaError";
 import Environment from "../application/Environment";
+import * as os from "os";
+import Rpc from "../cluster/Rpc";
+import LudmilaError from "../error/LudmilaError";
+import LudmilaErrors from "../error/LudmilaErrors";
 
 /**
  * @author tengda
@@ -41,21 +43,21 @@ export default class HttpServer {
     });
 
     // RPC
-    this.expressApp.post("/rpc", async (req, res) => {
-      try {
-        const results = await RpcPayloadDispatcher.S.dispatch({
-          type: req.body.type,
-          data: req.body.data,
-        });
-        res.status(200).json(results);
-      } catch (e) {
-        if (e instanceof LudmilaError) {
-          res.json({error: {code: e.code, message: e.message}});
-        } else {
-          HttpServer.LOG.error(e);
-          res.status(404).end();
-        }
-      }
+    this.expressApp.post("/rpc", (req, res) => {
+      Rpc.S.httpCallLocalProcedure(req.body)
+        .then((ret) => {
+          res.status(200).json(ret)
+        })
+        .catch((e) => {
+          if (e instanceof LudmilaError) {
+            res.status(200).json({error: {code: e.code, message: e.message}})
+          } else {
+            if (HttpServer.LOG.isDebugEnabled()) {
+              HttpServer.LOG.error(e)
+            }
+            res.status(200).json({error: {code: LudmilaErrors.FAIL, message: e.message}})
+          }
+        })
     });
 
     // docker 健康检查支持
@@ -115,5 +117,40 @@ export default class HttpServer {
    */
   public async shutdown() {
     this.server.close()
+  }
+
+  /**
+   * 获取Ip
+   */
+  public get ip(): string | null {
+    const networkInterfaces = os.networkInterfaces();
+
+    for (const networkInterfaceKey in networkInterfaces) {
+      if (!networkInterfaces.hasOwnProperty(networkInterfaceKey)) {
+        continue;
+      }
+      const networkInterface = networkInterfaces[networkInterfaceKey];
+      for (const alias of networkInterface) {
+        if (alias.family === "IPv4" && alias.address !== "127.0.0.1" && !alias.internal) {
+          return alias.address;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * 获取端口
+   */
+  public get port(): number {
+    const address = this.server.address();
+    if (address === null) {
+      return -1;
+    } else if (typeof address === "string") {
+      return Number(address.split(":")[1])
+    } else {
+      return address.port
+    }
   }
 }
