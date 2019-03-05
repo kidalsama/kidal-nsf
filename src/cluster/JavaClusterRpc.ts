@@ -6,6 +6,7 @@ import {IJavaClusterEndpoint} from "../application/ApplicationConfig";
 import LudmilaError from "../error/LudmilaError";
 import LudmilaErrors from "../error/LudmilaErrors";
 import fetch from "node-fetch";
+import md5 from "md5";
 
 /**
  * @author tengda
@@ -64,9 +65,14 @@ export class JavaRpcInvoker {
     const p = 1
     const t = this._target
     const m = this._version ? `${this._method}@${this._version}` : this._method
+    const keyId = "lbi000001"
+    const keySecret = "CmUfxkCMmu4NVPHvF7HvO3UX"
+    const timestamp = Math.floor(Date.now() / 1000).toString()
+    const preSignStr = `${p}&${t}&${m}&${timestamp}&${timestamp}&${keySecret}`
+    const sign = md5(preSignStr).toLowerCase()
+    const c = `${keyId}-${timestamp}-${timestamp}-${sign}`
     const {host, port, path} = this.config
-    const url = `http://${host}:${port}/${path}` + "/ludmila/lrpc/1.0" +
-      `?p=${p}&t=${t}&m=${m}&c=`
+    const url = `http://${host}:${port}/${path}/ludmila/lrpc/1.0?p=${p}&t=${t}&m=${m}&c=${c}`
 
     // 消息体
     const body = argArray ? Buffer.from(Buffer.from(JSON.stringify(argArray)).toString("base64")) : undefined
