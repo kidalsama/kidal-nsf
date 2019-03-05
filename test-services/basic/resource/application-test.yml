@@ -14,3 +14,8 @@ data:
     database: test_node_server_foundation # DATABASE_DATABASE
 cluster:
   enabled: true
+  javaClusterMap:
+    oa:
+      host: dev.happyhouse.club
+      port: 80
+      path: ms/oa

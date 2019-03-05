@@ -83,7 +83,7 @@ export default class Rpc {
     // 获取连接池
     const pool = this._getPool(id)
     if (!pool) {
-      throw new LudmilaError(LudmilaErrors.CLUSTER_DISCOVERY_RPC_CLIENT_NO_INSTANCE);
+      throw new LudmilaError(LudmilaErrors.CLUSTER_201);
     }
 
     // 准备载荷
@@ -105,11 +105,11 @@ export default class Rpc {
         (err: Error | null, res: http.IncomingMessage, bodyString: string | null) => {
           if (err) {
             Rpc.LOG.warn(err);
-            reject(new LudmilaError(LudmilaErrors.CLUSTER_DISCOVERY_RPC_CLIENT_NODE_NOT_AVAILABLE));
+            reject(new LudmilaError(LudmilaErrors.CLUSTER_203));
           } else {
             if (res.statusCode !== 200) {
               Rpc.LOG.error("Rpc response none status 200: %s, %s", res.statusCode, bodyString);
-              reject(new LudmilaError(LudmilaErrors.CLUSTER_DISCOVERY_RPC_CLIENT_STATUS_NOT_200));
+              reject(new LudmilaError(LudmilaErrors.CLUSTER_202));
             } else {
               if (bodyString === null) {
                 resolve(undefined);
@@ -119,7 +119,7 @@ export default class Rpc {
                   body = JSON.parse(bodyString);
                 } catch (e) {
                   Rpc.LOG.warn(e);
-                  reject(new LudmilaError(LudmilaErrors.CLUSTER_DISCOVERY_RPC_CLIENT_INVALID_PAYLOAD));
+                  reject(new LudmilaError(LudmilaErrors.CLUSTER_204));
                 }
                 if (body.hasOwnProperty("error")) {
                   reject(new LudmilaError(body.error.code, body.error.message));
@@ -140,7 +140,7 @@ export default class Rpc {
     // 获取定义
     const registry = RpcApiManager.S.getRegistryByModuleMethod(module, method)
     if (!registry) {
-      throw new LudmilaError(LudmilaErrors.CLUSTER_DISCOVERY_RPC_CLIENT_NO_HANDLER);
+      throw new LudmilaError(LudmilaErrors.CLUSTER_205);
     }
 
     // 处理
