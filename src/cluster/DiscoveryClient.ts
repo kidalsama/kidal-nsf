@@ -11,7 +11,7 @@ export default class DiscoveryClient extends events.EventEmitter {
   // 单例
   public static readonly S = new DiscoveryClient();
   // 日志
-  private static readonly LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "DiscoveryClient");
+  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "DiscoveryClient");
   // 客户端
   private _zk?: zookeeper.Client;
   public get zk(): zookeeper.Client {

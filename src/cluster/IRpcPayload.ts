@@ -45,7 +45,7 @@ export class RpcPayloadDispatcher {
   // 单例
   public static readonly S = new RpcPayloadDispatcher();
   // log
-  private static readonly LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "RpcPayloadDispatcher");
+  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "RpcPayloadDispatcher");
   // 接口
   private readonly rpcMap: Map<string, IRpcRegistry<any, any>> = new Map();
 

@@ -9,7 +9,7 @@ import Environment from "../../application/Environment";
  */
 export default class WebSocketServer {
   public static readonly S = new WebSocketServer();
-  private static readonly LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "WebSocketServer");
+  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "WebSocketServer");
   private wss?: WebSocket.Server;
 
   /**

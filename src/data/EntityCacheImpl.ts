@@ -11,7 +11,7 @@ import Sequelize = require("sequelize");
 export default class EntityCacheImpl<TKey extends number | string, TEntity extends IEntityBase<TKey>>
   extends events.EventEmitter implements IEntityCache<TKey, TEntity> {
 
-  private static readonly LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "EntityCacheImpl");
+  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "EntityCacheImpl");
   private readonly database: Database;
   private readonly model: Sequelize.Model<TEntity, any>;
   private readonly updatingCounter: Map<TKey, number> = new Map()

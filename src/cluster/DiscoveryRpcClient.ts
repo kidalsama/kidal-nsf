@@ -16,7 +16,7 @@ export default class DiscoveryRpcClient {
   // 单例
   public static readonly S = new DiscoveryRpcClient();
   // 日志
-  private static readonly LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "DiscoveryRpcClient");
+  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "DiscoveryRpcClient");
   // 连接池
   private readonly _poolMap: Map<string, any> = new Map();
 

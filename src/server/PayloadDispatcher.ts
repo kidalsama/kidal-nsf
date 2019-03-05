@@ -1,68 +1,27 @@
 import Payload from "./IPayload";
-import glob from "glob";
 import ISession from "./ISession";
 import Logs from "../application/Logs";
 import LudmilaError from "../error/LudmilaError";
 import LudmilaErrors from "../error/LudmilaErrors";
-import IApiRegistry from "./IApiRegistry";
-import Environment from "../application/Environment";
 import * as clsHooked from "cls-hooked";
 import * as graphqlHTTP from "express-graphql";
 import {Request, Response} from "express";
 import Maybe from "graphql/tsutils/Maybe";
+import WebSocketApiManager from "./websocket/WebSocketApiManager";
 
 /**
  * @author tengda
  */
 export default class PayloadDispatcher {
-  // 单例
   public static readonly S = new PayloadDispatcher();
-  // log
-  private static readonly LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "PayloadDispatcher");
-  // 处理器钩子
+  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "PayloadDispatcher");
   private readonly handlerCls = clsHooked.createNamespace("foundation.server.PayloadDispatcher.handler");
-  // 接口
-  private readonly apis: Map<string, IApiRegistry<any, any>> = new Map();
 
   /**
    * 单例
    */
   private constructor() {
 
-  }
-
-  /**
-   * 初始化处理器
-   */
-  public async init() {
-    const env = Environment.S;
-
-    // 注册接口
-    const contexts: Array<{ path: string, registry: IApiRegistry<any, any> }> = glob
-      .sync(`${env.srcDir}/module/**/api/*.js`)
-      .map((it: string) => ({path: it, registry: require(it).default}));
-
-    for (const context of contexts) {
-      // 类型
-      const path = context.path;
-      const indexOfModule = path.lastIndexOf("/module/");
-      const indexOfApi = path.lastIndexOf("/api/");
-      const type0 = path.substring(indexOfModule + "/module/".length, indexOfApi);
-      const type1 = path.substring(indexOfApi + "/api/".length);
-      const type = type0 + "/" + type1.substring(0, type1.length - ".js".length);
-
-      // 检查
-      if (this.apis.has(type)) {
-        throw new Error(`Api ${type} already registered.`);
-      }
-
-      // 缓存
-      Reflect.set(context.registry, "type", type)
-      this.apis.set(type, context.registry);
-
-      // log
-      PayloadDispatcher.LOG.info(`Registered api: ${type}`);
-    }
   }
 
   /**
@@ -107,7 +66,7 @@ export default class PayloadDispatcher {
     }
 
     // 获取定义
-    const registry = this.apis.get(payload.type);
+    const registry = WebSocketApiManager.S.getRegistry(payload.type);
     if (!registry) {
       throw new LudmilaError(LudmilaErrors.SERVER_WEBSOCKET_NO_HANDLER);
     }
@@ -115,24 +74,14 @@ export default class PayloadDispatcher {
     // 钩住处理器
     return new Promise<{ reply: any, sync: any }>((resolve, reject) => {
       this.handlerCls.run(() => {
-        // 准备上下文
-        const context = {
-          data: payload.data,
-          payload,
-          session,
-        };
-
         // 同步
-        const sync = {
-          full: [],
-          partial: [],
-        };
+        const sync = {full: [], partial: []};
 
         // 设置参数
         this.handlerCls.set("sync", sync);
 
         // 执行
-        registry.handle(context)
+        registry.processPayload(payload.data, {payload, session})
           .then((reply) => {
             resolve({reply, sync});
           })

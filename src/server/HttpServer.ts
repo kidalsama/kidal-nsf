@@ -12,7 +12,7 @@ import Environment from "../application/Environment";
  */
 export default class HttpServer {
   public static readonly S = new HttpServer();
-  private static readonly LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "HttpServer");
+  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "HttpServer");
   public readonly expressApp: express.Express;
   public readonly server: http.Server;
 

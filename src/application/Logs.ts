@@ -7,7 +7,7 @@ import * as path from "path";
  */
 export default class Logs {
   // 单例
-  public static readonly INSTANCE = new Logs();
+  public static readonly S = new Logs();
   private static readonly FAKE_TARGET: any = {};
 
   /**

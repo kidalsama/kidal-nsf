@@ -20,7 +20,7 @@ export default class Database extends events.EventEmitter {
     super();
   }
 
-  private static readonly LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "Database");
+  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "Database");
   private _sequelize?: Sequelize.Sequelize;
   private readonly caches: Map<string, IEntityCache<any, any>> = new Map();
   private readonly models: Map<string, Sequelize.Model<any, any>> = new Map();

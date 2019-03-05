@@ -16,7 +16,7 @@ export default class WebSocketSessionManager implements ISessionManager {
   // 单例
   public static readonly S = new WebSocketSessionManager();
   // log
-  private static readonly LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "WebSocketSessionManager");
+  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "WebSocketSessionManager");
   // 匿名会话
   private readonly anonymous: Map<string, WebSocketSession> = new Map();
   // 已认证会话
