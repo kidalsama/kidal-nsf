@@ -6,6 +6,8 @@ import Logs from "../application/Logs";
 import Environment from "../application/Environment";
 import * as os from "os";
 import Rpc from "../cluster/Rpc";
+import LudmilaError from "../error/LudmilaError";
+import LudmilaErrors from "../error/LudmilaErrors";
 
 /**
  * @author tengda
@@ -47,8 +49,14 @@ export default class HttpServer {
           res.status(200).json(ret)
         })
         .catch((e) => {
-          HttpServer.LOG.error(e);
-          res.status(404).end();
+          if (e instanceof LudmilaError) {
+            res.status(200).json({error: {code: e.code, message: e.message}})
+          } else {
+            if (HttpServer.LOG.isDebugEnabled()) {
+              HttpServer.LOG.error(e)
+            }
+            res.status(200).json({error: {code: LudmilaErrors.FAIL, message: e.message}})
+          }
         })
     });
 
