@@ -16,11 +16,8 @@ import PayloadDispatcher from "../PayloadDispatcher";
 export default class GraphQLServer {
   // 单例
   public static readonly S = new GraphQLServer();
-  private static readonly LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "GraphQLServer");
+  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "GraphQLServer");
 
-  /**
-   * 单例
-   */
   private constructor() {
 
   }
@@ -35,7 +32,7 @@ export default class GraphQLServer {
     const env = Environment.S;
     const config = env.applicationConfig.server.graphQL;
 
-    // 读取
+    // 读取格式和解析器
     const {schema, resolvers} = this.loadSchemaAndResolvers(env);
     if (schema === null || resolvers === null) {
       GraphQLServer.LOG.info("No graphql autowired");
@@ -70,7 +67,7 @@ export default class GraphQLServer {
 
   private loadSchemaAndResolvers(env: Environment) {
     const pieces = glob
-      .sync(`${env.srcDir}/graphql/**/*.js`)
+      .sync(`${env.srcDir}/**/graphql/**/*.js`)
       .map((it: string) => require(it).default);
     if (pieces.length === 0) {
       return {schema: null, resolvers: null};

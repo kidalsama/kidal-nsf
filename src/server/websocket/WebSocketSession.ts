@@ -11,7 +11,7 @@ import LudmilaErrors from "../../error/LudmilaErrors";
  */
 export default class WebSocketSession implements ISession {
   // log
-  private static readonly LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "WebSocketSession");
+  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "WebSocketSession");
   // 管理器
   public readonly manager: WebSocketSessionManager;
   // WebSocket对象

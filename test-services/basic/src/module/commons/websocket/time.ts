@@ -1,4 +1,7 @@
-import IApiRegistry, {IHandlePayloadContext} from "../../../../../../src/server/IApiRegistry";
+import {
+  IWebSocketApiRegistry,
+  IWebSocketProcessPayloadContext,
+} from "../../../../../../src/server/websocket/WebSocketApiManager";
 import GraphQLUnits from "../../../../../../src/server/graphql/GraphQLUnits";
 
 interface IArgs {
@@ -13,12 +16,12 @@ interface IResults {
   testingNull: string | null;
 }
 
-class Registry implements IApiRegistry<IArgs, IResults> {
+class Registry implements IWebSocketApiRegistry<IArgs, IResults> {
   public readonly type: string = null!;
 
-  public async handle(args: IHandlePayloadContext<IArgs, IResults>): Promise<IResults> {
+  public async processPayload(args: IArgs, ctx: IWebSocketProcessPayloadContext): Promise<IResults> {
     return {
-      format: GraphQLUnits.dateUnit(new Date(), {unit: args.data.fmt}),
+      format: GraphQLUnits.dateUnit(new Date(), {unit: args.fmt}),
       timestamp: GraphQLUnits.dateUnit(new Date(), {unit: "timestamp"}),
       date: GraphQLUnits.dateUnit(new Date(), {unit: "date"}),
       datetime: GraphQLUnits.dateUnit(new Date(), {unit: "datetime"}),

@@ -149,6 +149,13 @@ ${JSON.stringify(this.applicationConfig, null, 2)}
   }
 
   /**
+   * 环境
+   */
+  public get profiles(): string[] {
+    return this.applicationConfig.profiles;
+  }
+
+  /**
    * 主要环境
    */
   public get majorProfile(): string {

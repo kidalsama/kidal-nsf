@@ -5,11 +5,11 @@ import Database from "../data/Database";
 import DiscoveryClient from "../cluster/DiscoveryClient";
 import GraphQLServer from "../server/graphql/GraphQLServer";
 import WebSocketServer from "../server/websocket/WebSocketServer";
-import PayloadDispatcher from "../server/PayloadDispatcher";
 import HttpServer from "../server/HttpServer";
 import DiscoveryRpcClient from "../cluster/DiscoveryRpcClient";
 import {RpcPayloadDispatcher} from "../cluster/IRpcPayload";
 import {applicationBanner} from "./ApplicationConstants";
+import WebSocketApiManager from "../server/websocket/WebSocketApiManager";
 
 /**
  * @author tengda
@@ -61,7 +61,7 @@ export default class Application {
     await env.boot()
 
     // 静态初始化
-    this.LOG = Logs.INSTANCE.getFoundationLogger(__dirname, "Application");
+    this.LOG = Logs.S.getFoundationLogger(__dirname, "Application");
     this._INSTANCE = new Application();
 
     // 启动
@@ -90,7 +90,7 @@ export default class Application {
     await GraphQLServer.S.init();
     await WebSocketServer.S.init();
     await RpcPayloadDispatcher.S.init();
-    await PayloadDispatcher.S.init();
+    await WebSocketApiManager.S.init();
     await HttpServer.S.start();
   }
 

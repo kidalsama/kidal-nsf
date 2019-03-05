@@ -30,4 +30,17 @@ query time {
       })
     expect(resp.status).toBe(200)
   });
+
+  it("Error", async () => {
+    const resp = await request(HttpServer.S.expressApp)
+      .post("/graphql")
+      .send({
+        query: `
+query error {
+  error
+}`,
+      })
+    expect(resp.status).toBe(200)
+    expect(resp.body).toHaveProperty("errors")
+  });
 });
