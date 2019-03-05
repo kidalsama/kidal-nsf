@@ -62,13 +62,13 @@ export default class PayloadDispatcher {
   public async dispatchWebSocket(session: Maybe<ISession>, payload: Payload): Promise<{ reply: any, sync: any }> {
     // 检查必要数据
     if (!payload.type) {
-      throw new LudmilaError(LudmilaErrors.SERVER_WEBSOCKET_INVALID_PAYLOAD);
+      throw new LudmilaError(LudmilaErrors.SERVER_101);
     }
 
     // 获取定义
     const registry = WebSocketApiManager.S.getRegistry(payload.type);
     if (!registry) {
-      throw new LudmilaError(LudmilaErrors.SERVER_WEBSOCKET_NO_HANDLER);
+      throw new LudmilaError(LudmilaErrors.SERVER_102);
     }
 
     // 钩住处理器

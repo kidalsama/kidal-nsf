@@ -71,8 +71,18 @@ export interface IDataSourceMysqlConfig {
  */
 export interface IClusterConfig {
   enabled: boolean;
+  javaClusterMap: { [key: string]: IJavaClusterEndpoint };
   discoveryClientType: string;
   zookeeper: IClusterZookeeperConfig;
+}
+
+/**
+ * Java集群终端配置
+ */
+export interface IJavaClusterEndpoint {
+  host: string;
+  port: number;
+  path: string;
 }
 
 /**
@@ -115,6 +125,13 @@ export const DEFAULT_APPLICATION_CONFIG: IApplicationConfig = {
   },
   cluster: {
     enabled: true,
+    javaClusterMap: {
+      oa: {
+        host: "127.0.0.1",
+        port: 22130,
+        path: "ms/oa",
+      },
+    },
     discoveryClientType: "zookeeper",
     zookeeper: {
       connectionString: "39.106.136.198:2181",
