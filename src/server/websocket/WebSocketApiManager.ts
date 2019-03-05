@@ -33,7 +33,7 @@ export interface IWebSocketApiRegistry<TArgs, TResults> {
  */
 export default class WebSocketApiManager {
   public static readonly S = new WebSocketApiManager()
-  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "PayloadDispatcher");
+  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "WebSocketApiManager");
   private readonly registryMap: Map<string, IWebSocketApiRegistry<any, any>> = new Map();
 
   /**

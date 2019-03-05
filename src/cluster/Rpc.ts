@@ -6,17 +6,16 @@ import Logs from "../application/Logs";
 import LudmilaError from "../error/LudmilaError";
 import LudmilaErrors from "../error/LudmilaErrors";
 import {IRpcArgs} from "./IRpcPayload";
-import Application from "../application/Application";
 import Environment from "../application/Environment";
 
 /**
  * @author tengda
  */
-export default class DiscoveryRpcClient {
+export default class Rpc {
   // 单例
-  public static readonly S = new DiscoveryRpcClient();
+  public static readonly S = new Rpc();
   // 日志
-  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "DiscoveryRpcClient");
+  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "Rpc");
   // 连接池
   private readonly _poolMap: Map<string, any> = new Map();
 
@@ -33,7 +32,7 @@ export default class DiscoveryRpcClient {
   public async init() {
     // 检查是否启用
     if (!Environment.S.applicationConfig.cluster.enabled) {
-      DiscoveryRpcClient.LOG.info("Cluster disabled");
+      Rpc.LOG.info("Cluster disabled");
       return;
     }
 
@@ -45,7 +44,7 @@ export default class DiscoveryRpcClient {
    */
   private _onNodesChanged() {
     this._poolMap.clear();
-    DiscoveryRpcClient.LOG.info("Cleared pool");
+    Rpc.LOG.info("Cleared pool");
   }
 
   /**
@@ -91,11 +90,11 @@ export default class DiscoveryRpcClient {
           },
           (err: Error | null, res: http.IncomingMessage, bodyString: string | null) => {
             if (err) {
-              DiscoveryRpcClient.LOG.warn(err);
+              Rpc.LOG.warn(err);
               reject(new LudmilaError(LudmilaErrors.CLUSTER_DISCOVERY_RPC_CLIENT_NODE_NOT_AVAILABLE));
             } else {
               if (res.statusCode !== 200) {
-                DiscoveryRpcClient.LOG.error("Rpc response none status 200: %s, %s", res.statusCode, bodyString);
+                Rpc.LOG.error("Rpc response none status 200: %s, %s", res.statusCode, bodyString);
                 reject(new LudmilaError(LudmilaErrors.CLUSTER_DISCOVERY_RPC_CLIENT_STATUS_NOT_200));
               } else {
                 if (bodyString === null) {
@@ -105,7 +104,7 @@ export default class DiscoveryRpcClient {
                   try {
                     body = JSON.parse(bodyString);
                   } catch (e) {
-                    DiscoveryRpcClient.LOG.warn(e);
+                    Rpc.LOG.warn(e);
                     reject(new LudmilaError(LudmilaErrors.CLUSTER_DISCOVERY_RPC_CLIENT_INVALID_PAYLOAD));
                   }
                   if (body.hasOwnProperty("error")) {

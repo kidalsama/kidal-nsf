@@ -6,7 +6,7 @@ import DiscoveryClient from "../cluster/DiscoveryClient";
 import GraphQLServer from "../server/graphql/GraphQLServer";
 import WebSocketServer from "../server/websocket/WebSocketServer";
 import HttpServer from "../server/HttpServer";
-import DiscoveryRpcClient from "../cluster/DiscoveryRpcClient";
+import Rpc from "../cluster/Rpc";
 import {RpcPayloadDispatcher} from "../cluster/IRpcPayload";
 import {applicationBanner} from "./ApplicationConstants";
 import WebSocketApiManager from "../server/websocket/WebSocketApiManager";
@@ -84,7 +84,7 @@ export default class Application {
 
     // 启动发现服务
     await DiscoveryClient.S.init();
-    await DiscoveryRpcClient.S.init();
+    await Rpc.S.init();
 
     // 启动服务器
     await GraphQLServer.S.init();
