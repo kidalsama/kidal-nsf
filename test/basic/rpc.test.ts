@@ -5,13 +5,9 @@ describe("Basic: Rpc", () => {
   const waitDiscoveryTimeout = 5 * 1000
 
   beforeAll(async () => {
-    return new Promise((resolve) => {
-      Application.runTest("basic")
-        .then(() => {
-          setTimeout(resolve, waitDiscoveryTimeout) // 等待Discovery同步
-        });
-    })
-  }, waitDiscoveryTimeout + 2000)
+    await Application.runTest("basic")
+    await new Promise((resolve, reject) => setTimeout(resolve, waitDiscoveryTimeout))
+  }, waitDiscoveryTimeout + 3 * 1000)
 
   afterAll(async () => {
     await Application.S.shutdown()
