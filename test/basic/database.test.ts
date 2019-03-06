@@ -8,8 +8,8 @@ describe("Basic: IEntityCache", () => {
   let userCache: IEntityCache<number, IUser>
   beforeAll(async () => {
     await Application.runTest("basic");
-    userCache = Database.S.getCache("999_user")
-    Database.S.getModel("999_user")
+    userCache = Database.acquire().getCache("user")
+    Database.acquire().getModel("user")
   })
 
   afterAll(async () => {

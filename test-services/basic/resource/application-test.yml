@@ -1,17 +1,29 @@
 id: "901"
 profiles:
-- test
+- "test"
 configServer:
   type: "local"
 server:
   port: 0
 data:
   dropTableOnInit: true
-  dataSourceMysql:
-    host: 39.105.87.12 # DATABASE_HOST
-    username: mcg # DATABASE_USERNAME
-    password: Mcg!2345 # DATABASE_PASSWORD
-    database: test_node_server_foundation # DATABASE_DATABASE
+  databaseMap:
+    primary:
+      dialect: "mysql"
+      host: "39.105.87.12" # CI: data.databaseMap.primary.host
+      port: 3306
+      username: "mcg" # CI: data.databaseMap.primary.username
+      password: "Mcg!2345" # CI: data.databaseMap.primary.password
+      database: "test_node_server_foundation" # CI: data.databaseMap.primary.database
+      timezone: "Asia/Shanghai"
+    secondary:
+      dialect: "mysql"
+      host: "39.105.87.12" # CI: data.databaseMap.secondary.host
+      port: 3306
+      username: "mcg" # CI: data.databaseMap.secondary.username
+      password: "Mcg!2345" # CI: data.databaseMap.secondary.password
+      database: "test_node_server_foundation_2" # CI: data.databaseMap.secondary.database
+      timezone: "Asia/Shanghai"
 cluster:
   enabled: true
   javaClusterMap:

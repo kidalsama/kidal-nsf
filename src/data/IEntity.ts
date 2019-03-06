@@ -1,5 +1,6 @@
 import Sequelize = require("sequelize");
 import * as events from "events";
+import Database from "./Database";
 
 /**
  * @author tengda
@@ -87,6 +88,11 @@ export interface IEntityCache<TKey extends number | string, TEntity extends IEnt
  * @author tengda
  */
 export interface IEntityRegistry<TKey extends number | string, TEntity extends IEntityBase<TKey>> {
+  /**
+   * 数据库
+   */
+  readonly database: Database;
+
   /**
    * 数据模型
    */

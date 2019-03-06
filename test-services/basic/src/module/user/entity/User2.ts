@@ -2,7 +2,7 @@ import {IEntityBase, IEntityCache, IEntityRegistry} from "../../../../../../src/
 import Database from "../../../../../../src/data/Database";
 import Sequelize from "sequelize";
 
-export interface IUser extends IEntityBase<number> {
+export interface IUser2 extends IEntityBase<number> {
   id: number;
   username: string;
   password: string;
@@ -10,9 +10,9 @@ export interface IUser extends IEntityBase<number> {
   updatedAt: Date;
 }
 
-const database = Database.acquire()
-const model = database.sequelize.define<IUser, any>(
-  "user",
+const database = Database.acquire("secondary")
+const model = database.sequelize.define<IUser2, any>(
+  "user2",
   {
     id: {
       type: Sequelize.INTEGER,
@@ -46,16 +46,16 @@ const model = database.sequelize.define<IUser, any>(
     ],
   });
 
-class Registry implements IEntityRegistry<number, IUser> {
+class Registry implements IEntityRegistry<number, IUser2> {
   public get database(): Database {
     return database
   }
 
-  public get model(): Sequelize.Model<IUser, any> {
+  public get model(): Sequelize.Model<IUser2, any> {
     return model;
   }
 
-  public readonly cache: IEntityCache<number, IUser> = null!
+  public readonly cache: IEntityCache<number, IUser2> = null!
 }
 
 export default new Registry();

@@ -90,7 +90,7 @@ export default class Rpc {
     const payload = JSON.stringify({module, method, data: args})
 
     // async
-    return new Promise<TResults>((resolve, reject) => {
+    return await new Promise<TResults>((resolve, reject) => {
       // 发送载荷
       pool.request(
         {
