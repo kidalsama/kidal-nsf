@@ -8,7 +8,7 @@ export default class UserService {
 
   private constructor() {
     // 自动同步
-    Database.S.getCache<number, IUser>("999_user")
+    Database.acquire().getCache<number, IUser>("user")
       .on(EntityEvents.FIELD_UPDATED, (id: number, key: string, value: any) => {
         PayloadDispatcher.S.addSyncPartial("User", id, key, value);
       });

@@ -1,0 +1,28 @@
+id: "901"
+profiles:
+- "dev"
+configServer:
+  type: "local"
+server:
+  port: 29011
+data:
+  enabled: true
+  databaseMap:
+    primary:
+      dialect: "mysql"
+      host: "39.105.87.12"
+      port: 3306
+      username: "mcg"
+      password: "Mcg!2345"
+      database: "dev_node_server_foundation"
+      timezone: "Asia/Shanghai"
+    secondary:
+      dialect: "mysql"
+      host: "39.105.87.12"
+      port: 3306
+      username: "mcg"
+      password: "Mcg!2345"
+      database: "dev_node_server_foundation_2"
+      timezone: "Asia/Shanghai"
+cluster:
+  enabled: true

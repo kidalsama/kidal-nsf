@@ -51,13 +51,15 @@ export interface IDataConfig {
   enabled: boolean;
   dropTableOnInit: boolean;
   autoUpdateChangedFields: boolean;
-  dataSourceMysql: IDataSourceMysqlConfig;
+  databaseMap: { [key: string]: IDatabaseConfig };
 }
 
 /**
- * MySQL 数据源配置
+ * 数据库配置
  */
-export interface IDataSourceMysqlConfig {
+export interface IDatabaseConfig {
+  alias?: string;
+  dialect: string;
   host: string;
   port: number;
   username: string;
@@ -114,13 +116,16 @@ export const DEFAULT_APPLICATION_CONFIG: IApplicationConfig = {
     enabled: true,
     dropTableOnInit: false,
     autoUpdateChangedFields: true,
-    dataSourceMysql: {
-      host: "192.168.93.222",
-      port: 3306,
-      username: "mcg",
-      password: "Mcg!2345",
-      database: "mcg_games_servers",
-      timezone: "Asia/Shanghai",
+    databaseMap: {
+      primary: {
+        dialect: "mysql",
+        host: "192.168.93.222",
+        port: 3306,
+        username: "mcg",
+        password: "Mcg!2345",
+        database: "mcg_games_servers",
+        timezone: "Asia/Shanghai",
+      },
     },
   },
   cluster: {

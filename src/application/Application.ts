@@ -80,7 +80,7 @@ export default class Application {
   // 启动应用
   private async boot() {
     // 启动数据库
-    await Database.S.init();
+    await Database.initAll()
 
     // 启动服务器
     await GraphQLServer.S.init();
@@ -112,6 +112,6 @@ export default class Application {
     await DiscoveryClient.S.shutdown()
 
     // 关闭数据库
-    await Database.S.shutdown()
+    await Database.shutdownAll()
   }
 }
