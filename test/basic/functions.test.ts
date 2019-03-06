@@ -2,6 +2,7 @@ import Application from "../../src/application/Application";
 import Environment from "../../src/application/Environment";
 import LudmilaError from "../../src/error/LudmilaError";
 import LudmilaErrors from "../../src/error/LudmilaErrors";
+import DiscoveryClient from "../../src/cluster/DiscoveryClient";
 
 describe("Basic: Functions", () => {
   beforeAll(async () => {
@@ -28,5 +29,12 @@ describe("Basic: Functions", () => {
     } catch (e) {
       // ignored
     }
+  });
+
+  it("DiscoveryClient", async () => {
+    const discoveryClient = DiscoveryClient.S
+
+    discoveryClient.getNodes()
+    discoveryClient.getNodeIds()
   });
 });
