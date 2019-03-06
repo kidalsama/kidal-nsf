@@ -1,4 +1,3 @@
-import IRpcPayload from "./IRpcPayload";
 import Logs from "../application/Logs";
 import Environment from "../application/Environment";
 import glob from "glob";
