@@ -271,6 +271,13 @@ export default class DiscoveryClient extends events.EventEmitter {
   }
 
   /**
+   * 重新连接
+   */
+  public async reconnect() {
+    this.zk.close()
+  }
+
+  /**
    * 获取全部节点
    */
   public getNodes(): INode[] {
