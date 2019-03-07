@@ -34,7 +34,10 @@ describe("Basic: Functions", () => {
   it("DiscoveryClient", async () => {
     const discoveryClient = DiscoveryClient.S
 
-    discoveryClient.getNodes()
-    discoveryClient.getNodeIds()
+    const nodes = discoveryClient.getNodes()
+    const ids = discoveryClient.getNodeIds()
+
+    expect(nodes).not.toBeNull()
+    expect(ids).not.toBeNull()
   });
 });

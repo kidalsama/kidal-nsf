@@ -6,10 +6,10 @@ configServer:
 server:
   port: 0
 data:
-  dropTableOnInit: true
   databaseMap:
     primary:
       dialect: "mysql"
+      dropTableOnInit: true
       host: "39.105.87.12" # CI: data.databaseMap.primary.host
       port: 3306
       username: "mcg" # CI: data.databaseMap.primary.username
@@ -18,6 +18,7 @@ data:
       timezone: "Asia/Shanghai"
     secondary:
       dialect: "mysql"
+      dropTableOnInit: true
       host: "39.105.87.12" # CI: data.databaseMap.secondary.host
       port: 3306
       username: "mcg" # CI: data.databaseMap.secondary.username

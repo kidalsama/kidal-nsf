@@ -70,9 +70,25 @@ export default class Database extends events.EventEmitter {
     super();
   }
 
+  private _name?: string;
+  private _config?: IDatabaseConfig;
   private _sequelize?: Sequelize.Sequelize;
   private readonly caches: Map<string, IEntityCache<any, any>> = new Map();
   private readonly models: Map<string, Sequelize.Model<any, any>> = new Map();
+
+  /**
+   * 数据库名
+   */
+  public get name() {
+    return this._name!;
+  }
+
+  /**
+   * 配置
+   */
+  public get config(): IDatabaseConfig {
+    return this._config!;
+  }
 
   /**
    * ORM框架
@@ -89,14 +105,14 @@ export default class Database extends events.EventEmitter {
   }
 
   // 获取数据库配置
-  private getDatabaseConfig(name: string): IDatabaseConfig {
+  private loadDatabaseConfig(name: string): IDatabaseConfig {
     const databaseMap = Environment.S.applicationConfig.data.databaseMap
-    const databaseConfig: Maybe<IDatabaseConfig> = databaseMap[name];
+    let databaseConfig: Maybe<IDatabaseConfig> = databaseMap[name];
     if (!databaseConfig) {
       throw new Error(`Database config ${name} not found`)
     }
     if (databaseConfig.alias) {
-      return this.getDatabaseConfig(databaseConfig.alias)
+      databaseConfig = this.loadDatabaseConfig(databaseConfig.alias)
     }
     return databaseConfig
   }
@@ -111,7 +127,8 @@ export default class Database extends events.EventEmitter {
     }
 
     // 读取配置
-    const databaseConfig = this.getDatabaseConfig(name)
+    this._name = name
+    this._config = this.loadDatabaseConfig(name)
 
     // 配置数据库
     const Op = Sequelize.Op;
@@ -155,13 +172,13 @@ export default class Database extends events.EventEmitter {
 
     // 初始化
     this._sequelize = new Sequelize({
-      host: databaseConfig.host,
-      port: databaseConfig.port,
-      username: databaseConfig.username,
-      password: databaseConfig.password,
-      database: databaseConfig.database,
-      timezone: databaseConfig.timezone,
-      dialect: databaseConfig.dialect,
+      host: this._config.host,
+      port: this._config.port,
+      username: this._config.username,
+      password: this._config.password,
+      database: this._config.database,
+      timezone: this._config.timezone,
+      dialect: this._config.dialect,
       dialectOptions: {
         supportBigNumbers: true,
         bigNumberStrings: true,
@@ -260,7 +277,7 @@ export default class Database extends events.EventEmitter {
 
       // 初始化
       Reflect.set(registry, "cache", cache)
-      await registry.model.sync({force: env.applicationConfig.data.dropTableOnInit})
+      await registry.model.sync({force: this._config!.dropTableOnInit})
 
       // log
       Database.LOG.info(`Registered cache: ${name}`);

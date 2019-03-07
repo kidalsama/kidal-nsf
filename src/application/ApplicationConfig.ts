@@ -49,8 +49,6 @@ export interface IServerWebSocketConfig {
  */
 export interface IDataConfig {
   enabled: boolean;
-  dropTableOnInit: boolean;
-  autoUpdateChangedFields: boolean;
   databaseMap: { [key: string]: IDatabaseConfig };
 }
 
@@ -60,6 +58,8 @@ export interface IDataConfig {
 export interface IDatabaseConfig {
   alias?: string;
   dialect: string;
+  dropTableOnInit: boolean;
+  autoUpdateChangedFields: boolean;
   host: string;
   port: number;
   username: string;
@@ -114,11 +114,11 @@ export const DEFAULT_APPLICATION_CONFIG: IApplicationConfig = {
   },
   data: {
     enabled: true,
-    dropTableOnInit: false,
-    autoUpdateChangedFields: true,
     databaseMap: {
       primary: {
         dialect: "mysql",
+        dropTableOnInit: false,
+        autoUpdateChangedFields: true,
         host: "192.168.93.222",
         port: 3306,
         username: "mcg",
