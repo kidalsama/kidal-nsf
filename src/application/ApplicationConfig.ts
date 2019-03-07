@@ -58,14 +58,15 @@ export interface IDataConfig {
 export interface IDatabaseConfig {
   alias?: string;
   dialect: string;
-  dropTableOnInit: boolean;
-  autoUpdateChangedFields: boolean;
   host: string;
   port: number;
   username: string;
   password: string;
   database: string;
   timezone: string;
+  dropTableOnInit?: boolean;
+  suppressSyncTableOnInit?: boolean;
+  suppressAutoUpdateChangedFields?: boolean;
 }
 
 /**
@@ -117,8 +118,6 @@ export const DEFAULT_APPLICATION_CONFIG: IApplicationConfig = {
     databaseMap: {
       primary: {
         dialect: "mysql",
-        dropTableOnInit: false,
-        autoUpdateChangedFields: true,
         host: "192.168.93.222",
         port: 3306,
         username: "mcg",

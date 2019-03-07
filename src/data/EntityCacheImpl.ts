@@ -107,7 +107,7 @@ export default class EntityCacheImpl<TKey extends number | string, TEntity exten
    */
   private _onSingleFieldUpdated(id: TKey, propertyKey: string, value: any): void {
     // 回写到数据库
-    if (this.database.config.autoUpdateChangedFields) {
+    if (!this.database.config.suppressAutoUpdateChangedFields) {
       // 更新计数器
       this._incDecUpdatingCounter(id, true)
 

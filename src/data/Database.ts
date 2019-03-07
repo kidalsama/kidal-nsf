@@ -277,7 +277,11 @@ export default class Database extends events.EventEmitter {
 
       // 初始化
       Reflect.set(registry, "cache", cache)
-      await registry.model.sync({force: this._config!.dropTableOnInit})
+      if (this.config.dropTableOnInit) {
+        await registry.model.sync({force: this._config!.dropTableOnInit})
+      } else if (!this.config.suppressSyncTableOnInit) {
+        await registry.model.sync()
+      }
 
       // log
       Database.LOG.info(`Registered cache: ${name}`);
