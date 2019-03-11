@@ -37,7 +37,13 @@ type ${name}PageArgs {
   before: String
 }`
   },
-  makeConnection<TNode>(connection: Connection<TNode>): any {
+  makeConnection<TNode>(
+    connection: Connection<TNode>,
+    transform?: (node: TNode) => TNode,
+  ): any {
+    if (transform) {
+      connection = connection.map(transform)
+    }
     return {
       edges: connection.edges,
       nodes: connection.edges.map((it) => it.node),

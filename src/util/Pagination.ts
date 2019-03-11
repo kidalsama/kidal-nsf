@@ -150,9 +150,14 @@ export class Connection<TNode> {
   /**
    * 转换
    */
-  public map<R>(transform: (node?: TNode) => R): Connection<R> {
+  public map<R>(transform: (node: TNode) => R): Connection<R> {
     return new Connection<R>(
-      this.edges.map((it) => ({node: transform(it.node), cursor: it.cursor})),
+      this.edges.map((it) => {
+        return {
+          node: it.node ? transform(it.node) : undefined,
+          cursor: it.cursor,
+        }
+      }),
       this.totalCount,
       this.startCursor,
       this.endCursor,
