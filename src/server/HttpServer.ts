@@ -8,6 +8,7 @@ import Environment from "../application/Environment";
 import * as os from "os";
 import Rpc from "../cluster/Rpc";
 import LudmilaError from "../error/LudmilaError";
+import cors from "cors";
 import LudmilaErrors from "../error/LudmilaErrors";
 
 /**
@@ -32,12 +33,13 @@ export default class HttpServer {
     this.expressApp.use("/static", express.static("public"));
 
     // 跨域
-    this.expressApp.all("*", (req, res, next) => {
-      res.header("Access-Control-Allow-Origin", "*");
-      res.header("Access-Control-Allow-Headers", "Content-Type");
-      res.header("Access-Control-Allow-Methods", "OPTIONS,GET,POST");
-      next();
-    });
+    this.expressApp.use(cors())
+    // this.expressApp.all("*", (req, res, next) => {
+    //   res.header("Access-Control-Allow-Origin", "*");
+    //   res.header("Access-Control-Allow-Headers", "Content-Type");
+    //   res.header("Access-Control-Allow-Methods", "OPTIONS,GET,POST");
+    //   next();
+    // });
 
     // 路由
     this.expressApp.get("/", (req, res) => {
