@@ -68,15 +68,21 @@ export default class GraphQLServer {
   private loadSchemaAndResolvers(env: Environment) {
     const pieces = glob
       .sync(`${env.srcDir}/**/graphql/**/*.js`)
-      .map((it: string) => require(it).default);
+      .map((it: string) => require(it).default)
+      .filter((it: any) => !!it);
     if (pieces.length === 0) {
       return {schema: null, resolvers: null};
     }
 
-    const source = mergeTypes(pieces.map((it: any) => it.schema), {all: true});
+    const source = mergeTypes(
+      pieces.map((it: any) => it.schema).filter((it: any) => !!it),
+      {all: true},
+    );
     // GraphQLServer.LOG.debug(`Merged Schema\n${source}`);
     const schema = buildSchema(source);
-    const resolvers = mergeResolvers(pieces.map((it: any) => it.resolver));
+    const resolvers = mergeResolvers(
+      pieces.map((it: any) => it.resolver).filter((it: any) => !!it),
+    );
 
     return {schema, resolvers};
   }
