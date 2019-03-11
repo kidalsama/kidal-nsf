@@ -1,4 +1,5 @@
-import {Connection} from "../../util/Pagination";
+import {Connection, DEFAULT_LIMIT, DEFAULT_PAGE, MAX_LIMIT, PageArgs} from "../../util/Pagination";
+import Maybe from "graphql/tsutils/Maybe";
 
 export default {
   makeConnectionSchema(name: string) {
@@ -61,5 +62,18 @@ type ${name}PageArgs {
         before: connection.pageArgs.before,
       },
     }
+  },
+  parsePageArgs(args: { page: Maybe<number>, limit: Maybe<number> }): PageArgs {
+    let fixedPage = args.page ? args.page : DEFAULT_PAGE
+    if (fixedPage < 1) {
+      fixedPage = 1
+    }
+    let fixedLimit = args.limit ? args.limit : DEFAULT_LIMIT
+    if (fixedLimit < 0) {
+      fixedLimit = 0
+    } else if (fixedLimit > MAX_LIMIT) {
+      fixedLimit = MAX_LIMIT
+    }
+    return PageArgs.page(fixedPage, fixedLimit)
   },
 }

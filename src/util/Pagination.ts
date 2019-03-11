@@ -75,7 +75,7 @@ export class PageArgs {
    * 起始位置
    */
   public get offset(): number {
-    return this.page * this.limit
+    return (this.page - 1) * this.limit
   }
 }
 
