@@ -1,3 +1,5 @@
+import {Connection} from "../../util/Pagination";
+
 export default {
   makeConnectionSchema(name: string) {
     return `type ${name}Edge {
@@ -7,7 +9,7 @@ export default {
 	cursor: String
 }
 
-type OaFieldConnection {
+type ${name}Connection {
 	# 节点列表
 	nodes: [${name}!]!
 	# 边列表
@@ -34,5 +36,24 @@ type ${name}PageArgs {
   last: Int
   before: String
 }`
+  },
+  makeConnection<TNode>(connection: Connection<TNode>): any {
+    return {
+      edges: connection.edges,
+      nodes: connection.edges.map((it) => it.node),
+      totalCount: connection.totalCount,
+      startCursor: connection.startCursor,
+      endCursor: connection.endCursor,
+      hasNextPage: connection.hasNextPage,
+      hasPreviousPage: connection.hasPreviousPage,
+      pageArgs: {
+        page: connection.pageArgs.page,
+        limit: connection.pageArgs.limit,
+        first: connection.pageArgs.first,
+        after: connection.pageArgs.after,
+        last: connection.pageArgs.last,
+        before: connection.pageArgs.before,
+      },
+    }
   },
 }
