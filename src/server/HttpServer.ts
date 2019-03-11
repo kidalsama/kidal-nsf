@@ -1,4 +1,5 @@
 import * as bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import express from "express";
 import {Request, Response} from "express-serve-static-core";
 import * as http from "http";
@@ -27,6 +28,7 @@ export default class HttpServer {
 
     this.expressApp.use(bodyParser.urlencoded({extended: false}));
     this.expressApp.use(bodyParser.json());
+    this.expressApp.use(cookieParser());
     this.expressApp.use("/static", express.static("public"));
 
     // 跨域
