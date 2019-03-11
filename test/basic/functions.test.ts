@@ -3,6 +3,7 @@ import Environment from "../../src/application/Environment";
 import LudmilaError from "../../src/error/LudmilaError";
 import LudmilaErrors from "../../src/error/LudmilaErrors";
 import DiscoveryClient from "../../src/cluster/DiscoveryClient";
+import GraphQLUtils from "../../src/server/graphql/GraphQLUtils";
 
 describe("Basic: Functions", () => {
   beforeAll(async () => {
@@ -39,5 +40,11 @@ describe("Basic: Functions", () => {
 
     expect(nodes).not.toBeNull()
     expect(ids).not.toBeNull()
+  });
+
+  it("GraphQLUtils", async () => {
+    const schema = GraphQLUtils.makeConnectionSchema("Test")
+
+    expect(schema).not.toBeNull()
   });
 });
