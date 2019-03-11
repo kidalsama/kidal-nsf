@@ -63,6 +63,20 @@ export class PageArgs {
   public static max() {
     return new PageArgs(DEFAULT_PAGE, MAX_LIMIT)
   }
+
+  /**
+   * @author tengda
+   */
+  public static page(page: number = DEFAULT_PAGE, limit: number = MAX_LIMIT) {
+    return new PageArgs(page, limit)
+  }
+
+  /**
+   * 起始位置
+   */
+  public get offset(): number {
+    return this.page * this.limit
+  }
 }
 
 /**
@@ -131,5 +145,18 @@ export class Connection<TNode> {
    */
   public get hasPreviousPage(): boolean {
     return this.pageArgs.page > 1
+  }
+
+  /**
+   * 转换
+   */
+  public map<R>(transform: (node?: TNode) => R): Connection<R> {
+    return new Connection<R>(
+      this.edges.map((it) => ({node: transform(it.node), cursor: it.cursor})),
+      this.totalCount,
+      this.startCursor,
+      this.endCursor,
+      this.pageArgs,
+    )
   }
 }
