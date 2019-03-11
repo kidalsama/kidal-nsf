@@ -34,6 +34,9 @@ export default class HttpServer {
 
     // 跨域
     this.expressApp.use(cors({
+      origin: ((requestOrigin, callback) => {
+        callback(null, true)
+      }),
       credentials: true,
     }))
     // this.expressApp.all("*", (req, res, next) => {
