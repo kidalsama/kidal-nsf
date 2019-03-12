@@ -79,7 +79,7 @@ export default class GraphQLServer {
       {all: true},
     );
     // GraphQLServer.LOG.debug(`Merged Schema\n${source}`);
-    const schema = buildSchema(source);
+    const schema = buildSchema(source, {commentDescriptions: true});
     const resolvers = mergeResolvers(
       pieces.map((it: any) => it.resolver).filter((it: any) => !!it),
     );

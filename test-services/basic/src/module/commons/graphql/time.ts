@@ -30,7 +30,9 @@ type Query {
   serverTime: ServerTime!
 }
 
+# 服务器时间
 type ServerTime {
+  # 格式化时间
   format(unit: String): String!
   timestamp: Float!
   date: String!
