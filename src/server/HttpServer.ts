@@ -30,7 +30,6 @@ export default class HttpServer {
     this.expressApp.use(bodyParser.urlencoded({extended: false}));
     this.expressApp.use(bodyParser.json());
     this.expressApp.use(cookieParser());
-    this.expressApp.use("/static", express.static("public"));
 
     // 跨域
     this.expressApp.use(cors({
@@ -75,6 +74,14 @@ export default class HttpServer {
    */
   public async start() {
     const config = Environment.S.applicationConfig.server;
+
+    // 静态文件
+    if (config.staticFiles) {
+      for (const path of Object.keys(config.staticFiles)) {
+        const dir = config.staticFiles[path]
+        this.expressApp.use(path, express.static(dir));
+      }
+    }
 
     // 404
     this.expressApp.use("*", (req, res) => {

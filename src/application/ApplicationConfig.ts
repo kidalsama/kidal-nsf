@@ -28,6 +28,7 @@ export interface IServerConfig {
   port: number;
   graphQL: IServerGraphQLConfig;
   webSocket: IServerWebSocketConfig;
+  staticFiles?: { [key: string]: string };
 }
 
 /**
