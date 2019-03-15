@@ -84,7 +84,7 @@ export default class Application {
 
     // 启动服务器
     await GraphQLServer.S.init();
-    await WebSocketServer.S.init();
+    // await WebSocketServer.S.init();
     await WebSocketApiManager.S.init();
     await HttpServer.S.start();
 

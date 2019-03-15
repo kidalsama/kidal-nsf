@@ -41,6 +41,9 @@ export default {
         case "datetime-no-sec":
           fmt = "yyyy-MM-dd hh:mm";
           break;
+        default:
+          fmt = args.unit
+          break;
       }
     }
     return formatTime(result, fmt);

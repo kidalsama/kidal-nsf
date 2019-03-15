@@ -47,6 +47,9 @@ export default class GraphQLServer {
     // 使用Apollo中间价
     const apolloServer = new GraphQLApolloServer({
       schema,
+      subscriptions: {
+        path: `${config.endpoint}-subscription`,
+      },
       formatError: (error) => {
         const formattedError = formatError(error);
         const originalError = error.originalError;
@@ -95,6 +98,9 @@ export default class GraphQLServer {
         credentials: true,
       },
     })
+    apolloServer.installSubscriptionHandlers(
+      httpServer.server,
+    )
 
     // log
     GraphQLServer.LOG.info(`Using GraphQL at endpoint ${config.endpoint}`);
