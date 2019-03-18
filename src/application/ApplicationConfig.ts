@@ -1,3 +1,34 @@
+function required<T>(path: string, config: any, key: string): T {
+  if (config.hasOwnProperty(key)) {
+    return config[key]
+  } else {
+    throw new Error(`Configuration property ${path}.${key} is required.`)
+  }
+}
+
+function orElse<T>(path: string, config: any, key: string, elseVal: T): T {
+  if (config.hasOwnProperty(key)) {
+    return config[key]
+  } else {
+    return elseVal
+  }
+}
+
+function orElseWalkMap<T>(path: string, config: any, key: string,
+                          elseVal: { [key: string]: T } | (() => { [key: string]: T }),
+                          walker: (key: string, val: T) => T) {
+  const map: any = orElse(path, config, key, elseVal)
+  const rst: any = {}
+
+  for (const mk of Object.keys(map)) {
+    if (map.hasOwnProperty(mk)) {
+      rst[mk] = walker(mk, map[mk])
+    }
+  }
+
+  return rst
+}
+
 /**
  * 应用配置
  */
@@ -8,6 +39,17 @@ export interface IApplicationConfig {
   server: IServerConfig;
   data: IDataConfig;
   cluster: IClusterConfig;
+}
+
+export const completeApplicationConfig = (config: any): IApplicationConfig => {
+  return {
+    id: required("", config, "id"),
+    profiles: orElse("", config, "profiles", ["dev"]),
+    configServer: completeConfigServerConfig(config.configServer || {}),
+    server: completeServerConfig(config.server || {}),
+    data: completeDataConfig(config.data || {}),
+    cluster: completeClusterConfig(config.cluster || {}),
+  }
 }
 
 /**
@@ -21,28 +63,64 @@ export interface IConfigServer {
   token?: string;
 }
 
+export const completeConfigServerConfig = (config: any): IConfigServer => {
+  return {
+    type: orElse("configServer", config, "type", "local"),
+    uri: orElse("configServer", config, "uri", undefined),
+    username: orElse("configServer", config, "username", undefined),
+    password: orElse("configServer", config, "password", undefined),
+    token: orElse("configServer", config, "token", undefined),
+  }
+}
+
 /**
  * 服务器配置
  */
 export interface IServerConfig {
+  enabled: boolean;
+  httpServerMap: { [key: string]: IHttpServerConfig };
+}
+
+export interface IHttpServerConfig {
   port: number;
-  graphQL: IServerGraphQLConfig;
-  webSocket: IServerWebSocketConfig;
-  staticFiles?: { [key: string]: string };
+  staticMapping?: { [key: string]: string };
+  graphQLEndpoint?: string;
+  graphQLSubscriptionEndpoint?: string;
+  webSocketEndpoint?: string;
 }
 
-/**
- * 服务器 GraphQL 配置
- */
-export interface IServerGraphQLConfig {
-  endpoint: string;
+const completeServerConfig = (config: any): IServerConfig => {
+  return {
+    enabled: orElse<boolean>("server", config, "enabled", false),
+    httpServerMap: orElseWalkMap<IHttpServerConfig>(
+      "server", config, "httpServerMap",
+      {
+        primary: {
+          port: 8080,
+          staticMapping: undefined,
+          graphQLEndpoint: undefined,
+          graphQLSubscriptionEndpoint: undefined,
+          webSocketEndpoint: undefined,
+        },
+      },
+      completeHttpServerConfig,
+    ),
+  }
 }
 
-/**
- * 服务器 WebSocket 配置
- */
-export interface IServerWebSocketConfig {
-  endpoint: string;
+const completeHttpServerConfig = (key: string, config: any): IHttpServerConfig => {
+  return {
+    port: orElse(`server.httpServerMap:${key}`, config,
+      "port", 8080),
+    staticMapping: orElse(`server.httpServerMap:${key}`, config,
+      "staticMapping", undefined),
+    graphQLEndpoint: orElse(`server.httpServerMap:${key}`, config,
+      "graphQLEndpoint", undefined),
+    graphQLSubscriptionEndpoint: orElse(`server.httpServerMap:${key}`, config,
+      "graphQLSubscriptionEndpoint", undefined),
+    webSocketEndpoint: orElse(`server.httpServerMap:${key}`, config,
+      "webSocketEndpoint", undefined),
+  }
 }
 
 /**
@@ -53,9 +131,6 @@ export interface IDataConfig {
   databaseMap: { [key: string]: IDatabaseConfig };
 }
 
-/**
- * 数据库配置
- */
 export interface IDatabaseConfig {
   alias?: string;
   dialect: string;
@@ -70,14 +145,58 @@ export interface IDatabaseConfig {
   suppressAutoUpdateChangedFields?: boolean;
 }
 
+const completeDataConfig = (config: any): IDataConfig => {
+  return {
+    enabled: orElse("data", config, "enabled", false),
+    databaseMap: orElseWalkMap("data", config, "databaseMap",
+      {
+        primary: {
+          dialect: "mysql",
+          host: "192.168.93.222",
+          port: 3306,
+          username: "mcg",
+          password: "Mcg!2345",
+          database: "mcg_games_servers",
+          timezone: "Asia/Shanghai",
+        },
+      },
+      completeDatabaseConfig,
+    ),
+  }
+}
+
+const completeDatabaseConfig = (key: string, config: any): IDatabaseConfig => {
+  return {
+    alias: orElse(`server.databaseMap:${key}`, config, "alias", undefined),
+    dialect: orElse(`server.databaseMap:${key}`, config, "dialect", "mysql"),
+    host: orElse(`server.databaseMap:${key}`, config, "host", "192.168.93.222"),
+    port: orElse(`server.databaseMap:${key}`, config, "port", 3306),
+    username: orElse(`server.databaseMap:${key}`, config, "username", "mcg"),
+    password: orElse(`server.databaseMap:${key}`, config, "password", "Mcg!2345"),
+    database: orElse(`server.databaseMap:${key}`, config, "database", "dev_node_server_foundation"),
+    timezone: orElse(`server.databaseMap:${key}`, config, "timezone", "Asia/Shanghai"),
+    dropTableOnInit: orElse(`server.databaseMap:${key}`, config, "dropTableOnInit", undefined),
+    suppressSyncTableOnInit: orElse(`server.databaseMap:${key}`, config, "suppressSyncTableOnInit", undefined),
+    suppressAutoUpdateChangedFields:
+      orElse(`server.databaseMap:${key}`, config, "suppressAutoUpdateChangedFields", undefined),
+  }
+}
+
 /**
  * 集群配置
  */
 export interface IClusterConfig {
   enabled: boolean;
-  javaClusterMap: { [key: string]: IJavaClusterEndpoint };
   discoveryClientType: string;
-  zookeeper: IClusterZookeeperConfig;
+  zookeeper?: IClusterZookeeperConfig;
+  javaClusterMap?: { [key: string]: IJavaClusterEndpoint };
+}
+
+/**
+ * Zookeeper 配置
+ */
+export interface IClusterZookeeperConfig {
+  connectionString: string;
 }
 
 /**
@@ -89,60 +208,37 @@ export interface IJavaClusterEndpoint {
   path: string;
 }
 
-/**
- * Zookeeper 配置
- */
-export interface IClusterZookeeperConfig {
-  connectionString: string;
+const completeClusterConfig = (config: any): IClusterConfig => {
+  return {
+    enabled: orElse("cluster", config, "enabled", false),
+    discoveryClientType: orElse("cluster", config, "discoveryClientType", "zookeeper"),
+    zookeeper: completeClusterZookeeperConfig(config.zookeeper || {}),
+    javaClusterMap: orElseWalkMap<IJavaClusterEndpoint>("cluster", config, "javaClusterMap",
+      {
+        oa: {
+          host: "192.168.93.222",
+          port: 22130,
+          path: "ms/oa",
+        },
+      },
+      completeJavaClusterEndpointConfig,
+    ),
+  }
 }
 
-/**
- * 默认配置
- */
-export const DEFAULT_APPLICATION_CONFIG: IApplicationConfig = {
-  id: "?",
-  profiles: ["dev"],
-  configServer: {
-    type: "local",
-  },
-  server: {
-    port: 8080,
-    graphQL: {
-      endpoint: "/graphql",
-    },
-    webSocket: {
-      endpoint: "/ws",
-    },
-  },
-  data: {
-    enabled: true,
-    databaseMap: {
-      primary: {
-        dialect: "mysql",
-        host: "192.168.93.222",
-        port: 3306,
-        username: "mcg",
-        password: "Mcg!2345",
-        database: "mcg_games_servers",
-        timezone: "Asia/Shanghai",
-      },
-    },
-  },
-  cluster: {
-    enabled: true,
-    javaClusterMap: {
-      oa: {
-        host: "127.0.0.1",
-        port: 22130,
-        path: "ms/oa",
-      },
-    },
-    discoveryClientType: "zookeeper",
-    zookeeper: {
-      connectionString: "39.106.136.198:2181",
-    },
-  },
-};
+const completeClusterZookeeperConfig = (config: any): IClusterZookeeperConfig => {
+  return {
+    connectionString: orElse("cluster.zookeeper", config, "connectionString", "39.106.136.198:2181"),
+  }
+}
+
+const completeJavaClusterEndpointConfig = (key: string, config: any): IJavaClusterEndpoint => {
+  return {
+    host: required(`cluster.javaClusterMap:${key}`, config, "host"),
+    port: required(`cluster.javaClusterMap:${key}`, config, "port"),
+    path: required(`cluster.javaClusterMap:${key}`, config, "path"),
+  }
+}
 
 /**
  * 合并配置

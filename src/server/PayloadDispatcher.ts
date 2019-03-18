@@ -4,8 +4,6 @@ import Logs from "../application/Logs";
 import LudmilaError from "../error/LudmilaError";
 import LudmilaErrors from "../error/LudmilaErrors";
 import * as clsHooked from "cls-hooked";
-import * as graphqlHTTP from "express-graphql";
-import {Request, Response} from "express";
 import Maybe from "graphql/tsutils/Maybe";
 import WebSocketApiManager from "./websocket/WebSocketApiManager";
 
@@ -34,8 +32,7 @@ export default class PayloadDispatcher {
   /**
    * 分发GraphQL载荷
    */
-  public async dispatchGraphQL(middleware: graphqlHTTP.Middleware,
-                               request: Request, response: Response): Promise<undefined> {
+  public async dispatchGraphQL(dispatcher: () => void): Promise<undefined> {
     // 钩住处理器
     return new Promise<undefined>((resolve, reject) => {
       this.handlerCls.run(() => {
@@ -49,9 +46,7 @@ export default class PayloadDispatcher {
         this.handlerCls.set("sync", sync);
 
         // 调用
-        middleware(request, response)
-          .then(resolve)
-          .catch(reject);
+        dispatcher()
       });
     });
   }

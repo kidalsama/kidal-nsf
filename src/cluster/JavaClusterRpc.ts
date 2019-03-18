@@ -124,7 +124,11 @@ export default class JavaRpcClientManager {
    * 获取一个客户端
    */
   public acquire(endpoint: string): JavaRpcInvoker {
-    const config: IJavaClusterEndpoint | undefined = Environment.S.applicationConfig.cluster.javaClusterMap[endpoint]
+    const map = Environment.S.applicationConfig.cluster.javaClusterMap
+    if (!map) {
+      throw new LudmilaError(LudmilaErrors.CLUSTER_203)
+    }
+    const config: IJavaClusterEndpoint | undefined = map[endpoint]
     if (config === undefined) {
       throw new LudmilaError(LudmilaErrors.CLUSTER_203)
     }

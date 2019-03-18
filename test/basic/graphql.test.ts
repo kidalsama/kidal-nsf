@@ -12,7 +12,7 @@ describe("Basic: GraphQL", () => {
   })
 
   it("Time", async () => {
-    const resp = await request(HttpServer.S.expressApp)
+    const resp = await request(HttpServer.acquire().expressApp)
       .post("/graphql")
       .send({
         query: `
@@ -32,7 +32,7 @@ query time {
   });
 
   it("Error", async () => {
-    const resp = await request(HttpServer.S.expressApp)
+    const resp = await request(HttpServer.acquire().expressApp)
       .post("/graphql")
       .send({
         query: `

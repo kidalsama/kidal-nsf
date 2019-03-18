@@ -20,7 +20,7 @@ describe("Basic: Api", () => {
   })
 
   it("Connect", (done) => {
-    const address = HttpServer.S.server.address()
+    const address = HttpServer.acquire().server.address()
 
     if (address === null) {
       throw new Error("Server's address is null");

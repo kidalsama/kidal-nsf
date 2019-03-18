@@ -3,8 +3,6 @@ import Environment from "./Environment";
 import Logs from "./Logs";
 import Database from "../data/Database";
 import DiscoveryClient from "../cluster/DiscoveryClient";
-import GraphQLServer from "../server/graphql/GraphQLServer";
-import WebSocketServer from "../server/websocket/WebSocketServer";
 import HttpServer from "../server/HttpServer";
 import Rpc from "../cluster/Rpc";
 import {applicationBanner} from "./ApplicationConstants";
@@ -83,10 +81,8 @@ export default class Application {
     await Database.initAll()
 
     // 启动服务器
-    await GraphQLServer.S.init();
-    await WebSocketServer.S.init();
     await WebSocketApiManager.S.init();
-    await HttpServer.S.start();
+    await HttpServer.initAll()
 
     // 启动发现服务
     await DiscoveryClient.S.init();
@@ -106,7 +102,7 @@ export default class Application {
     }
 
     // 关闭服务器
-    await HttpServer.S.shutdown()
+    await HttpServer.shutdownAll()
 
     // 关闭发现服务
     await DiscoveryClient.S.shutdown()

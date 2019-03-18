@@ -1,4 +1,5 @@
 import GraphQLUnits from "../../../../../../src/server/graphql/GraphQLUnits";
+import {gql} from "apollo-server-express";
 
 class ServerTime {
   private readonly _now = new Date();
@@ -25,7 +26,7 @@ class ServerTime {
 }
 
 export default {
-  schema: `
+  schema: gql`
 type Query {
   serverTime: ServerTime!
 }
@@ -40,9 +41,11 @@ type ServerTime {
   testingNull: String
 }
 `,
-  resolver: {
-    serverTime() {
-      return new ServerTime();
+  resolvers: {
+    Query: {
+      serverTime() {
+        return new ServerTime();
+      },
     },
   },
 };

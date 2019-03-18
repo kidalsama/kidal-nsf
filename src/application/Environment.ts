@@ -3,7 +3,7 @@ import * as log4js from "log4js";
 import * as path from "path";
 import * as yaml from "yaml";
 import {log4jsConfig} from "./ApplicationConstants";
-import {DEFAULT_APPLICATION_CONFIG, IApplicationConfig, mergeConfig} from "./ApplicationConfig";
+import {completeApplicationConfig, IApplicationConfig, mergeConfig} from "./ApplicationConfig";
 import fetch from "node-fetch";
 
 /**
@@ -228,8 +228,7 @@ ${JSON.stringify(this.applicationConfig, null, 2)}
     const configServer = localConfig.configServer;
 
     if (configServer.type === "local") {
-      mergeConfig(localConfig, DEFAULT_APPLICATION_CONFIG)
-      return localConfig;
+      return completeApplicationConfig(localConfig)
     } else if (configServer.type === "gitlab") {
       // 如何从gitlab读取raw文件
       //  https://docs.gitlab.com/ee/api/repository_files.html#get-raw-file-from-repository
