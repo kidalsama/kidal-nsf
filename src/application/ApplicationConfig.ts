@@ -6,11 +6,9 @@ function required<T>(path: string, config: any, key: string): T {
   }
 }
 
-function orElse<T>(path: string, config: any, key: string, elseVal: T | (() => T)): T {
+function orElse<T>(path: string, config: any, key: string, elseVal: T): T {
   if (config.hasOwnProperty(key)) {
     return config[key]
-  } else if (typeof elseVal === "function") {
-    return elseVal()
   } else {
     return elseVal
   }
