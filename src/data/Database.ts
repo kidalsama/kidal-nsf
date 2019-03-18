@@ -27,10 +27,16 @@ export default class Database extends events.EventEmitter {
   }
 
   /**
-   * 初始化全部数据库
+   * 初始化全部
    */
   public static async initAll(): Promise<void> {
-    const names = Object.keys(Environment.S.applicationConfig.data.databaseMap)
+    const config = Environment.S.applicationConfig.data
+    if (!config.enabled) {
+      return
+    }
+
+    // vars
+    const names = Object.keys(config.databaseMap)
 
     // 这里要先添加
     // 初始化时扫描文件会读取这里的数据库

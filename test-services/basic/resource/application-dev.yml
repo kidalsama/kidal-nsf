@@ -4,7 +4,12 @@ profiles:
 configServer:
   type: "local"
 server:
-  port: 29011
+  enabled: true
+  httpServerMap:
+    primary:
+      port: 29011
+      graphQLEndpoint: "/graphql"
+      webSocketEndpoint: "/ws"
 data:
   enabled: true
   databaseMap:

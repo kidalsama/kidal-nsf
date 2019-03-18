@@ -14,23 +14,19 @@ import {makeExecutableSchema, mergeSchemas} from "graphql-tools";
  * @author tengda
  */
 export default class GraphQLServer {
-  // 单例
-  public static readonly S = new GraphQLServer();
   private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "GraphQLServer");
+  public readonly httpServer: HttpServer
 
-  private constructor() {
-
+  public constructor(httpServer: HttpServer) {
+    this.httpServer = httpServer
   }
 
   /**
    * 初始化
    */
   public init() {
-    const httpServer = HttpServer.S;
-
     // 配置
     const env = Environment.S;
-    const config = env.applicationConfig.server.graphQL;
 
     // 加载注册列表
     const registryList = glob
@@ -45,11 +41,11 @@ export default class GraphQLServer {
     const schema = mergeSchemas({schemas: schemaList})
 
     // 使用Apollo中间价
+    const subscriptions = this.httpServer.config.graphQLSubscriptionEndpoint ?
+      {path: this.httpServer.config.graphQLSubscriptionEndpoint} : undefined
     const apolloServer = new GraphQLApolloServer({
       schema,
-      subscriptions: {
-        path: `${config.endpoint}-subscription`,
-      },
+      subscriptions,
       formatError: (error) => {
         const formattedError = formatError(error);
         const originalError = error.originalError;
@@ -89,8 +85,8 @@ export default class GraphQLServer {
       },
     });
     apolloServer.applyMiddleware({
-      app: httpServer.expressApp,
-      path: config.endpoint,
+      app: this.httpServer.expressApp,
+      path: this.httpServer.config.graphQLEndpoint,
       cors: {
         origin: true,
         allowedHeaders: "*",
@@ -98,11 +94,13 @@ export default class GraphQLServer {
         credentials: true,
       },
     })
-    apolloServer.installSubscriptionHandlers(
-      httpServer.server,
-    )
+    if (subscriptions) {
+      apolloServer.installSubscriptionHandlers(
+        this.httpServer.server,
+      )
+    }
 
     // log
-    GraphQLServer.LOG.info(`Using GraphQL at endpoint ${config.endpoint}`);
+    GraphQLServer.LOG.info(`Using GraphQL at endpoint ${this.httpServer.config.graphQLEndpoint}`);
   }
 }

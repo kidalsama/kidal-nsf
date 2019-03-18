@@ -37,7 +37,7 @@ export default class DiscoveryClient extends events.EventEmitter {
       return;
     }
 
-    const zookeeperConfig = Environment.S.applicationConfig.cluster.zookeeper;
+    const zookeeperConfig = Environment.S.applicationConfig.cluster.zookeeper!;
     this._zk = zookeeper.createClient(zookeeperConfig.connectionString,
       {
         sessionTimeout: 3000,
@@ -215,13 +215,13 @@ export default class DiscoveryClient extends events.EventEmitter {
     }
 
     // 解析IP
-    const ip = HttpServer.S.ip;
+    const ip = HttpServer.acquire().ip;
     if (!ip) {
       throw new Error("Resolve ip failed");
     }
 
     // uuid
-    const port = HttpServer.S.port
+    const port = HttpServer.acquire().port
     this._uuid = `${ip}:${port}`;
 
     // 准备路径

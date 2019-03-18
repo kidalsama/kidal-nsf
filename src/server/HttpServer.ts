@@ -10,20 +10,78 @@ import Rpc from "../cluster/Rpc";
 import LudmilaError from "../error/LudmilaError";
 import cors from "cors";
 import LudmilaErrors from "../error/LudmilaErrors";
+import {IHttpServerConfig} from "../application/ApplicationConfig";
+import GraphQLServer from "./graphql/GraphQLServer";
+import WebSocketServer from "./websocket/WebSocketServer";
 
 /**
  * @author tengda
  */
 export default class HttpServer {
-  public static readonly S = new HttpServer();
   private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "HttpServer");
+  public static readonly serverMap: Map<string, HttpServer> = new Map()
+
+  /**
+   * 获取服务器
+   */
+  public static acquire(name: string = "primary"): HttpServer {
+    const server = this.serverMap.get(name)
+    if (server === undefined) {
+      throw new Error(`Server ${name} not found`)
+    }
+    return server
+  }
+
+  /**
+   * 初始化全部
+   */
+  public static async initAll(): Promise<void> {
+    const config = Environment.S.applicationConfig.server
+    if (!config.enabled) {
+      return
+    }
+
+    // vars
+    const names = Object.keys(config.httpServerMap)
+
+    // 这里要先添加
+    for (const name of names) {
+      this.serverMap.set(name, new HttpServer(config.httpServerMap[name]))
+    }
+
+    // 启动服务器
+    for (const name of this.serverMap.keys()) {
+      const server = this.serverMap.get(name)
+      if (server) {
+        await server.start()
+      }
+    }
+  }
+
+  /**
+   * 关闭全部数据库
+   */
+  public static async shutdownAll(): Promise<void> {
+    for (const server of this.serverMap.values()) {
+      try {
+        await server.shutdown()
+      } catch (e) {
+        this.LOG.warn(e)
+      }
+    }
+  }
+
+  public readonly config: IHttpServerConfig;
   public readonly expressApp: express.Express;
   public readonly server: http.Server;
+  public readonly graphQLServer?: GraphQLServer
+  public readonly webSocketServer?: WebSocketServer
 
   /**
    * 单例
    */
-  private constructor() {
+  private constructor(config: IHttpServerConfig) {
+    this.config = config;
     this.expressApp = express();
     this.server = http.createServer(this.expressApp);
 
@@ -67,18 +125,30 @@ export default class HttpServer {
       // TODO: 使用HealthIndicator读取健康状态
       res.status(200).end();
     });
+
+    // graphQL
+    this.graphQLServer = this.config.graphQLEndpoint ? new GraphQLServer(this) : undefined
+    // WebSocket
+    this.webSocketServer = this.config.webSocketEndpoint ? new WebSocketServer(this) : undefined
   }
 
   /**
    * 启动服务器
    */
   public async start() {
-    const config = Environment.S.applicationConfig.server;
+    // graphQL
+    if (this.graphQLServer) {
+      this.graphQLServer.init()
+    }
+    // webSocket
+    if (this.webSocketServer) {
+      this.webSocketServer.init()
+    }
 
     // 静态文件
-    if (config.staticFiles) {
-      for (const path of Object.keys(config.staticFiles)) {
-        const dir = config.staticFiles[path]
+    if (this.config.staticMapping) {
+      for (const path of Object.keys(this.config.staticMapping)) {
+        const dir = this.config.staticMapping[path]
         this.expressApp.use(path, express.static(dir));
       }
     }
@@ -100,7 +170,7 @@ export default class HttpServer {
 
     // 监听http
     return new Promise((resolve, reject) => {
-      const port = config.port
+      const port = this.config.port
       const listeningListener = () => {
         const address = this.server.address();
         if (address === null) {
@@ -117,7 +187,7 @@ export default class HttpServer {
       } else if (port === 0) {
         this.server.listen(listeningListener)
       } else {
-        this.server.listen(config.port, "0.0.0.0", listeningListener);
+        this.server.listen(this.config.port, "0.0.0.0", listeningListener);
       }
     });
   }

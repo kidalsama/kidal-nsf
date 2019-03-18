@@ -12,14 +12,14 @@ describe("Basic: Http", () => {
   })
 
   it("Should get status 200", async () => {
-    const resp = await request(HttpServer.S.expressApp)
+    const resp = await request(HttpServer.acquire().expressApp)
       .get("/")
 
     expect(resp.status).toBe(200)
   });
 
   it("Should get status 404", async () => {
-    const resp = await request(HttpServer.S.expressApp)
+    const resp = await request(HttpServer.acquire().expressApp)
       .get("/wrongUrl2018")
     expect(resp.status).toBe(404)
   });

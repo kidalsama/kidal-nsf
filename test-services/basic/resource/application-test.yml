@@ -4,27 +4,33 @@ profiles:
 configServer:
   type: "local"
 server:
-  port: 0
+  enabled: true
+  httpServerMap:
+    primary:
+      port: 0
+      graphQLEndpoint: "/graphql"
+      webSocketEndpoint: "/ws"
 data:
+  enabled: true
   databaseMap:
     primary:
       dialect: "mysql"
-      dropTableOnInit: true
       host: "39.105.87.12" # CI: data.databaseMap.primary.host
       port: 3306
       username: "mcg" # CI: data.databaseMap.primary.username
       password: "Mcg!2345" # CI: data.databaseMap.primary.password
       database: "test_node_server_foundation" # CI: data.databaseMap.primary.database
       timezone: "Asia/Shanghai"
+      dropTableOnInit: true
     secondary:
       dialect: "mysql"
-      dropTableOnInit: true
       host: "39.105.87.12" # CI: data.databaseMap.secondary.host
       port: 3306
       username: "mcg" # CI: data.databaseMap.secondary.username
       password: "Mcg!2345" # CI: data.databaseMap.secondary.password
       database: "test_node_server_foundation_2" # CI: data.databaseMap.secondary.database
       timezone: "Asia/Shanghai"
+      dropTableOnInit: true
 cluster:
   enabled: true
   javaClusterMap:
