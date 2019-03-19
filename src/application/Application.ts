@@ -8,6 +8,7 @@ import Rpc from "../cluster/Rpc";
 import {applicationBanner} from "./ApplicationConstants";
 import WebSocketApiManager from "../server/websocket/WebSocketApiManager";
 import RpcApiManager from "../cluster/RpcApiManager";
+import * as fs from "fs";
 
 /**
  * @author tengda
@@ -90,6 +91,12 @@ export default class Application {
     // Rpc
     await RpcApiManager.S.init();
     await Rpc.S.init();
+
+    // 加载入口
+    const entry = `${Environment.S.srcDir}/Entry.js`
+    if (fs.existsSync(entry)) {
+      require(entry)
+    }
   }
 
   /**
