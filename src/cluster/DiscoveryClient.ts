@@ -208,9 +208,18 @@ export default class DiscoveryClient extends events.EventEmitter {
    * 初始化
    */
   public async init(): Promise<void> {
+    // vars
+    const config = Environment.S.applicationConfig.cluster
+
     // 检查是否启用
-    if (!Environment.S.applicationConfig.cluster.enabled) {
+    if (!config.enabled) {
       DiscoveryClient.LOG.info("Cluster disabled");
+      return;
+    }
+
+    // 目前只支持zookeeper
+    if (config.discoveryClientType !== "zookeeper") {
+      DiscoveryClient.LOG.info("Discovery Client disabled");
       return;
     }
 
