@@ -96,9 +96,9 @@ export class JavaRpcInvoker {
     }
 
     // 解包返回消息
-    const respBodyString = await resp.text()
+    const respBodyString = resp.size > 0 ? await resp.text() : null
     if (respBodyString === null) {
-      return Promise.resolve(undefined as any)
+      return Promise.resolve(null as any)
     }
     let respBody
     try {
