@@ -46,6 +46,9 @@ export default class GraphQLServer {
     const apolloServer = new GraphQLApolloServer({
       schema,
       subscriptions,
+      context: ({req, res}) => {
+        return {req, res}
+      },
       formatError: (error) => {
         const formattedError = formatError(error);
         const originalError = error.originalError;
