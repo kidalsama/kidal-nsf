@@ -96,7 +96,7 @@ export class JavaRpcInvoker {
     }
 
     // 解包返回消息
-    const respBodyString = resp.size > 0 ? await resp.text() : null
+    const respBodyString = await resp.text()
     if (respBodyString === null) {
       return Promise.resolve(null as any)
     }
@@ -104,7 +104,10 @@ export class JavaRpcInvoker {
     try {
       respBody = JSON.parse(Buffer.from(respBodyString, "base64").toString("utf-8"))
     } catch (e) {
-      throw new LudmilaError(LudmilaErrors.CLUSTER_208)
+      // TODO: 这个问题很难搞
+      // 暂时视为null
+      // throw new LudmilaError(LudmilaErrors.CLUSTER_208)
+      return Promise.resolve(null as any)
     }
     if (respBody.hasOwnProperty("error")) {
       throw new LudmilaError(LudmilaErrors.CLUSTER_209, `${respBody.error.message}(${respBody.error.code})`)
