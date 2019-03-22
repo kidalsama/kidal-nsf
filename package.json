@@ -60,6 +60,6 @@
     "supertest": "3.4.2"
   },
   "publishConfig": {
-    "registry": "http://nexus.dev.happyhouse.club/repository/npm-registry/"
+    "registry": "http://nexus.dev.happyhouse.club/repository/npm-hosted/"
   }
 }
