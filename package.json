@@ -1,6 +1,6 @@
 {
   "name": "node-server-foundation",
-  "version": "0.5.8",
+  "version": "0.5.9",
   "repository": "http://gitlab.dev.happyhouse.club/mcg-game/server-foundation",
   "author": "MCG RND DEPARTMENT",
   "scripts": {
