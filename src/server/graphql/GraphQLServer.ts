@@ -73,7 +73,7 @@ export default class GraphQLServer {
           "editor.fontFamily": `'Monaco', monospace, 'Consolas'`,
           "editor.fontSize": 18,
           "editor.reuseHeaders": true, // new tab reuses headers from last tab
-          "editor.theme": "dark", // possible values: 'dark', 'light'
+          "editor.theme": "light", // possible values: 'dark', 'light'
           "general.betaUpdates": false,
           "prettier.printWidth": 80,
           "prettier.tabWidth": 2,
