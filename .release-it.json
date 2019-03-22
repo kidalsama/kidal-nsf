@@ -11,6 +11,9 @@
     "release": false
   },
   "npm": {
-    "publish": true
+    "publish": true,
+    "publishConfig": {
+      "registry": "http://nexus.dev.happyhouse.club/repository/npm-hosted/"
+    }
   }
 }
