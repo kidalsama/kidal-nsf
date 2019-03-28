@@ -205,7 +205,7 @@ export interface IClusterZookeeperConfig {
 export interface IJavaClusterEndpoint {
   host: string;
   port: number;
-  path: string;
+  path?: string;
 }
 
 const completeClusterConfig = (config: any): IClusterConfig => {
@@ -218,7 +218,6 @@ const completeClusterConfig = (config: any): IClusterConfig => {
         oa: {
           host: "192.168.93.222",
           port: 22130,
-          path: "ms/oa",
         },
       },
       completeJavaClusterEndpointConfig,
@@ -236,7 +235,7 @@ const completeJavaClusterEndpointConfig = (key: string, config: any): IJavaClust
   return {
     host: required(`cluster.javaClusterMap:${key}`, config, "host"),
     port: required(`cluster.javaClusterMap:${key}`, config, "port"),
-    path: required(`cluster.javaClusterMap:${key}`, config, "path"),
+    path: orElse(`cluster.javaClusterMap:${key}`, config, "path", undefined),
   }
 }
 

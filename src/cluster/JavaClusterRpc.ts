@@ -72,7 +72,9 @@ export class JavaRpcInvoker {
     const sign = md5(preSignStr).toLowerCase()
     const c = `${keyId}-${timestamp}-${timestamp}-${sign}`
     const {host, port, path} = this.config
-    const url = `http://${host}:${port}/${path}/ludmila/lrpc/1.0?p=${p}&t=${t}&m=${m}&c=${c}`
+    const url = path ?
+      `http://${host}:${port}/${path}/ludmila/lrpc/1.0?p=${p}&t=${t}&m=${m}&c=${c}` :
+      `http://${host}:${port}/ludmila/lrpc/1.0?p=${p}&t=${t}&m=${m}&c=${c}`
 
     // 消息体
     const body = argArray ? Buffer.from(Buffer.from(JSON.stringify(argArray)).toString("base64")) : undefined
