@@ -51,7 +51,10 @@ export default class GraphQLServer {
       },
       formatError: (error) => {
         // 记录一下
-        GraphQLServer.LOG.debug(error)
+        if (GraphQLServer.LOG.isDebugEnabled()) {
+          // noinspection TsLint
+          console.error(error)
+        }
 
         const formattedError = formatError(error);
         const originalError: any = error.originalError;
