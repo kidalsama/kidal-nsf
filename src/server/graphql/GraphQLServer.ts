@@ -50,6 +50,9 @@ export default class GraphQLServer {
         return {_ctx: ctx}
       },
       formatError: (error) => {
+        // 记录一下
+        GraphQLServer.LOG.debug(error)
+
         const formattedError = formatError(error);
         const originalError: any = error.originalError;
         if (!originalError) {
