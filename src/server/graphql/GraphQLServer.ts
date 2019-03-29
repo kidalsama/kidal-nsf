@@ -63,7 +63,7 @@ export default class GraphQLServer {
         if (!(maybeLudmilaError instanceof LudmilaError)) {
           return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
         }
-        return Object.assign({}, formattedError, {code: originalError.code, message: originalError.message});
+        return Object.assign({}, formattedError, {code: maybeLudmilaError.code, message: maybeLudmilaError.message});
       },
       extensions: [
         (): GraphQLExtension => ({
