@@ -51,12 +51,19 @@ export default class GraphQLServer {
       },
       formatError: (error) => {
         const formattedError = formatError(error);
-        const originalError = error.originalError;
-        if (originalError !== undefined && originalError !== null && originalError instanceof LudmilaError) {
-          return Object.assign({}, formattedError, {code: originalError.code, message: originalError.message});
-        } else {
+        const originalError: any = error.originalError;
+        if (!originalError) {
           return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
         }
+        const errors: any = originalError.errors
+        if (!errors || errors.length < 0) {
+          return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
+        }
+        const maybeLudmilaError = errors[0]
+        if (maybeLudmilaError instanceof LudmilaError) {
+          return Object.assign({}, formattedError, {code: originalError.code, message: originalError.message});
+        }
+        return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
       },
       extensions: [
         (): GraphQLExtension => ({
