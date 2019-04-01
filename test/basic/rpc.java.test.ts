@@ -13,7 +13,7 @@ describe("Basic: Java Rpc", () => {
 
   it("Fetch", async () => {
     await JavaRpcClientManager.S.acquire("oa")
-      .target("213.project")
+      .target("MAJOR.project")
       .method("get-project")
       .version("2018.11")
       .invoke(2)
@@ -22,7 +22,7 @@ describe("Basic: Java Rpc", () => {
   it("Error", async () => {
     try {
       await JavaRpcClientManager.S.acquire("oa")
-        .target("213.project")
+        .target("MAJOR.project")
         .method("-no-method")
         .version("2018.11")
         .invoke(2)

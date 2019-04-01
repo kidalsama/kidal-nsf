@@ -9,6 +9,7 @@ import GraphQLApolloServer from "./GraphQLApolloServer";
 import {GraphQLExtension} from "graphql-extensions";
 import PayloadDispatcher from "../PayloadDispatcher";
 import {makeExecutableSchema, mergeSchemas} from "graphql-tools";
+import IGraphQLContext from "./IGraphQLContext";
 
 /**
  * @author tengda
@@ -47,7 +48,10 @@ export default class GraphQLServer {
       schema,
       subscriptions,
       context: (ctx) => {
-        return {_ctx: ctx}
+        return {
+          req: ctx.req,
+          res: ctx.res,
+        } as IGraphQLContext
       },
       formatError: (error) => {
         const formattedError = formatError(error);

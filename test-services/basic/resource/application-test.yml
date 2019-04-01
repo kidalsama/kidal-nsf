@@ -35,6 +35,6 @@ cluster:
   enabled: true
   javaClusterMap:
     oa:
-      host: dev.happyhouse.club
+      host: ldev.happyhouse.club
       port: 80
-      path: ms/oa
+      path: oa
