@@ -9,7 +9,6 @@ import GraphQLApolloServer from "./GraphQLApolloServer";
 import {GraphQLExtension} from "graphql-extensions";
 import PayloadDispatcher from "../PayloadDispatcher";
 import {makeExecutableSchema, mergeSchemas} from "graphql-tools";
-import IGraphQLContext from "./IGraphQLContext";
 
 /**
  * @author tengda
@@ -47,11 +46,16 @@ export default class GraphQLServer {
     const apolloServer = new GraphQLApolloServer({
       schema,
       subscriptions,
-      context: (ctx) => {
-        return {
-          req: ctx.req,
-          res: ctx.res,
-        } as IGraphQLContext
+      context: (ctx: any) => {
+        const context: any = {}
+        for (const key of Object.keys(ctx)) {
+          if (ctx.hasOwnProperty(key)) {
+            context[key] = ctx[key]
+          }
+        }
+        context.req = ctx.req
+        context.res = ctx.res
+        return context
       },
       formatError: (error) => {
         const formattedError = formatError(error);
