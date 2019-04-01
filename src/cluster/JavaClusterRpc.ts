@@ -7,6 +7,7 @@ import LudmilaError from "../error/LudmilaError";
 import LudmilaErrors from "../error/LudmilaErrors";
 import fetch from "node-fetch";
 import md5 from "md5";
+import Logs from "../application/Logs";
 
 /**
  * @author tengda
@@ -29,6 +30,7 @@ export interface IJavaMethod {
  * @author tengda
  */
 export class JavaRpcInvoker {
+  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "JavaRpcInvoker")
   public readonly config: IJavaClusterEndpoint
   private _target?: string;
   private _method?: string;
@@ -104,9 +106,11 @@ export class JavaRpcInvoker {
     }
     let respBody
     try {
-      respBody = JSON.parse(Buffer.from(respBodyString, "base64").toString("utf-8"))
+      //
+      respBody = JSON.parse(Buffer.from(respBodyString, "base64").toString("utf8"))
     } catch (e) {
-      // TODO: 这个问题很难搞
+      // FIXME: jsf已修复，观察下这个问题是否再次发生
+      JavaRpcInvoker.LOG.warn(e)
       // 暂时视为null
       // throw new LudmilaError(LudmilaErrors.CLUSTER_208)
       return Promise.resolve(null as any)
