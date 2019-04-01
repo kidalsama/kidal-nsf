@@ -115,9 +115,6 @@ export class JavaRpcInvoker {
       // throw new LudmilaError(LudmilaErrors.CLUSTER_208)
       return Promise.resolve(null as any)
     }
-    if (respBody.hasOwnProperty("error")) {
-      throw new LudmilaError(LudmilaErrors.CLUSTER_209, `${respBody.error.message}(${respBody.error.code})`)
-    }
 
     return respBody as TResults
   }
