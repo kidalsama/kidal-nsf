@@ -8,6 +8,7 @@ import * as events from "events";
 import {IDatabaseConfig} from "../application/ApplicationConfig";
 import Maybe from "graphql/tsutils/Maybe";
 import IEntityCache from "./IEntityCache";
+import {createMigrationModel, IMigration} from "./Migration";
 
 /**
  * @author tengda
@@ -57,6 +58,11 @@ export default class Database extends events.EventEmitter {
     for (const database of this.databaseMap.values()) {
       await database.registerCaches()
     }
+
+    // 升级
+    for (const database of this.databaseMap.values()) {
+      await database.migrateUp()
+    }
   }
 
   /**
@@ -80,8 +86,10 @@ export default class Database extends events.EventEmitter {
   private _name?: string;
   private _config?: IDatabaseConfig;
   private _sequelize?: Sequelize.Sequelize;
-  private readonly caches: Map<string, IEntityCache<any, any>> = new Map();
-  private readonly models: Map<string, Sequelize.Model<any, any>> = new Map();
+  private _migrationModel?: Sequelize.Model<IMigration, any>
+  private readonly cacheMap: Map<string, IEntityCache<any, any>> = new Map();
+  private readonly modelMap: Map<string, Sequelize.Model<any, any>> = new Map();
+  private readonly registryMap: Map<string, IEntityRegistry<any, any>> = new Map();
 
   /**
    * 数据库名
@@ -102,6 +110,13 @@ export default class Database extends events.EventEmitter {
    */
   public get sequelize() {
     return this._sequelize!;
+  }
+
+  /**
+   * 数据库迁移数据模型
+   */
+  public get migrationModel(): Sequelize.Model<IMigration, any> | null {
+    return this._migrationModel || null
   }
 
   /**
@@ -233,7 +248,7 @@ export default class Database extends events.EventEmitter {
   public getCache<TKey extends number | string, TEntity extends IEntityBase<TKey>>(
     name: string,
   ): IEntityCache<TKey, TEntity> {
-    const cache = this.caches.get(name)
+    const cache = this.cacheMap.get(name)
     if (!cache) {
       throw new Error(`Entity cache ${name} not found`)
     }
@@ -246,7 +261,7 @@ export default class Database extends events.EventEmitter {
   public getModel<TKey extends number | string, TEntity extends IEntityBase<TKey>>(
     name: string,
   ): Sequelize.Model<TEntity, any> {
-    const model = this.models.get(name)
+    const model = this.modelMap.get(name)
     if (!model) {
       throw new Error(`Entity model ${name} not found`)
     }
@@ -273,25 +288,57 @@ export default class Database extends events.EventEmitter {
       const name = registry.model.name;
 
       // 检查
-      if (this.caches.has(name)) {
+      if (this.cacheMap.has(name)) {
         throw new Error(`Entity cache for model ${name} already registered`);
       }
 
       // 创建缓存
       const cache = new EntityCacheImpl(this, registry.model);
-      this.caches.set(name, cache);
-      this.models.set(name, registry.model)
+
+      // 保存参数
+      this.cacheMap.set(name, cache);
+      this.modelMap.set(name, registry.model)
+      this.registryMap.set(name, registry)
 
       // 初始化
       Reflect.set(registry, "cache", cache)
-      if (this.config.dropTableOnInit) {
-        await registry.model.sync({force: this._config!.dropTableOnInit})
-      } else if (!this.config.suppressSyncTableOnInit) {
-        await registry.model.sync()
-      }
 
       // log
       Database.LOG.info(`Registered cache: ${name}`);
+    }
+  }
+
+  // 迁移
+  private async migrateUp() {
+    // 关闭迁移
+    if (this.config.enableMigration) {
+      return
+    }
+
+    // 创建迁移记录模型
+    const migrationModel = this._migrationModel = await createMigrationModel(this)
+
+    // 开始迁移
+    for (const registry of this.registryMap.values()) {
+      // 当前模型名
+      const modelName = registry.model.name
+
+      // 读取已经迁移完成的方法
+      const ran = await migrationModel.findAll({where: {modelName}})
+
+      // 开始迁移
+      for (const migrationName in registry.migrations) {
+        // 跳过已经迁移过的
+        if (ran.find((it: IMigration) => it.migrationName === migrationName)) {
+          continue;
+        }
+
+        // 开始迁移
+        await registry.migrations[migrationName].up()
+
+        // 记录
+        await migrationModel.create({modelName, migrationName})
+      }
     }
   }
 }

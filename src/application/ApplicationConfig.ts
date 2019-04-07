@@ -140,9 +140,8 @@ export interface IDatabaseConfig {
   password: string;
   database: string;
   timezone: string;
-  dropTableOnInit?: boolean;
-  suppressSyncTableOnInit?: boolean;
-  suppressAutoUpdateChangedFields?: boolean;
+  enableMigration?: boolean;
+  enableAutoUpdateChangedFields?: boolean;
 }
 
 const completeDataConfig = (config: any): IDataConfig => {
@@ -175,10 +174,9 @@ const completeDatabaseConfig = (key: string, config: any): IDatabaseConfig => {
     password: orElse(`server.databaseMap:${key}`, config, "password", "Mcg!2345"),
     database: orElse(`server.databaseMap:${key}`, config, "database", "dev_node_server_foundation"),
     timezone: orElse(`server.databaseMap:${key}`, config, "timezone", "Asia/Shanghai"),
-    dropTableOnInit: orElse(`server.databaseMap:${key}`, config, "dropTableOnInit", undefined),
-    suppressSyncTableOnInit: orElse(`server.databaseMap:${key}`, config, "suppressSyncTableOnInit", undefined),
-    suppressAutoUpdateChangedFields:
-      orElse(`server.databaseMap:${key}`, config, "suppressAutoUpdateChangedFields", undefined),
+    enableMigration: orElse(`server.databaseMap:${key}`, config, "enableMigration", undefined),
+    enableAutoUpdateChangedFields:
+      orElse(`server.databaseMap:${key}`, config, "enableAutoUpdateChangedFields", undefined),
   }
 }
 

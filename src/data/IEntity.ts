@@ -20,6 +20,20 @@ export interface IEntityBase<TKey extends number | string> {
 /**
  * @author tengda
  */
+export interface IEntityMigration {
+  /**
+   * 升级数据库版本
+   */
+  up: () => Promise<void>;
+  /**
+   * 降级数据库版本
+   */
+  down?: () => Promise<void>;
+}
+
+/**
+ * @author tengda
+ */
 export interface IEntityRegistry<TKey extends number | string, TEntity extends IEntityBase<TKey>> {
   /**
    * 数据库
@@ -35,4 +49,9 @@ export interface IEntityRegistry<TKey extends number | string, TEntity extends I
    * 缓存
    */
   readonly cache: IEntityCache<TKey, TEntity>;
+
+  /**
+   * 迁移
+   */
+  readonly migrations: { [key: string]: IEntityMigration };
 }

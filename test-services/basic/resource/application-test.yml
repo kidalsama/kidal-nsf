@@ -21,7 +21,6 @@ data:
       password: "Mcg!2345" # CI: data.databaseMap.primary.password
       database: "test_node_server_foundation" # CI: data.databaseMap.primary.database
       timezone: "Asia/Shanghai"
-      dropTableOnInit: true
     secondary:
       dialect: "mysql"
       host: "39.105.87.12" # CI: data.databaseMap.secondary.host
@@ -30,7 +29,6 @@ data:
       password: "Mcg!2345" # CI: data.databaseMap.secondary.password
       database: "test_node_server_foundation_2" # CI: data.databaseMap.secondary.database
       timezone: "Asia/Shanghai"
-      dropTableOnInit: true
 cluster:
   enabled: true
   javaClusterMap:

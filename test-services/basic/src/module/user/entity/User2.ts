@@ -1,4 +1,4 @@
-import {IEntityBase, IEntityRegistry} from "../../../../../../src/data/IEntity";
+import {IEntityBase, IEntityMigration, IEntityRegistry} from "../../../../../../src/data/IEntity";
 import Database from "../../../../../../src/data/Database";
 import Sequelize from "sequelize";
 import IEntityCache from "../../../../../../src/data/IEntityCache";
@@ -57,6 +57,16 @@ class Registry implements IEntityRegistry<number, IUser2> {
   }
 
   public readonly cache: IEntityCache<number, IUser2> = null!
+
+  public get migrations(): { [key: string]: IEntityMigration } {
+    return {
+      init: {
+        up: async () => {
+          await model.sync()
+        },
+      },
+    }
+  }
 }
 
 export default new Registry();
