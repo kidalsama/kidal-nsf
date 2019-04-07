@@ -2,11 +2,12 @@ import Sequelize = require("sequelize");
 import Logs from "../application/Logs";
 import glob from "glob";
 import Environment from "../application/Environment";
-import {IEntityBase, IEntityCache, IEntityRegistry} from "./IEntity";
+import {IEntityBase, IEntityRegistry} from "./IEntity";
 import EntityCacheImpl from "./EntityCacheImpl";
 import * as events from "events";
 import {IDatabaseConfig} from "../application/ApplicationConfig";
 import Maybe from "graphql/tsutils/Maybe";
+import IEntityCache from "./IEntityCache";
 
 /**
  * @author tengda

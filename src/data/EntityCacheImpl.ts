@@ -1,8 +1,10 @@
-import {EntityEvents, EntityLoadManyFunction, EntityLoadOneFunction, IEntityBase, IEntityCache} from "./IEntity";
 import Database from "./Database";
 import Logs from "../application/Logs";
 import * as events from "events";
-import Environment from "../application/Environment";
+import {IEntityBase} from "./IEntity";
+import IEntityCache from "./IEntityCache";
+import {EntityLoadManyFunction, EntityLoadOneFunction} from "./EntityFunction";
+import {EntityEvents} from "./EntityEvents";
 import Sequelize = require("sequelize");
 
 /**

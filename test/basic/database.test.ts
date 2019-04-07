@@ -1,5 +1,5 @@
 import Application from "../../src/application/Application"
-import {IEntityCache} from "../../src/data/IEntity";
+import IEntityCache from "../../src/data/IEntityCache";
 import {IUser} from "../../test-services/basic/src/module/user/entity/User";
 import Database from "../../src/data/Database";
 

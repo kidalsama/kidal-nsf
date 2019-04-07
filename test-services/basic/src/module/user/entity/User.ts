@@ -1,6 +1,7 @@
-import {IEntityBase, IEntityCache, IEntityRegistry} from "../../../../../../src/data/IEntity";
+import {IEntityBase, IEntityRegistry} from "../../../../../../src/data/IEntity";
 import Database from "../../../../../../src/data/Database";
 import Sequelize from "sequelize";
+import IEntityCache from "../../../../../../src/data/IEntityCache";
 
 export interface IUser extends IEntityBase<number> {
   id: number;

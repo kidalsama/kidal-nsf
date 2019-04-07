@@ -1,7 +1,7 @@
 import User, {IUser} from "./entity/User";
 import PayloadDispatcher from "./../../../../../src/server/PayloadDispatcher";
-import {EntityEvents} from "../../../../../src/data/IEntity";
 import Database from "../../../../../src/data/Database";
+import {EntityEvents} from "../../../../../src/data/EntityEvents";
 
 export default class UserService {
   public static readonly S = new UserService();
