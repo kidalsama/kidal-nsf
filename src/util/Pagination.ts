@@ -164,4 +164,39 @@ export class Connection<TNode> {
       this.pageArgs,
     )
   }
+
+  /**
+   * 转换为Json
+   */
+  public stringify(): string {
+    return JSON.stringify({
+      edges: this.edges,
+      totalCount: this.totalCount,
+      startCursor: this.startCursor,
+      endCursor: this.endCursor,
+      pageArgs: this.pageArgs,
+    })
+  }
+
+  /**
+   * 从Json解析
+   */
+  public static parse<T>(s: any): Connection<T> {
+    const obj = typeof s === "string" ? JSON.parse(s) : s
+
+    return new Connection<T>(
+      obj.edges,
+      obj.totalCount,
+      obj.startCursor,
+      obj.endCursor,
+      new PageArgs(
+        obj.pageArgs.page,
+        obj.pageArgs.limit,
+        obj.pageArgs.first,
+        obj.pageArgs.after,
+        obj.pageArgs.last,
+        obj.pageArgs.before,
+      ),
+    )
+  }
 }
