@@ -59,6 +59,13 @@ export default class GraphQLServer {
       },
       formatError: (error) => {
         const formattedError = formatError(error);
+        // 打印错误
+        if (formattedError &&
+          formattedError.extensions &&
+          formattedError.extensions.hasOwnProperty("code") &&
+          formattedError.extensions.code === "INTERNAL_SERVER_ERROR") {
+          GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR", formattedError)
+        }
         const originalError: any = error.originalError;
         if (!originalError) {
           return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
@@ -71,7 +78,9 @@ export default class GraphQLServer {
         if (!(maybeLudmilaError instanceof LudmilaError)) {
           return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
         }
-        return Object.assign({}, formattedError, {code: maybeLudmilaError.code, message: maybeLudmilaError.message});
+        return Object.assign(
+          {}, formattedError, {code: maybeLudmilaError.code, message: maybeLudmilaError.message},
+        );
       },
       extensions: [
         (): GraphQLExtension => ({
