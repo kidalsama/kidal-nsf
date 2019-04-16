@@ -37,6 +37,7 @@ export default class GraphQLServer {
       .map((it: any) => makeExecutableSchema({
         typeDefs: it.schema,
         resolvers: it.resolvers,
+        allowUndefinedInResolve: true,
       }))
     const schema = mergeSchemas({schemas: schemaList})
 
