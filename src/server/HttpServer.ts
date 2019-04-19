@@ -35,7 +35,7 @@ export default class HttpServer {
   /**
    * 初始化全部
    */
-  public static async initAll(): Promise<void> {
+  public static async initAll(init: any): Promise<void> {
     const config = Environment.S.applicationConfig.server
     if (!config.enabled) {
       return
@@ -46,7 +46,7 @@ export default class HttpServer {
 
     // 这里要先添加
     for (const name of names) {
-      this.serverMap.set(name, new HttpServer(config.httpServerMap[name]))
+      this.serverMap.set(name, new HttpServer(config.httpServerMap[name], init))
     }
 
     // 启动服务器
@@ -80,7 +80,7 @@ export default class HttpServer {
   /**
    * 单例
    */
-  private constructor(config: IHttpServerConfig) {
+  private constructor(config: IHttpServerConfig, init: any) {
     this.config = config;
     this.expressApp = express();
     this.server = http.createServer(this.expressApp);
@@ -98,9 +98,9 @@ export default class HttpServer {
     }))
 
     // 路由
-    this.expressApp.get("/", (req, res) => {
-      res.end("Welcome to Mcg Game Service");
-    });
+    if (init && init.initRoutes) {
+      init.initRoutes(this.expressApp)
+    }
 
     // RPC
     this.expressApp.post("/rpc", (req, res) => {

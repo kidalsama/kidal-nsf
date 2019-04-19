@@ -78,12 +78,19 @@ export default class Application {
 
   // 启动应用
   private async boot() {
+    // 加载初始化控制器
+    const initJs = `${Environment.S.srcDir}/Init.js`
+    let init: any = {}
+    if (fs.existsSync(initJs)) {
+      init = require(initJs).default
+    }
+
     // 启动数据库
     await Database.initAll()
 
     // 启动服务器
     await WebSocketApiManager.S.init();
-    await HttpServer.initAll()
+    await HttpServer.initAll(init.httpServer)
 
     // 启动发现服务
     await DiscoveryClient.S.init();
