@@ -13,6 +13,7 @@ import LudmilaErrors from "../error/LudmilaErrors";
 import {IHttpServerConfig} from "../application/ApplicationConfig";
 import GraphQLServer from "./graphql/GraphQLServer";
 import WebSocketServer from "./websocket/WebSocketServer";
+import * as fs from "fs";
 
 /**
  * @author tengda
@@ -35,7 +36,14 @@ export default class HttpServer {
   /**
    * 初始化全部
    */
-  public static async initAll(init: any): Promise<void> {
+  public static async initAll(): Promise<void> {
+    // 控制器
+    const initializerSrc = `${Environment.S.srcDir}/HttpServerInitializer.js`
+    let initializer: any = {}
+    if (fs.existsSync(initializerSrc)) {
+      initializer = require(initializerSrc).default
+    }
+
     const config = Environment.S.applicationConfig.server
     if (!config.enabled) {
       return
@@ -46,7 +54,7 @@ export default class HttpServer {
 
     // 这里要先添加
     for (const name of names) {
-      this.serverMap.set(name, new HttpServer(config.httpServerMap[name], init))
+      this.serverMap.set(name, new HttpServer(config.httpServerMap[name], initializer))
     }
 
     // 启动服务器
@@ -80,7 +88,7 @@ export default class HttpServer {
   /**
    * 单例
    */
-  private constructor(config: IHttpServerConfig, init: any) {
+  private constructor(config: IHttpServerConfig, initializer: any) {
     this.config = config;
     this.expressApp = express();
     this.server = http.createServer(this.expressApp);
@@ -98,8 +106,8 @@ export default class HttpServer {
     }))
 
     // 路由
-    if (init && init.initRoutes) {
-      init.initRoutes(this.expressApp)
+    if (initializer && initializer.routes) {
+      initializer.initRoutes(this.expressApp)
     }
 
     // RPC
