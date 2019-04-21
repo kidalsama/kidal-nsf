@@ -107,7 +107,7 @@ export default class HttpServer {
 
     // 路由
     if (initializer && initializer.routes) {
-      initializer.initRoutes(this.expressApp)
+      initializer.routes(this.expressApp)
     }
 
     // RPC
