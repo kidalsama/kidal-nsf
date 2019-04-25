@@ -20,11 +20,11 @@ export const createMigrationModel = async (database: Database): Promise<Sequeliz
         autoIncrement: true,
       },
       modelName: {
-        type: Sequelize.STRING(255),
+        type: Sequelize.STRING(64),
         allowNull: false,
       },
       migrationName: {
-        type: Sequelize.STRING(255),
+        type: Sequelize.STRING(64),
         allowNull: false,
       },
     },
