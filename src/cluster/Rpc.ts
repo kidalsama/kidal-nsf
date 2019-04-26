@@ -63,7 +63,7 @@ export default class Rpc {
         pool = new LB_Pool.Pool(http, servers, {
           max_pending: 300, // 最大等待
           // ping: "/ping",
-          timeout: 10 * 1000, // 请求超时
+          timeout: 60 * 1000, // 请求超时
           max_sockets: 10, // 最大连接数
           name: id,
         });
