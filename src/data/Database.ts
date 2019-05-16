@@ -222,7 +222,7 @@ export default class Database extends events.EventEmitter {
         idle: 10 * 1000, // 最长线程空闲时间
       },
       logging: (message: any) => {
-        Database.LOG.debug(message);
+        Database.LOG.trace(message);
       },
     });
 
