@@ -109,6 +109,7 @@ export default class GraphQLServer {
           "schema.polling.interval": 2000, // schema polling interval in ms
           "schema.disableComments": false,
           "tracing.hideTracingResponse": true,
+          "queryPlan.hideQueryPlanResponse": false,
         },
       },
     });
