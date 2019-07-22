@@ -13,7 +13,7 @@ describe("Basic: Http", () => {
 
   it("Should get status 200", async () => {
     const resp = await request(HttpServer.acquire().expressApp)
-      .get("/")
+      .get("/health")
 
     expect(resp.status).toBe(200)
   });

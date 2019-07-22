@@ -129,7 +129,7 @@ export default class HttpServer {
     });
 
     // docker 健康检查支持
-    this.expressApp.get("/docker-support/health", (req, res) => {
+    this.expressApp.get("/health", (req, res) => {
       // TODO: 使用HealthIndicator读取健康状态
       res.status(200).end();
     });
