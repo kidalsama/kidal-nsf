@@ -15,19 +15,19 @@ data:
   databaseMap:
     primary:
       dialect: "mysql"
-      host: "39.107.15.85" # CI: data.databaseMap.primary.host
+      host: "39.107.15.85"
       port: 3306
-      username: "mcg" # CI: data.databaseMap.primary.username
-      password: "Mcg!2345" # CI: data.databaseMap.primary.password
-      database: "test_nsf_1" # CI: data.databaseMap.primary.database
+      username: "mcg"
+      password: "Mcg!2345"
+      database: "test_nsf_1"
       timezone: "Asia/Shanghai"
     secondary:
       dialect: "mysql"
-      host: "39.107.15.85" # CI: data.databaseMap.secondary.host
+      host: "39.107.15.85"
       port: 3306
-      username: "mcg" # CI: data.databaseMap.secondary.username
-      password: "Mcg!2345" # CI: data.databaseMap.secondary.password
-      database: "test_nsf_2" # CI: data.databaseMap.secondary.database
+      username: "mcg"
+      password: "Mcg!2345"
+      database: "test_nsf_2"
       timezone: "Asia/Shanghai"
 cluster:
   enabled: true

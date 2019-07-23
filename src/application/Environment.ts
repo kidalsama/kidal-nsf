@@ -33,6 +33,7 @@ export default class Environment {
   private static LOG: log4js.Logger;
   private static _INSTANCE?: Environment;
   private _applicationConfig?: IApplicationConfig;
+  private _settings?: any;
 
   /**
    * 单例
@@ -82,6 +83,13 @@ export default class Environment {
    */
   public get applicationConfig(): IApplicationConfig {
     return this._applicationConfig!;
+  }
+
+  /**
+   * 设置
+   */
+  public get settings(): any {
+    return this._settings;
   }
 
   /**
@@ -135,6 +143,9 @@ export default class Environment {
     // 读取应用配置
     this._applicationConfig = await this.loadApplicationConfig()
 
+    // 读取设置
+    this._settings = await this.loadSettings()
+
     // 打印参数
     Environment.LOG.info(`CurrentWorkingDirectory: ${this.cwd}
 ServiceName: ${this.serviceName}
@@ -145,6 +156,8 @@ FoundationConfig ---------------------
 ${JSON.stringify(this.foundationConfig, null, 2)}
 ApplicationConfig ---------------------
 ${JSON.stringify(this.applicationConfig, null, 2)}
+Settings ---------------------
+${this._settings ? JSON.stringify(this._settings, null, 2) : "undefined"}
 `);
   }
 
@@ -251,6 +264,17 @@ ${JSON.stringify(this.applicationConfig, null, 2)}
     } else {
       throw new Error(`无效的配置服务器类型 ${configServer.type}`);
     }
+  }
+
+  // 读取设置
+  private async loadSettings(): Promise<any> {
+    // 加载本地配置
+    const filename = path.join(this.resourceDir, `settings-${this.applicationConfigName}.yml`)
+    if (!fs.existsSync(filename)) {
+      return undefined
+    }
+    const localConfigText = fs.readFileSync(filename).toString("utf8");
+    return yaml.parse(localConfigText);
   }
 
   // 检查启动参数
