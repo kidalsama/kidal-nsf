@@ -256,7 +256,7 @@ ${JSON.stringify(this.applicationConfig, null, 2)}
   // 检查启动参数
   private checkArgv(argv: string[]): void {
     // 读取启动参数
-    if (argv.length !== 4) {
+    if (argv.length < 3) {
       // noinspection TsLint
       console.error(`Invalid bootstrap argv: ${argv.slice(2).join(" ")}`);
       // noinspection TsLint
