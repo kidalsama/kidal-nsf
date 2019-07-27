@@ -39,6 +39,7 @@ export interface IApplicationConfig {
   server: IServerConfig;
   data: IDataConfig;
   cluster: IClusterConfig;
+  settings: any;
 }
 
 export const completeApplicationConfig = (config: any): IApplicationConfig => {
@@ -49,6 +50,7 @@ export const completeApplicationConfig = (config: any): IApplicationConfig => {
     server: completeServerConfig(config.server || {}),
     data: completeDataConfig(config.data || {}),
     cluster: completeClusterConfig(config.cluster || {}),
+    settings: config.settings,
   }
 }
 
