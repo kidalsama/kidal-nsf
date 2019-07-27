@@ -98,7 +98,7 @@ export default class Environment {
     this.testing = testing;
     this.cwd = process.cwd();
     this.serviceName = argv[2];
-    this.applicationConfigName = argv[3];
+    this.applicationConfigName = argv.length >= 4 ? argv[3] : process.env.NSF_CONFIG_NAME || "dev";
 
     // 加载框架配置
     this.foundationConfig = this.loadFoundationConfig();
