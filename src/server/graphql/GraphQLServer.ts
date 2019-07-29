@@ -65,7 +65,13 @@ export default class GraphQLServer {
           formattedError.extensions &&
           formattedError.extensions.hasOwnProperty("code") &&
           formattedError.extensions.code === "INTERNAL_SERVER_ERROR") {
-          GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR", formattedError, formattedError.extensions.exception)
+          if (formattedError.extensions.exception &&
+            formattedError.extensions.exception.errors &&
+            formattedError.extensions.exception.errors[0]) {
+            GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR", formattedError.extensions.exception.errors[0].stack)
+          } else {
+            GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR", formattedError, formattedError.extensions.exception)
+          }
         }
         const originalError: any = error.originalError;
         if (!originalError) {

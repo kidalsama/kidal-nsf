@@ -15,19 +15,19 @@ data:
   databaseMap:
     primary:
       dialect: "mysql"
-      host: "39.105.87.12"
+      host: "39.107.15.85"
       port: 3306
       username: "mcg"
       password: "Mcg!2345"
-      database: "dev_node_server_foundation"
+      database: "test_nsf_1"
       timezone: "Asia/Shanghai"
     secondary:
       dialect: "mysql"
-      host: "39.105.87.12"
+      host: "39.107.15.85"
       port: 3306
       username: "mcg"
       password: "Mcg!2345"
-      database: "dev_node_server_foundation_2"
+      database: "test_nsf_2"
       timezone: "Asia/Shanghai"
 cluster:
   enabled: true
