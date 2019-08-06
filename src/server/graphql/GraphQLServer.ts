@@ -14,7 +14,9 @@ import {makeExecutableSchema, mergeSchemas} from "graphql-tools";
  * @author tengda
  */
 export default class GraphQLServer {
+  // 日志
   private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "GraphQLServer");
+  // 服务器
   public readonly httpServer: HttpServer
 
   public constructor(httpServer: HttpServer) {
@@ -61,18 +63,18 @@ export default class GraphQLServer {
       formatError: (error) => {
         const formattedError = formatError(error);
         // 打印错误
-        if (formattedError &&
-          formattedError.extensions &&
-          formattedError.extensions.hasOwnProperty("code") &&
-          formattedError.extensions.code === "INTERNAL_SERVER_ERROR") {
-          if (formattedError.extensions.exception &&
-            formattedError.extensions.exception.errors &&
-            formattedError.extensions.exception.errors[0]) {
-            GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR", formattedError.extensions.exception.errors[0].stack)
-          } else {
-            GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR", formattedError, formattedError.extensions.exception)
-          }
-        }
+        // if (formattedError &&
+        //   formattedError.extensions &&
+        //   formattedError.extensions.hasOwnProperty("code") &&
+        //   formattedError.extensions.code === "INTERNAL_SERVER_ERROR") {
+        //   if (formattedError.extensions.exception &&
+        //     formattedError.extensions.exception.errors &&
+        //     formattedError.extensions.exception.errors[0]) {
+        //     GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR", formattedError.extensions.exception.errors[0].stack)
+        //   } else {
+        //     GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR", formattedError, formattedError.extensions.exception)
+        //   }
+        // }
         const originalError: any = error.originalError;
         if (!originalError) {
           return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
@@ -83,6 +85,8 @@ export default class GraphQLServer {
         }
         const maybeLudmilaError = errors[0].originalError
         if (!(maybeLudmilaError instanceof LudmilaError)) {
+          // 打印错误
+          GraphQLServer.LOG.error(maybeLudmilaError, error.source)
           return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
         }
         return Object.assign(

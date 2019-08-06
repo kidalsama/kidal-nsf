@@ -107,11 +107,14 @@ export default class HttpServer {
 
     // 路由
     if (initializer && initializer.routes) {
+      HttpServer.LOG.warn("请不要再使用 HttpServerInitializer 的 routes 方法，使用 initRouter 方法替代")
       initializer.routes(this.expressApp)
+    } else if (initializer && initializer.initRouter) {
+      initializer.initRouter(this)
     }
 
     // RPC
-    this.expressApp.post("/rpc", (req, res) => {
+    this.expressApp.post("/.nsf/rpc", (req, res) => {
       Rpc.S.httpCallLocalProcedure(req.body)
         .then((ret) => {
           res.status(200).json(ret)
@@ -129,13 +132,16 @@ export default class HttpServer {
     });
 
     // docker 健康检查支持
-    this.expressApp.get("/health", (req, res) => {
+    this.expressApp.get("/.nsf/health", (req, res) => {
       // TODO: 使用HealthIndicator读取健康状态
       res.status(200).end();
     });
 
     // graphQL
     this.graphQLServer = this.config.graphQLEndpoint ? new GraphQLServer(this) : undefined
+    if (this.graphQLServer && initializer && initializer.initGraphQL) {
+      initializer.initGraphQL(this, this.graphQLServer)
+    }
     // WebSocket
     this.webSocketServer = this.config.webSocketEndpoint ? new WebSocketServer(this) : undefined
   }
