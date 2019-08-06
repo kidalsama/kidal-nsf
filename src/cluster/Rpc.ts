@@ -95,7 +95,7 @@ export default class Rpc {
       pool.request(
         {
           method: "POST",
-          path: "/rpc",
+          path: "/.nsf/rpc",
           headers: {
             "Content-Type": "application/json",
             "Content-Length": payload ? payload.length : 0,

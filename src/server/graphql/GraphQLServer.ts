@@ -1,4 +1,4 @@
-import {formatError} from "graphql";
+import {formatError, GraphQLError, GraphQLFormattedError} from "graphql";
 import HttpServer from "../HttpServer";
 import glob from "glob";
 import Environment from "../../application/Environment";
@@ -18,9 +18,46 @@ export default class GraphQLServer {
   private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "GraphQLServer");
   // 服务器
   public readonly httpServer: HttpServer
+  // 错误格式化器
+  public errorFormatter: (error: GraphQLError) => GraphQLFormattedError
 
   public constructor(httpServer: HttpServer) {
     this.httpServer = httpServer
+    this.errorFormatter = (error) => {
+      const formattedError = formatError(error);
+      // 打印错误
+      // if (formattedError &&
+      //   formattedError.extensions &&
+      //   formattedError.extensions.hasOwnProperty("code") &&
+      //   formattedError.extensions.code === "INTERNAL_SERVER_ERROR") {
+      //   if (formattedError.extensions.exception &&
+      //     formattedError.extensions.exception.errors &&
+      //     formattedError.extensions.exception.errors[0]) {
+      //     GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR", formattedError.extensions.exception.errors[0].stack)
+      //   } else {
+      //     GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR", formattedError, formattedError.extensions.exception)
+      //   }
+      // }
+      const originalError: any = error.originalError;
+      if (!originalError) {
+        return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
+      }
+      const errors: any = originalError.errors
+      if (!errors || errors.length < 0) {
+        return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
+      }
+      // 推测是否是标准错误形式
+      const maybeLudmilaError = errors[0].originalError
+      if (!(maybeLudmilaError instanceof LudmilaError)) {
+        return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
+      }
+      // 打印错误
+      GraphQLServer.LOG.error("StdError", maybeLudmilaError.stack, error.source ? error.source.body : "")
+      // 返回
+      return Object.assign(
+        {}, formattedError, {code: maybeLudmilaError.code, message: maybeLudmilaError.message},
+      );
+    }
   }
 
   /**
@@ -61,39 +98,7 @@ export default class GraphQLServer {
         return context
       },
       formatError: (error) => {
-        const formattedError = formatError(error);
-        // 打印错误
-        // if (formattedError &&
-        //   formattedError.extensions &&
-        //   formattedError.extensions.hasOwnProperty("code") &&
-        //   formattedError.extensions.code === "INTERNAL_SERVER_ERROR") {
-        //   if (formattedError.extensions.exception &&
-        //     formattedError.extensions.exception.errors &&
-        //     formattedError.extensions.exception.errors[0]) {
-        //     GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR", formattedError.extensions.exception.errors[0].stack)
-        //   } else {
-        //     GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR", formattedError, formattedError.extensions.exception)
-        //   }
-        // }
-        const originalError: any = error.originalError;
-        if (!originalError) {
-          return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
-        }
-        const errors: any = originalError.errors
-        if (!errors || errors.length < 0) {
-          return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
-        }
-        // 推测是否是标准错误形式
-        const maybeLudmilaError = errors[0].originalError
-        if (!(maybeLudmilaError instanceof LudmilaError)) {
-          return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
-        }
-        // 打印错误
-        GraphQLServer.LOG.error("StdError", maybeLudmilaError.stack, error.source ? error.source.body : "")
-        // 返回
-        return Object.assign(
-          {}, formattedError, {code: maybeLudmilaError.code, message: maybeLudmilaError.message},
-        );
+        return this.errorFormatter(error)
       },
       extensions: [
         (): GraphQLExtension => ({
