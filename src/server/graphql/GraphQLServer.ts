@@ -83,12 +83,14 @@ export default class GraphQLServer {
         if (!errors || errors.length < 0) {
           return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
         }
+        // 推测是否是标准错误形式
         const maybeLudmilaError = errors[0].originalError
         if (!(maybeLudmilaError instanceof LudmilaError)) {
-          // 打印错误
-          GraphQLServer.LOG.error(maybeLudmilaError, error.source)
           return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
         }
+        // 打印错误
+        GraphQLServer.LOG.error(maybeLudmilaError, error.source)
+        // 返回
         return Object.assign(
           {}, formattedError, {code: maybeLudmilaError.code, message: maybeLudmilaError.message},
         );
