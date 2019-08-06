@@ -89,7 +89,7 @@ export default class GraphQLServer {
           return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
         }
         // 打印错误
-        GraphQLServer.LOG.error(maybeLudmilaError, error.source)
+        GraphQLServer.LOG.error("StdError", maybeLudmilaError, error.source ? error.source.body : "")
         // 返回
         return Object.assign(
           {}, formattedError, {code: maybeLudmilaError.code, message: maybeLudmilaError.message},
