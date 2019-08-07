@@ -7,6 +7,7 @@ import expressApollo = require("apollo-server-express/dist/expressApollo");
 import BodyParser = require("body-parser");
 import ApolloServerCore = require("apollo-server-core");
 import GraphqlPlaygroundHtml = require( "@apollographql/graphql-playground-html");
+import PayloadDispatcher from "../PayloadDispatcher";
 
 const fileUploadMiddleware = (uploadsConfig: any, server: any) => (req: any, res: any, next: any) => {
   if (typeof ApolloServerCore.processFileUploads === "function" &&
@@ -109,15 +110,11 @@ export default class GraphQLApolloServer extends ApolloServer {
         }
       }
 
-      return expressApollo.graphqlExpress(() => {
-        return this.createGraphQLServerOptions(req, res);
-      })(req, res, next)
-
-      // return PayloadDispatcher.S.dispatchGraphQL(() => {
-      //   expressApollo.graphqlExpress(() => {
-      //     return this.createGraphQLServerOptions(req, res);
-      //   })(req, res, next)
-      // })
+      return PayloadDispatcher.S.dispatchGraphQL(() => {
+        expressApollo.graphqlExpress(() => {
+          return this.createGraphQLServerOptions(req, res);
+        })(req, res, next)
+      })
     });
   }
 }

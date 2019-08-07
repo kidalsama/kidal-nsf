@@ -26,29 +26,32 @@ export default class PayloadDispatcher {
    * 获取同步数据
    */
   public getSync(): any {
-    return this.handlerCls.get("sync");
+    return {}
+    // return this.handlerCls.get("sync");
   }
 
   /**
    * 分发GraphQL载荷
    */
   public async dispatchGraphQL(dispatcher: () => void): Promise<undefined> {
+    dispatcher()
+    return undefined
     // 钩住处理器
-    return new Promise<undefined>((resolve, reject) => {
-      this.handlerCls.run(() => {
-        // 同步
-        const sync = {
-          full: [],
-          partial: [],
-        };
-
-        // 设置参数
-        this.handlerCls.set("sync", sync);
-
-        // 调用
-        dispatcher()
-      });
-    });
+    // return new Promise<undefined>((resolve, reject) => {
+    //   this.handlerCls.run(() => {
+    //     // 同步
+    //     const sync = {
+    //       full: [],
+    //       partial: [],
+    //     };
+    //
+    //     // 设置参数
+    //     this.handlerCls.set("sync", sync);
+    //
+    //     // 调用
+    //     dispatcher()
+    //   });
+    // });
   }
 
   /**
@@ -66,42 +69,51 @@ export default class PayloadDispatcher {
       throw new LudmilaError(LudmilaErrors.SERVER_102);
     }
 
-    // 钩住处理器
     return new Promise<{ reply: any, sync: any }>((resolve, reject) => {
-      this.handlerCls.run(() => {
-        // 同步
-        const sync = {full: [], partial: []};
-
-        // 设置参数
-        this.handlerCls.set("sync", sync);
-
-        // 执行
-        registry.processPayload(payload.data, {payload, session})
-          .then((reply) => {
-            resolve({reply, sync});
-          })
-          .catch(reject);
-      });
+      // 执行
+      registry.processPayload(payload.data, {payload, session})
+        .then((reply) => {
+          resolve({reply, sync: {full: [], partial: []}});
+        })
+        .catch(reject);
     });
+
+    // 钩住处理器
+    // return new Promise<{ reply: any, sync: any }>((resolve, reject) => {
+    //   this.handlerCls.run(() => {
+    //     // 同步
+    //     const sync = {full: [], partial: []};
+    //
+    //     // 设置参数
+    //     this.handlerCls.set("sync", sync);
+    //
+    //     // 执行
+    //     registry.processPayload(payload.data, {payload, session})
+    //       .then((reply) => {
+    //         resolve({reply, sync});
+    //       })
+    //       .catch(reject);
+    //   });
+    // });
   }
 
   /**
    *
    */
   public addSyncFull(type: string, id: any, data: any): void {
-    const sync: any = this.handlerCls.get("sync");
-    if (sync) {
-      sync.full.push({type, id, data});
-    }
+    // const sync: any = this.handlerCls.get("sync");
+    // if (sync) {
+    //   sync.full.push({type, id, data});
+    // }
   }
 
   /**
    *
    */
   public addSyncPartial(type: string, id: any, key: string, value: any): void {
-    const sync: any = this.handlerCls.get("sync");
-    if (sync) {
-      sync.partial.push({type, id, key, value});
-    }
+    // const sync: any = this.handlerCls.get("sync");
+    // if (sync) {
+    //   sync.partial.push({type, id, key, value});
+    // }
   }
 }

@@ -103,9 +103,9 @@ export default class GraphQLServer {
       extensions: [
         (): GraphQLExtension => ({
           willSendResponse: ({graphqlResponse}) => {
-            // const extensions = graphqlResponse.extensions || {}
-            // extensions.foundation = {sync: PayloadDispatcher.S.getSync()}
-            // graphqlResponse.extensions = extensions
+            const extensions = graphqlResponse.extensions || {}
+            extensions.foundation = {sync: PayloadDispatcher.S.getSync()}
+            graphqlResponse.extensions = extensions
           },
         }),
       ],
