@@ -33,7 +33,6 @@ export default class GraphQLServer {
       ) {
         GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR",
           formattedError, formattedError.extensions.exception,
-          error.source ? error.source.body : "",
           printError(error),
         )
       }

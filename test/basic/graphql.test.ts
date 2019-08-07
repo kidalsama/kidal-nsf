@@ -43,4 +43,21 @@ query error {
     expect(resp.status).toBe(200)
     expect(resp.body).toHaveProperty("errors")
   });
+
+  it("SubTypeError", async () => {
+    const resp = await request(HttpServer.acquire().expressApp)
+      .post("/graphql")
+      .send({
+        query: `
+query error {
+  subType {
+    error
+  }
+}`,
+      })
+    expect(resp.status).toBe(200)
+    expect(resp.body).toHaveProperty("errors")
+    expect(resp.body.errors[0]).toHaveProperty("code")
+    expect(resp.body.errors[0].code).toBe("998")
+  });
 });

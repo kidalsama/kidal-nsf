@@ -6,12 +6,25 @@ export default {
   schema: gql`
 type Query {
   error: Boolean
+  subType: SubTypeError
+}
+
+type SubTypeError {
+  error: Boolean
 }
 `,
   resolvers: {
     Query: {
       error() {
-        throw new LudmilaError(LudmilaErrors.FAIL, "testing error")
+        throw new LudmilaError("998", "test error")
+      },
+      async subType() {
+        return {}
+      },
+    },
+    SubTypeError: {
+      async error() {
+        throw new LudmilaError("998", "test sub type error")
       },
     },
   },
