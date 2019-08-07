@@ -3,7 +3,7 @@ import ISession from "./ISession";
 import Logs from "../application/Logs";
 import LudmilaError from "../error/LudmilaError";
 import LudmilaErrors from "../error/LudmilaErrors";
-import * as clsHooked from "cls-hooked";
+// import * as clsHooked from "cls-hooked";
 import Maybe from "graphql/tsutils/Maybe";
 import WebSocketApiManager from "./websocket/WebSocketApiManager";
 
@@ -13,7 +13,7 @@ import WebSocketApiManager from "./websocket/WebSocketApiManager";
 export default class PayloadDispatcher {
   public static readonly S = new PayloadDispatcher();
   private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "PayloadDispatcher");
-  private readonly handlerCls = clsHooked.createNamespace("foundation.server.PayloadDispatcher.handler");
+  // private readonly handlerCls = clsHooked.createNamespace("foundation.server.PayloadDispatcher.handler");
 
   /**
    * 单例

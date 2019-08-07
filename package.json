@@ -1,6 +1,6 @@
 {
   "name": "mcg-nsf",
-  "version": "0.9.7",
+  "version": "0.9.8",
   "repository": "http://gitlab.dev.happyhouse.club/mcg-game/server-foundation",
   "author": "MCG RND DEPARTMENT",
   "scripts": {
@@ -35,7 +35,6 @@
     "@types/yaml": "1.0.2",
     "apollo-server": "2.5.0",
     "babel-jest": "24.1.0",
-    "cls-hooked": "4.2.2",
     "cookie-parser": "1.4.4",
     "cors": "2.8.5",
     "express": "4.16.4",
