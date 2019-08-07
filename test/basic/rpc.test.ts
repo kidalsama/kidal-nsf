@@ -8,7 +8,7 @@ describe("Basic: Rpc", () => {
   beforeAll(async () => {
     await Application.runTest("basic")
     await new Promise((resolve, reject) => setTimeout(resolve, waitDiscoveryTimeout))
-  }, waitDiscoveryTimeout + 3 * 1000)
+  }, waitDiscoveryTimeout + 5 * 1000)
 
   afterAll(async () => {
     await Application.S.shutdown()
@@ -17,7 +17,7 @@ describe("Basic: Rpc", () => {
   it("Discovery init twice", async () => {
     await DiscoveryClient.S.init()
     await new Promise((resolve, reject) => setTimeout(resolve, waitDiscoveryTimeout))
-  }, waitDiscoveryTimeout + 3 * 1000);
+  }, waitDiscoveryTimeout + 5 * 1000);
 
   it("Discovery reconnect", async () => {
     await DiscoveryClient.S.reconnect()
