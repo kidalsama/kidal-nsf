@@ -3,7 +3,6 @@ import Cors from "cors"
 import Accepts from "accepts"
 // @ts-ignore
 import TypeIs from "type-is"
-import PayloadDispatcher from "../PayloadDispatcher";
 import expressApollo = require("apollo-server-express/dist/expressApollo");
 import BodyParser = require("body-parser");
 import ApolloServerCore = require("apollo-server-core");
@@ -110,11 +109,15 @@ export default class GraphQLApolloServer extends ApolloServer {
         }
       }
 
-      return PayloadDispatcher.S.dispatchGraphQL(() => {
-        expressApollo.graphqlExpress(() => {
-          return this.createGraphQLServerOptions(req, res);
-        })(req, res, next)
-      })
+      return expressApollo.graphqlExpress(() => {
+        return this.createGraphQLServerOptions(req, res);
+      })(req, res, next)
+
+      // return PayloadDispatcher.S.dispatchGraphQL(() => {
+      //   expressApollo.graphqlExpress(() => {
+      //     return this.createGraphQLServerOptions(req, res);
+      //   })(req, res, next)
+      // })
     });
   }
 }
