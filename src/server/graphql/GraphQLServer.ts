@@ -1,4 +1,4 @@
-import {formatError, GraphQLError, GraphQLFormattedError} from "graphql";
+import {formatError, GraphQLError, GraphQLFormattedError, printError} from "graphql";
 import HttpServer from "../HttpServer";
 import glob from "glob";
 import Environment from "../../application/Environment";
@@ -26,18 +26,17 @@ export default class GraphQLServer {
     this.errorFormatter = (error) => {
       const formattedError = formatError(error);
       // 打印错误
-      // if (formattedError &&
-      //   formattedError.extensions &&
-      //   formattedError.extensions.hasOwnProperty("code") &&
-      //   formattedError.extensions.code === "INTERNAL_SERVER_ERROR") {
-      //   if (formattedError.extensions.exception &&
-      //     formattedError.extensions.exception.errors &&
-      //     formattedError.extensions.exception.errors[0]) {
-      //     GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR", formattedError.extensions.exception.errors[0].stack)
-      //   } else {
-      //     GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR", formattedError, formattedError.extensions.exception)
-      //   }
-      // }
+      if (formattedError &&
+        formattedError.extensions &&
+        formattedError.extensions.hasOwnProperty("code") &&
+        formattedError.extensions.code === "INTERNAL_SERVER_ERROR"
+      ) {
+        GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR",
+          formattedError, formattedError.extensions.exception,
+          error.source ? error.source.body : "",
+          printError(error),
+        )
+      }
       const originalError: any = error.originalError;
       if (!originalError) {
         return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
@@ -52,7 +51,7 @@ export default class GraphQLServer {
         return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
       }
       // 打印错误
-      GraphQLServer.LOG.error("StdError", maybeLudmilaError.stack, error.source ? error.source.body : "")
+      // GraphQLServer.LOG.error("StdError", maybeLudmilaError.stack, error.source ? error.source.body : "")
       // 返回
       return Object.assign(
         {}, formattedError, {code: maybeLudmilaError.code, message: maybeLudmilaError.message},
