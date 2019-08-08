@@ -136,7 +136,7 @@ export class Connection<TNode> {
   /**
    * @author tengda
    */
-  public static async empty<TNode>(pageArgs?: PageArgs): Promise<Connection<TNode>> {
+  public static empty<TNode>(pageArgs?: PageArgs): Connection<TNode> {
     return new Connection<TNode>([], 0, null, null, pageArgs || PageArgs.page())
   }
 
