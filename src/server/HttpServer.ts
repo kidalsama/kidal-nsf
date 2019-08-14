@@ -96,6 +96,7 @@ export default class HttpServer {
     this.expressApp.use(bodyParser.urlencoded({extended: false}));
     this.expressApp.use(bodyParser.json());
     this.expressApp.use(cookieParser());
+    this.expressApp.enable("trust proxy")
 
     // 跨域
     this.expressApp.use(cors({
