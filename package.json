@@ -3,6 +3,8 @@
   "version": "0.9.14",
   "repository": "http://gitlab.dev.happyhouse.club/mcg-game/server-foundation",
   "author": "MCG RND DEPARTMENT",
+  "main": "",
+  "types": "index",
   "scripts": {
     "postinstall": "tsc -p .",
     "lint": "tslint './**/*.ts' -c tslint.json -e './node_modules/**/*.ts'",

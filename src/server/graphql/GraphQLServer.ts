@@ -1,4 +1,4 @@
-import {formatError, GraphQLError, GraphQLFormattedError, printError} from "graphql";
+import {formatError, GraphQLError, GraphQLFormattedError, GraphQLSchema, printError} from "graphql";
 import HttpServer from "../HttpServer";
 import glob from "glob";
 import Environment from "../../application/Environment";
@@ -76,7 +76,15 @@ export default class GraphQLServer {
         resolvers: it.resolvers,
         allowUndefinedInResolve: true,
       }))
-    const schema = mergeSchemas({schemas: schemaList})
+    let schema: GraphQLSchema
+    if (schemaList.length === 0) {
+      throw new Error("No graphql schema")
+    } else if (schemaList.length > 1) {
+      GraphQLServer.LOG.warn("DON NOT use multiple graphql schema")
+      schema = mergeSchemas({schemas: schemaList})
+    } else {
+      schema = schemaList[0]
+    }
 
     // 使用Apollo中间价
     const subscriptions = this.httpServer.config.graphQLSubscriptionEndpoint ?
