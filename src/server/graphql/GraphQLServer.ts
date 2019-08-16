@@ -1,4 +1,4 @@
-import {formatError, GraphQLError, GraphQLFormattedError, GraphQLSchema, printError} from "graphql";
+import {formatError, GraphQLError, GraphQLFormattedError, printError} from "graphql";
 import HttpServer from "../HttpServer";
 import glob from "glob";
 import Environment from "../../application/Environment";
@@ -76,7 +76,7 @@ export default class GraphQLServer {
         resolvers: it.resolvers,
         allowUndefinedInResolve: true,
       }))
-    let schema: GraphQLSchema
+    let schema
     if (schemaList.length === 0) {
       throw new Error("No graphql schema")
     } else if (schemaList.length > 1) {
