@@ -197,7 +197,9 @@ export default class DiscoveryClient extends events.EventEmitter {
         this._nodes = nodes;
 
         // log
-        DiscoveryClient.LOG.info("Retrieved nodes: %s", JSON.stringify(this._nodes, null, 2));
+        if (DiscoveryClient.LOG.isTraceEnabled()) {
+          DiscoveryClient.LOG.trace("Retrieved nodes: %s", JSON.stringify(this._nodes, null, 2));
+        }
 
         // event
         this.emit("nodes-changed", this._nodes);
