@@ -23,38 +23,60 @@ export default class GraphQLServer {
 
   public constructor(httpServer: HttpServer) {
     this.httpServer = httpServer
+    // this.errorFormatter = (error) => {
+    //   const formattedError = formatError(error);
+    //   // 打印错误
+    //   if (formattedError &&
+    //     formattedError.extensions &&
+    //     formattedError.extensions.hasOwnProperty("code") &&
+    //     formattedError.extensions.code === "INTERNAL_SERVER_ERROR"
+    //   ) {
+    //     GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR",
+    //       formattedError, formattedError.extensions.exception,
+    //       printError(error),
+    //     )
+    //   }
+    //   const originalError: any = error.originalError;
+    //   if (!originalError) {
+    //     return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
+    //   }
+    //   const errors: any = originalError.errors
+    //   if (!errors || errors.length < 0) {
+    //     return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
+    //   }
+    //   // 推测是否是标准错误形式
+    //   const maybeLudmilaError = errors[0].originalError
+    //   if (!(maybeLudmilaError instanceof LudmilaError)) {
+    //     return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
+    //   }
+    //   // 打印错误
+    //   // GraphQLServer.LOG.error("StdError", maybeLudmilaError.stack, error.source ? error.source.body : "")
+    //   // 返回
+    //   return Object.assign(
+    //     {}, formattedError, {code: maybeLudmilaError.code, message: maybeLudmilaError.message},
+    //   );
+    // }
     this.errorFormatter = (error) => {
       const formattedError = formatError(error);
-      // 打印错误
-      if (formattedError &&
-        formattedError.extensions &&
-        formattedError.extensions.hasOwnProperty("code") &&
-        formattedError.extensions.code === "INTERNAL_SERVER_ERROR"
-      ) {
-        GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR",
-          formattedError, formattedError.extensions.exception,
+      const isLudmilaError = error.originalError && (error.originalError instanceof LudmilaError)
+      if (isLudmilaError) {
+        const originalError: any = error.originalError;
+        // 打印错误
+        GraphQLServer.LOG.error(
+          "LudmilaError",
+          originalError.code, originalError.message, originalError.stack,
           printError(error),
         )
-      }
-      const originalError: any = error.originalError;
-      if (!originalError) {
+        // 返回
+        return Object.assign(
+          {}, formattedError, {code: originalError.code, message: originalError.message},
+        );
+      } else {
+        // 打印错误
+        GraphQLServer.LOG.error("Error", formattedError, printError(error))
+        // 返回
         return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
       }
-      const errors: any = originalError.errors
-      if (!errors || errors.length < 0) {
-        return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
-      }
-      // 推测是否是标准错误形式
-      const maybeLudmilaError = errors[0].originalError
-      if (!(maybeLudmilaError instanceof LudmilaError)) {
-        return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
-      }
-      // 打印错误
-      // GraphQLServer.LOG.error("StdError", maybeLudmilaError.stack, error.source ? error.source.body : "")
-      // 返回
-      return Object.assign(
-        {}, formattedError, {code: maybeLudmilaError.code, message: maybeLudmilaError.message},
-      );
     }
   }
 
