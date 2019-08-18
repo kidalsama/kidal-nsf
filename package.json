@@ -1,10 +1,10 @@
 {
   "name": "mcg-nsf",
-  "version": "0.9.17",
+  "version": "0.9.18",
   "repository": "http://gitlab.dev.happyhouse.club/mcg-game/server-foundation",
   "author": "MCG RND DEPARTMENT",
-  "main": "",
-  "types": "index",
+  "main": "./index.d.ts",
+  "types": "./index.d.ts",
   "scripts": {
     "postinstall": "tsc -p .",
     "lint": "tslint './**/*.ts' -c tslint.json -e './node_modules/**/*.ts'",
