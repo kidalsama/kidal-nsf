@@ -17,7 +17,14 @@
       "severity": "warning"
     },
     "max-classes-per-file": true,
-    "semicolon": false
+    "semicolon": false,
+    "ban-types": false,
+    "object-literal-shorthand": [
+      true,
+      "never"
+    ],
+    "only-arrow-functions": false,
+    "space-before-function-paren": false
   },
   "rulesDirectory": []
 }

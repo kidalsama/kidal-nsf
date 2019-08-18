@@ -51,6 +51,8 @@
     "mysql2": "1.6.4",
     "node-fetch": "2.3.0",
     "node-zookeeper-client": "0.2.3",
+    "reflect-metadata": "0.1.13",
+    "require-glob": "^3.2.0",
     "sequelize": "4.42.1",
     "superagent": "4.1.0",
     "supertest": "3.4.2",
