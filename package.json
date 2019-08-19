@@ -10,8 +10,8 @@
     "lint": "tslint './**/*.ts' -c tslint.json -e './node_modules/**/*.ts'",
     "build": "tsc -p .",
     "test": "jest --runInBand --forceExit --detectOpenHandles",
+    "test:ioc": "jest --runInBand --forceExit --detectOpenHandles --config=jest-ioc.config.js",
     "lint & test": "yarn run lint & yarn run test",
-    "dev:docs@port:3000": "docsify serve ./docs --port 3000",
     "dev:basic@mac": "node $NODE_DEBUG_OPTION test-services/Bootstrap.js basic dev",
     "dev:basic@win": "node %NODE_DEBUG_OPTION% test-services/Bootstrap.js basic dev"
   },
@@ -52,7 +52,7 @@
     "node-fetch": "2.3.0",
     "node-zookeeper-client": "0.2.3",
     "reflect-metadata": "0.1.13",
-    "require-glob": "^3.2.0",
+    "require-glob": "3.2.0",
     "sequelize": "4.42.1",
     "superagent": "4.1.0",
     "supertest": "3.4.2",

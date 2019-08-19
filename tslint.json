@@ -19,10 +19,6 @@
     "max-classes-per-file": true,
     "semicolon": false,
     "ban-types": false,
-    "object-literal-shorthand": [
-      true,
-      "never"
-    ],
     "only-arrow-functions": false,
     "space-before-function-paren": false
   },

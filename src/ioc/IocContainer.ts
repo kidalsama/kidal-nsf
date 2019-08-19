@@ -49,10 +49,10 @@ export class IoCContainer {
     const propKey = `__${key}`;
     Object.defineProperty(target.prototype, key, {
       enumerable: true,
-      get: function () {
+      get() {
         return this[propKey] ? this[propKey] : this[propKey] = IoCContainer.get(propertyType);
       },
-      set: function (newValue) {
+      set(newValue) {
         this[propKey] = newValue;
       },
     });

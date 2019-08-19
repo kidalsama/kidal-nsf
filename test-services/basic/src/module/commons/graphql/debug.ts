@@ -13,7 +13,7 @@ type Query {
 `,
   resolvers: {
     Query: {
-      async debug() {
+      async debug(): Promise<any> {
         const results = await JavaRpcClientManager.S.acquire("oa")
           .target("213.project")
           .method("get-project")
