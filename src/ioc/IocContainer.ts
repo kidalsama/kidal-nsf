@@ -1,4 +1,4 @@
-import {InjectorHandler} from "./InjectorHandler";
+import {AutowireHandler} from "./AutowireHandler";
 import {ConfigImpl, IConfig} from "./Config";
 
 function checkType(source: Object) {
@@ -11,14 +11,14 @@ export class IoCContainer {
 
   public static isBound(source: Function): boolean {
     checkType(source);
-    const baseSource = InjectorHandler.getConstructorFromType(source);
+    const baseSource = AutowireHandler.getConstructorFromType(source);
     const config: ConfigImpl | undefined = IoCContainer.bindings.get(baseSource);
     return (!!config);
   }
 
   public static bind(source: Function): IConfig {
     checkType(source);
-    const baseSource = InjectorHandler.getConstructorFromType(source);
+    const baseSource = AutowireHandler.getConstructorFromType(source);
     let config: ConfigImpl | undefined = IoCContainer.bindings.get(baseSource);
     if (!config) {
       config = new ConfigImpl(baseSource);
@@ -37,7 +37,7 @@ export class IoCContainer {
 
   public static getType(source: Function): Function {
     checkType(source);
-    const baseSource = InjectorHandler.getConstructorFromType(source);
+    const baseSource = AutowireHandler.getConstructorFromType(source);
     const config: ConfigImpl | undefined = IoCContainer.bindings.get(baseSource);
     if (!config) {
       throw new TypeError(`The type ${source.name} hasn't been registered with the IOC Container`);
@@ -45,7 +45,7 @@ export class IoCContainer {
     return config.targetSource || config.source;
   }
 
-  public static injectProperty(target: Function, key: string, propertyType: Function) {
+  public static autowireProperty(target: Function, key: string, propertyType: Function) {
     const propKey = `__${key}`;
     Object.defineProperty(target.prototype, key, {
       enumerable: true,

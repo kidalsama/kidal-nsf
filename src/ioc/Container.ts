@@ -2,7 +2,7 @@ import {ConfigImpl, IConfig} from "./Config";
 import {IoCContainer} from "./IocContainer";
 import {IProvider} from "./IProvider";
 import {Scope} from "./Scope";
-import {Autowired} from "./Annotation";
+import {Component} from "./Annotation";
 
 /**
  * Ioc容器. 用于注册、查询你的依赖.
@@ -36,7 +36,7 @@ export class Container {
    */
   public static bind(source: Function): IConfig {
     if (!IoCContainer.isBound(source)) {
-      Autowired(source);
+      Component(source);
       return IoCContainer.bind(source).to(source);
     }
 

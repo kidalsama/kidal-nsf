@@ -1,6 +1,6 @@
 import {IoCContainer} from "./IocContainer";
 
-export class InjectorHandler {
+export class AutowireHandler {
   public static constructorNameRegEx = /function (\w*)/;
 
   public static decorateConstructor(target: Function) {

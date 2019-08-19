@@ -1,6 +1,6 @@
 import {IProvider} from "./IProvider";
 import {Scope} from "./Scope";
-import {InjectorHandler} from "./InjectorHandler";
+import {AutowireHandler} from "./AutowireHandler";
 import {IoCContainer} from "./IocContainer";
 
 function checkType(source: Object) {
@@ -33,7 +33,7 @@ export class ConfigImpl implements IConfig {
 
   public to(target: FunctionConstructor) {
     checkType(target);
-    const targetSource = InjectorHandler.getConstructorFromType(target);
+    const targetSource = AutowireHandler.getConstructorFromType(target);
     this.targetSource = targetSource;
     if (this.source === targetSource) {
       const configImpl = this;

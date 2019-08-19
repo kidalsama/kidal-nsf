@@ -1,5 +1,5 @@
 import {IProvider} from "./IProvider";
-import {InjectorHandler} from "./InjectorHandler";
+import {AutowireHandler} from "./AutowireHandler";
 
 /**
  * 实例作用范围
@@ -55,7 +55,7 @@ class SingletonScope extends Scope {
   }
 
   public reset(source: Function) {
-    SingletonScope.instances.delete(InjectorHandler.getConstructorFromType(source));
+    SingletonScope.instances.delete(AutowireHandler.getConstructorFromType(source));
   }
 }
 

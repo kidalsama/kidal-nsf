@@ -2,7 +2,7 @@ import "reflect-metadata";
 import {IoCContainer} from "./IocContainer";
 import {Scope} from "./Scope";
 import {IProvider} from "./IProvider";
-import {InjectorHandler} from "./InjectorHandler";
+import {AutowireHandler} from "./AutowireHandler";
 import {ConfigImpl} from "./Config";
 
 /**
@@ -103,11 +103,11 @@ export function Provides(target: Function) {
 /**
  * 又容器自动装配该类.
  *
- * Autowired类的构造方法会由容器重写。
+ * Component类的构造方法会由容器重写。
  * 所以，如果过你编写:
  *
  * ```
- * @ AutoWired
+ * @ Component
  * class PersonService {
  *   @ Inject
  *   personDAO: PersonDAO;
@@ -127,8 +127,8 @@ export function Provides(target: Function) {
  * let personService: PersonService = Container.get(PersonService);
  * ```
  */
-export function Autowired(target: Function) { // <T extends {new(...args:any[]):{}}>(target:T) {
-  const newConstructor = InjectorHandler.decorateConstructor(target);
+export function Component(target: Function) { // <T extends {new(...args:any[]):{}}>(target:T) {
+  const newConstructor = AutowireHandler.decorateConstructor(target);
   const config: ConfigImpl = IoCContainer.bind(target) as ConfigImpl;
   config.toConstructor(newConstructor);
   return newConstructor;
@@ -139,12 +139,12 @@ export function Autowired(target: Function) { // <T extends {new(...args:any[]):
  * 例如:
  *
  * ```
- * @ AutoWired
+ * @ Component
  * class PersonService {
- *    constructor (@ Inject creationTime: Date) {
+ *    constructor (@ Autowired creationTime: Date) {
  *       this.creationTime = creationTime;
  *    }
- *    @ Inject
+ *    @ Autowired
  *    personDAO: PersonDAO;
  *
  *    creationTime: Date;
@@ -161,28 +161,28 @@ export function Autowired(target: Function) { // <T extends {new(...args:any[]):
  * console.log('PersonService.personDAO: ' + personService.personDAO);
  * ```
  */
-export function Inject(...args: any[]) {
+export function Autowired(...args: any[]) {
   if (args.length < 3 || typeof args[2] === "undefined") {
     // @ts-ignore
-    return InjectPropertyDecorator.apply(this, args);
+    return AutowiredPropertyDecorator.apply(this, args);
   } else if (args.length === 3 && typeof args[2] === "number") {
     // @ts-ignore
-    return InjectParamDecorator.apply(this, args);
+    return AutowiredParamDecorator.apply(this, args);
   }
 
-  throw new Error("Invalid @Inject Decorator declaration.");
+  throw new Error("Invalid @Autowired Decorator declaration.");
 }
 
-function InjectPropertyDecorator(target: Function, key: string) {
+function AutowiredPropertyDecorator(target: Function, key: string) {
   let t = Reflect.getMetadata("design:type", target, key);
   if (!t) {
     // Needed to support react native inheritance
     t = Reflect.getMetadata("design:type", target.constructor, key);
   }
-  IoCContainer.injectProperty(target.constructor, key, t);
+  IoCContainer.autowireProperty(target.constructor, key, t);
 }
 
-function InjectParamDecorator(target: Function, propertyKey: string | symbol, parameterIndex: number) {
+function AutowiredParamDecorator(target: Function, propertyKey: string | symbol, parameterIndex: number) {
   if (!propertyKey) { // only intercept constructor parameters
     const config: ConfigImpl = IoCContainer.bind(target) as ConfigImpl;
     config.paramTypes = config.paramTypes || [];
