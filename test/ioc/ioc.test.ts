@@ -1,4 +1,4 @@
-import {Autowired, Component, Container, Provided, Provides, Scope, Scoped, Singleton} from "../../src/ioc";
+import {Autowired, Component, Container, Provided, Provides, Scope, Scoped, Service, Singleton} from "../../src/ioc";
 
 describe("@Autowired 应用于字段", () => {
   @Component
@@ -368,59 +368,59 @@ describe("Container.getType(source)", () => {
 describe("Container.snapshot(source) and Container.restore(source)", () => {
 
   @Component
-  abstract class IService {
+  abstract class ITestService {
   }
 
   @Component
-  @Provides(IService)
-  class Service implements IService {
+  @Provides(ITestService)
+  class TestService implements ITestService {
   }
 
-  class MockService implements IService {
+  class MockTestService implements ITestService {
   }
 
-  Container.bind(IService).to(Service);
+  Container.bind(ITestService).to(TestService);
 
   it("当尝试恢复未暂存的类型是应该抛出异常", () => {
     expect(function () {
-      Container.restore(IService)
+      Container.restore(ITestService)
     }).toThrow(TypeError);
   });
 
   it("应当暂存已存在的类型并重写为新的类型", () => {
 
-    expect(Container.get(IService)).toBeInstanceOf(Service);
+    expect(Container.get(ITestService)).toBeInstanceOf(TestService);
 
-    Container.snapshot(IService);
-    Container.bind(IService).to(MockService);
+    Container.snapshot(ITestService);
+    Container.bind(ITestService).to(MockTestService);
 
-    expect(Container.get(IService)).toBeInstanceOf(MockService);
+    expect(Container.get(ITestService)).toBeInstanceOf(MockTestService);
   });
 
   it("应该恢复暂存的类型", () => {
 
-    Container.restore(IService);
+    Container.restore(ITestService);
 
-    expect(Container.get(IService)).toBeInstanceOf(Service);
+    expect(Container.get(ITestService)).toBeInstanceOf(TestService);
   });
 
   it("应当暂存已存在的类型并重写为新的类型并改变作用范围", () => {
 
-    Container.bind(IService).to(Service).scope(Scope.LOCAL);
+    Container.bind(ITestService).to(TestService).scope(Scope.LOCAL);
 
-    expect(Container.get(IService)).toBeInstanceOf(Service);
+    expect(Container.get(ITestService)).toBeInstanceOf(TestService);
 
-    Container.snapshot(IService);
-    Container.bind(IService).to(MockService).scope(Scope.LOCAL);
+    Container.snapshot(ITestService);
+    Container.bind(ITestService).to(MockTestService).scope(Scope.LOCAL);
 
-    expect(Container.get(IService)).toBeInstanceOf(MockService);
+    expect(Container.get(ITestService)).toBeInstanceOf(MockTestService);
   });
 
   it("应该恢复暂存的类型和作用范围", () => {
 
-    Container.restore(IService);
+    Container.restore(ITestService);
 
-    expect(Container.get(IService)).toBeInstanceOf(Service);
+    expect(Container.get(ITestService)).toBeInstanceOf(TestService);
   });
 });
 
@@ -439,11 +439,18 @@ describe("Container", () => {
     .to(ContainerSingletonInstantiation)
     .scope(Scope.SINGLETON);
 
+  @Service
+  class SingletonServiceInstantiation {
+  }
+
   it("不允许实例化单例类", () => {
     expect(function () {
       const ins = new SingletonInstantiation();
-    })
-      .toThrow(TypeError);
+    }).toThrow(TypeError);
+
+    expect(function () {
+      const ins = new SingletonServiceInstantiation();
+    }).toThrow(TypeError);
   });
 
   it("作用范围改变应当生效", () => {
@@ -455,7 +462,9 @@ describe("Container", () => {
 
   it("应当获取到单间类", () => {
     const instance: SingletonInstantiation = Container.get(SingletonInstantiation);
+    const serviceInstance: SingletonInstantiation = Container.get(SingletonServiceInstantiation);
     expect(instance).toBeDefined();
+    expect(serviceInstance).toBeDefined();
   });
 
   it("应该允许将单件类作用范围改为总是新建", () => {

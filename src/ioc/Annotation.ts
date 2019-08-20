@@ -101,7 +101,7 @@ export function Provides(target: Function) {
 }
 
 /**
- * 又容器自动装配该类.
+ * 由容器自动装配该类.
  *
  * Component类的构造方法会由容器重写。
  * 所以，如果过你编写:
@@ -130,6 +130,40 @@ export function Provides(target: Function) {
 export function Component(target: Function) { // <T extends {new(...args:any[]):{}}>(target:T) {
   const newConstructor = AutowireHandler.decorateConstructor(target);
   const config: ConfigImpl = IoCContainer.bind(target) as ConfigImpl;
+  config.toConstructor(newConstructor);
+  return newConstructor;
+}
+
+/**
+ * 由容器自动装配该单件类
+ *
+ * Service类的构造方法会由容器重写。
+ * 所以，如果过你编写:
+ *
+ * ```
+ * @ Service
+ * class PersonService {
+ *   @ Inject
+ *   personDAO: PersonDAO;
+ * }
+ * ```
+ *
+ * 不能通过new来创建该对象，因为他是单件类:
+ *
+ * ```
+ * let PersonService = new PersonService(); // 错误
+ * ```
+ *
+ * 等同于:
+ *
+ * ```
+ * Container.bind(PersonService).scope(Scope.SINGLETON);
+ * let personService: PersonService = Container.get(PersonService);
+ * ```
+ */
+export function Service(target: Function) { // <T extends {new(...args:any[]):{}}>(target:T) {
+  const newConstructor = AutowireHandler.decorateConstructor(target);
+  const config: ConfigImpl = IoCContainer.bind(target).scope(Scope.SINGLETON) as ConfigImpl;
   config.toConstructor(newConstructor);
   return newConstructor;
 }
