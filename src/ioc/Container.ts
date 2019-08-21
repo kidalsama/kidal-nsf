@@ -60,6 +60,13 @@ export class Container {
   /**
    *
    */
+  public static getAllTypes(): Function[] {
+    return IoCContainer.getAllTypes()
+  }
+
+  /**
+   *
+   */
   public static snapshot(source: Function): void {
     const config = Container.bind(source) as ConfigImpl;
     Container.snapshots.providers.set(source, config.iocProvider!);

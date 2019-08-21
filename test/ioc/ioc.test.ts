@@ -363,6 +363,13 @@ describe("Container.getType(source)", () => {
     }
   });
 
+  it("获取全部的类型", () => {
+    const types = Container.getAllTypes()
+    expect(types).not.toContain(ITest)
+    expect(types).toContain(Test)
+    expect(types).toContain(TestNoProvider)
+    expect(types).not.toContain(TypeNotRegistered)
+  })
 });
 
 describe("Container.snapshot(source) and Container.restore(source)", () => {

@@ -45,6 +45,14 @@ export class IoCContainer {
     return config.targetSource || config.source;
   }
 
+  public static getAllTypes(): Function[] {
+    const types: Function[] = []
+    for (const config of IoCContainer.bindings.values()) {
+      types.push(config.targetSource || config.source)
+    }
+    return types
+  }
+
   public static autowireProperty(target: Function, key: string, propertyType: Function) {
     const propKey = `__${key}`;
     Object.defineProperty(target.prototype, key, {
