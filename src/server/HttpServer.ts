@@ -10,7 +10,7 @@ import Rpc from "../cluster/Rpc";
 import LudmilaError from "../error/LudmilaError";
 import cors from "cors";
 import LudmilaErrors from "../error/LudmilaErrors";
-import {IHttpServerConfig} from "../application/ApplicationConfig";
+import {IHttpServerConfig} from "../application";
 import GraphQLServer from "./graphql/GraphQLServer";
 import WebSocketServer from "./websocket/WebSocketServer";
 import * as fs from "fs";

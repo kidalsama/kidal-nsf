@@ -22,8 +22,8 @@ export interface IConfig {
 export class ConfigImpl implements IConfig {
   public source: Function;
   public targetSource?: Function;
-  public iocProvider?: IProvider;
-  public iocScope?: Scope;
+  public iocProvider: IProvider;
+  public iocScope: Scope;
   public decoratedConstructor?: FunctionConstructor;
   public paramTypes?: any[];
 
@@ -92,7 +92,7 @@ export class ConfigImpl implements IConfig {
     if (!this.iocScope) {
       this.scope(Scope.LOCAL);
     }
-    return this.iocScope!.resolve(this.iocProvider!, this.source);
+    return this.iocScope.resolve(this.iocProvider, this.source);
   }
 
   private getParameters() {

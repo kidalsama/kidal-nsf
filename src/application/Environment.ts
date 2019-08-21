@@ -5,6 +5,7 @@ import * as yaml from "yaml";
 import {log4jsConfig} from "./ApplicationConstants";
 import {completeApplicationConfig, IApplicationConfig, mergeConfig} from "./ApplicationConfig";
 import fetch from "node-fetch";
+import {Container} from "../ioc";
 
 /**
  * 框架配置
@@ -31,14 +32,13 @@ export const DEFAULT_FOUNDATION_CONFIG: IFoundationConfig = {
  */
 export default class Environment {
   private static LOG: log4js.Logger;
-  private static _INSTANCE?: Environment;
   private _applicationConfig?: IApplicationConfig;
 
   /**
    * 单例
    */
   public static get S() {
-    return this._INSTANCE!;
+    return Container.get(Environment)
   }
 
   /**
@@ -90,9 +90,6 @@ export default class Environment {
   public constructor(argv: string[], testing: boolean) {
     // 检查参数
     this.checkArgv(argv);
-
-    // 单例
-    Environment._INSTANCE = this;
 
     // 启动参数
     this.testing = testing;

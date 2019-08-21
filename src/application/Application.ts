@@ -9,20 +9,24 @@ import {applicationBanner} from "./ApplicationConstants";
 import WebSocketApiManager from "../server/websocket/WebSocketApiManager";
 import RpcApiManager from "../cluster/RpcApiManager";
 import * as fs from "fs";
+import {Container, Scope, Service} from "../ioc";
 
 /**
  * @author tengda
  */
+@Service
 export default class Application {
-  private static LOG: log4js.Logger;
-  private static _INSTANCE?: Application;
-
   /**
    * 单例
    */
   public static get S(): Application {
-    return this._INSTANCE!;
+    return Container.get(Application)
   }
+
+  /**
+   * 日志
+   */
+  private static LOG: log4js.Logger;
 
   /**
    * 运行应用
@@ -55,16 +59,33 @@ export default class Application {
     // timer
     const startTs = Date.now();
 
-    // （重要）第一步环境初始化
-    const env = new Environment(argv, testing);
+    // 绑定类型
+    Container
+      .bind(Environment)
+      .scope(Scope.SINGLETON)
+      .provider({
+        get() {
+          return new Environment(argv, testing)
+        },
+      })
+    Container.bind(Logs)
+      .scope(Scope.SINGLETON)
+      .provider({
+        get() {
+          return new Logs(Container.get(Environment))
+        },
+      })
+
+    // 环境
+    const env = Container.get(Environment)
     await env.boot()
 
-    // 静态初始化
-    this.LOG = Logs.S.getFoundationLogger(__dirname, "Application");
-    this._INSTANCE = new Application();
+    // 日志初始化
+    const logs = Container.get(Logs)
+    this.LOG = logs.getFoundationLogger(__dirname, "Application");
 
-    // 启动
-    await this._INSTANCE.boot();
+    // 启动应用程序
+    await this.S.boot();
 
     // timer
     const sec = ((Date.now() - startTs) / 1000).toFixed(3);
@@ -73,7 +94,7 @@ export default class Application {
     Application.LOG.info(`Started ${env.applicationConfig.id} in ${sec} seconds`);
 
     // 搞定
-    return this._INSTANCE;
+    return this.S;
   }
 
   // 启动应用

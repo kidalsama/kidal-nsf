@@ -1,24 +1,35 @@
 import * as log4js from "log4js";
 import Environment from "./Environment";
 import * as path from "path";
+import {Container} from "../ioc";
 
 /**
  * @author tengda
  */
 export default class Logs {
-  // 单例
-  public static readonly S = new Logs();
-  private static readonly FAKE_TARGET: any = {};
+  /**
+   * 单例
+   */
+  public static get S() {
+    return Container.get(Logs)
+  }
+
+  /**
+   * 环境
+   */
+  public readonly env: Environment
 
   /**
    *
    */
-  private constructor() {
-
+  public constructor(env: Environment) {
+    this.env = env
   }
 
   /**
-   * 获取日至期
+   * 获取日志
+   * @param dirname 目录，传入[[__dirname]]即可
+   * @param className 类名
    */
   public getLogger(dirname: string, className: string): log4js.Logger {
     const env = Environment.S;
@@ -36,20 +47,13 @@ export default class Logs {
   public getFoundationLogger(dirname: string, className: string): log4js.Logger {
     let logger: log4js.Logger | null = null;
 
-    return new Proxy(Logs.FAKE_TARGET, {
+    return new Proxy({} as any, {
       get: (target, p, receiver) => {
         if (!logger) {
           logger = this.createLogger(dirname, className)
         }
         return Reflect.get(logger, p, receiver)
       },
-      // FIXME: 貌似不用，可以移除，观察下
-      // apply: (target, thisArg, argArray) => {
-      //   if (!logger) {
-      //     logger = this.createLogger(dirname, className)
-      //   }
-      //   return Reflect.apply(target, logger, argArray);
-      // },
     });
 
   }
