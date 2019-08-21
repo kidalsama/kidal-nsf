@@ -16,3 +16,4 @@ export {
 
 export * from "./graphql";
 export * from "./websocket";
+export * from "./bind";

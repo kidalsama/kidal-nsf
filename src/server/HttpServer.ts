@@ -14,6 +14,8 @@ import {IHttpServerConfig} from "../application";
 import GraphQLServer from "./graphql/GraphQLServer";
 import WebSocketServer from "./websocket/WebSocketServer";
 import * as fs from "fs";
+import {ServerBindingRegistry} from "./bind";
+import {Container} from "../ioc";
 
 /**
  * @author tengda
@@ -84,6 +86,7 @@ export default class HttpServer {
   public readonly server: http.Server;
   public readonly graphQLServer?: GraphQLServer
   public readonly webSocketServer?: WebSocketServer
+  public readonly bindingRegistry: ServerBindingRegistry = Container.get(ServerBindingRegistry)
 
   /**
    * 单例
@@ -159,6 +162,9 @@ export default class HttpServer {
     if (this.webSocketServer) {
       this.webSocketServer.init()
     }
+
+    // 绑定
+    await this.bindingRegistry.init(this.expressApp)
 
     // 静态文件
     if (this.config.staticMapping) {
