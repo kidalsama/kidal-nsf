@@ -10,11 +10,11 @@ import {
   HttpResponse,
   Next,
   Param,
+  PostMapping,
   Query,
   QueryParam,
   RequestMapping,
 } from "../../../../src/server";
-import {LudmilaError} from "../../../../src/error";
 
 /**
  *
@@ -89,7 +89,7 @@ class TestBindingController {
   /**
    * Echo
    */
-  @RequestMapping("echo/:p1/:p2")
+  @PostMapping("echo/:p1/:p2")
   public async echo(
     @HttpRequest req: Express.Request,
     @HttpResponse res: Express.Response,
@@ -112,13 +112,5 @@ class TestBindingController {
   @GetMapping("error")
   public async error() {
     throw new Error("Testing error")
-  }
-
-  /**
-   *
-   */
-  @GetMapping("ludmila-error")
-  public async ludmilaError() {
-    throw new LudmilaError("Testing error")
   }
 }

@@ -3,7 +3,7 @@ import PayloadDispatcher from "../../src/server/PayloadDispatcher";
 import HttpServer from "../../src/server/HttpServer";
 import WebSocket from "ws";
 
-describe("Basic: Api", () => {
+describe("WebSocket", () => {
   let wsc: WebSocket
 
   beforeAll(async () => {

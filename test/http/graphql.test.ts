@@ -2,7 +2,7 @@ import request from "supertest";
 import Application from "../../src/application/Application"
 import HttpServer from "../../src/server/HttpServer";
 
-describe("Basic: GraphQL", () => {
+describe("GraphQL", () => {
   beforeAll(async () => {
     return Application.runTest("basic", "test-http");
   })
