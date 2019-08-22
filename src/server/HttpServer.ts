@@ -13,72 +13,25 @@ import LudmilaErrors from "../error/LudmilaErrors";
 import {IHttpServerConfig} from "../application";
 import GraphQLServer from "./graphql/GraphQLServer";
 import WebSocketServer from "./websocket/WebSocketServer";
-import * as fs from "fs";
 import {ServerBindingRegistry} from "./bind";
-import {Container} from "../ioc";
+import {Component, Container} from "../ioc";
+import {HttpServerManager} from "./HttpServerManager";
 
 /**
  * @author tengda
  */
+@Component
 export default class HttpServer {
+  /**
+   * 日志
+   */
   private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "HttpServer");
-  public static readonly serverMap: Map<string, HttpServer> = new Map()
 
   /**
    * 获取服务器
    */
   public static acquire(name: string = "primary"): HttpServer {
-    const server = this.serverMap.get(name)
-    if (server === undefined) {
-      throw new Error(`Server ${name} not found`)
-    }
-    return server
-  }
-
-  /**
-   * 初始化全部
-   */
-  public static async initAll(): Promise<void> {
-    // 控制器
-    const initializerSrc = `${Environment.S.srcDir}/HttpServerInitializer.js`
-    let initializer: any = {}
-    if (fs.existsSync(initializerSrc)) {
-      initializer = require(initializerSrc).default
-    }
-
-    const config = Environment.S.applicationConfig.server
-    if (!config.enabled) {
-      return
-    }
-
-    // vars
-    const names = Object.keys(config.httpServerMap)
-
-    // 这里要先添加
-    for (const name of names) {
-      this.serverMap.set(name, new HttpServer(config.httpServerMap[name], initializer))
-    }
-
-    // 启动服务器
-    for (const name of this.serverMap.keys()) {
-      const server = this.serverMap.get(name)
-      if (server) {
-        await server.start()
-      }
-    }
-  }
-
-  /**
-   * 关闭全部数据库
-   */
-  public static async shutdownAll(): Promise<void> {
-    for (const server of this.serverMap.values()) {
-      try {
-        await server.shutdown()
-      } catch (e) {
-        this.LOG.warn(e)
-      }
-    }
+    return Container.get(HttpServerManager).acquire(name)
   }
 
   public readonly config: IHttpServerConfig;
@@ -89,9 +42,9 @@ export default class HttpServer {
   public readonly bindingRegistry: ServerBindingRegistry = Container.get(ServerBindingRegistry)
 
   /**
-   * 单例
+   *
    */
-  private constructor(config: IHttpServerConfig, initializer: any) {
+  constructor(config: IHttpServerConfig, initializer: any) {
     this.config = config;
     this.expressApp = express();
     this.server = http.createServer(this.expressApp);

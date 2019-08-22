@@ -3,13 +3,13 @@ import Environment from "./Environment";
 import Logs from "./Logs";
 import Database from "../data/Database";
 import DiscoveryClient from "../cluster/DiscoveryClient";
-import HttpServer from "../server/HttpServer";
 import Rpc from "../cluster/Rpc";
 import {applicationBanner} from "./ApplicationConstants";
 import WebSocketApiManager from "../server/websocket/WebSocketApiManager";
 import RpcApiManager from "../cluster/RpcApiManager";
 import * as fs from "fs";
 import {Container, Scope, Service} from "../ioc";
+import {HttpServerManager} from "../server/HttpServerManager";
 
 /**
  * @author tengda
@@ -97,6 +97,18 @@ export default class Application {
     return this.S;
   }
 
+  /**
+   * Http服务器管理器
+   */
+  private httpServerManager: HttpServerManager
+
+  /**
+   * 构造方法
+   */
+  public constructor() {
+    //
+  }
+
   // 启动应用
   private async boot() {
     // 启动数据库
@@ -104,7 +116,7 @@ export default class Application {
 
     // 启动服务器
     await WebSocketApiManager.S.init();
-    await HttpServer.initAll()
+    this.httpServerManager = await Container.get(HttpServerManager).boot()
 
     // 启动发现服务
     await DiscoveryClient.S.init();
@@ -130,7 +142,7 @@ export default class Application {
     }
 
     // 关闭服务器
-    await HttpServer.shutdownAll()
+    await this.httpServerManager.shutdownAll()
 
     // 关闭发现服务
     await DiscoveryClient.S.shutdown()
