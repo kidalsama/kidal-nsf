@@ -8,6 +8,7 @@ import {
   GetMapping,
   HttpRequest,
   HttpResponse,
+  Middleware,
   Next,
   Param,
   PostMapping,
@@ -97,6 +98,37 @@ class TestBindingController extends BaseController {
    */
   @GetMapping("hook2")
   public async hook2(
+    @HttpResponse res: Express.Response,
+  ) {
+    res.write("Function")
+  }
+
+  /**
+   *
+   */
+  @GetMapping("hook3")
+  @Middleware((req, res, next) => {
+    res.write("Middleware")
+    next()
+  })
+  public async hook3(
+    @HttpResponse res: Express.Response,
+  ) {
+    res.write("Function")
+  }
+
+  /**
+   *
+   */
+  @GetMapping("hook4")
+  @Middleware([(req, res, next) => {
+    res.write("Middleware0")
+    next()
+  }, (req, res, next) => {
+    res.write("Middleware1")
+    next()
+  }])
+  public async hook4(
     @HttpResponse res: Express.Response,
   ) {
     res.write("Function")

@@ -3,7 +3,7 @@ import * as p from "path";
 import * as lodash from "lodash";
 import {Container} from "../../ioc";
 import {Environment, Logs} from "../../application";
-import {createHandler} from "./Handler";
+import {createHandlers} from "./Handler";
 import ReflectUtils from "../../util/ReflectUtils";
 
 /**
@@ -33,6 +33,7 @@ export const MetadataKeys = {
   Method: Symbol("Method"),
 
   // 钩子
+  Middleware: Symbol("Middleware"),
   Before: Symbol("Before"),
   After: Symbol("After"),
   BeforeAll: Symbol("BeforeAll"),
@@ -176,11 +177,11 @@ export class ServerBindingRegistry {
 
         // 路由
         for (const method of requestMappingOptions.method) {
-          const handler = createHandler(
+          const handlers = createHandlers(
             type, controller, property, propertyName,
             beforeAllHook, afterAllHook, onErrorHook,
           )
-          routes.push({method, path: requestMappingOptions.path, handlers: [handler]})
+          routes.push({method, path: requestMappingOptions.path, handlers})
         }
       },
       async (propertyName, property) => {

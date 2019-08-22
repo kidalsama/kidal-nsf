@@ -46,11 +46,19 @@ describe("Http Binding", () => {
       .get("/test-binding/hook1")
     const resp2 = await request(HttpServer.acquire().expressApp)
       .get("/test-binding/hook2")
+    const resp3 = await request(HttpServer.acquire().expressApp)
+      .get("/test-binding/hook3")
+    const resp4 = await request(HttpServer.acquire().expressApp)
+      .get("/test-binding/hook4")
 
     expect(resp1.status).toEqual(200)
     expect(resp1.text).toEqual("BeforeHookFunctionAfterHook")
     expect(resp2.status).toEqual(200)
     expect(resp2.text).toEqual("BeforeAllHookFunctionAfterAllHook")
+    expect(resp3.status).toEqual(200)
+    expect(resp3.text).toEqual("MiddlewareFunction")
+    expect(resp4.status).toEqual(200)
+    expect(resp4.text).toEqual("Middleware0Middleware1Function")
   });
 
   it("json", async () => {

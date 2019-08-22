@@ -38,7 +38,7 @@ function convert(val: any, to: Function) {
 /**
  * 创建请求处理器
  */
-export function createHandler(
+export function createHandlers(
   controllerType: Function,
   controller: Object,
   func: Function,
@@ -46,8 +46,10 @@ export function createHandler(
   beforeAllHook?: Express.Handler,
   afterAllHook?: Express.Handler,
   onErrorHook?: Express.ErrorRequestHandler,
-): Express.Handler {
+): Express.Handler[] {
   // 钩子
+  const middlewareHook: Express.Handler | Express.Handler[] | undefined =
+    Reflect.getMetadata(MetadataKeys.Middleware, controllerType.prototype, funcName)
   const beforeHook: Express.Handler | undefined =
     Reflect.getMetadata(MetadataKeys.Before, controllerType.prototype, funcName)
   const afterHook: Express.Handler | undefined =
@@ -64,7 +66,7 @@ export function createHandler(
   const httpResponse = Reflect.getMetadata(MetadataKeys.HttpResponse, controllerType.prototype, funcName)
   const nextFunc = Reflect.getMetadata(MetadataKeys.Next, controllerType.prototype, funcName)
 
-  return (req, res, next) => {
+  const handler: Express.Handler = (req, res, next) => {
     // nex需要使用控制器错误处理方法给钩住
     if (onErrorHook) {
       const originalNext = next
@@ -142,4 +144,8 @@ export function createHandler(
       }
     })().then(null, next)
   }
+
+  return middlewareHook ?
+    (_.isArray(middlewareHook) ? [...middlewareHook, handler] : [middlewareHook, handler]) :
+    [handler]
 }

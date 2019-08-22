@@ -5,23 +5,29 @@ import {MetadataKeys} from "./ServerBindingRegistry";
 /**
  * TODO: 补注释
  */
-function createFunctionHookAnnotation(metadataKey: symbol) {
-  return (hook: Express.Handler) => {
-    return (target: Object, propertyKey: string) => {
-      Reflect.defineMetadata(metadataKey, hook, target, propertyKey)
-    }
+export function Middleware(hook: Express.Handler | Express.Handler[]) {
+  return (target: Object, propertyKey: string) => {
+    Reflect.defineMetadata(MetadataKeys.Middleware, hook, target, propertyKey)
   }
 }
 
 /**
  * TODO: 补注释
  */
-export const Before = createFunctionHookAnnotation(MetadataKeys.Before)
+export function Before(hook: Express.Handler) {
+  return (target: Object, propertyKey: string) => {
+    Reflect.defineMetadata(MetadataKeys.Before, hook, target, propertyKey)
+  }
+}
 
 /**
  * TODO: 补注释
  */
-export const After = createFunctionHookAnnotation(MetadataKeys.After)
+export function After(hook: Express.Handler) {
+  return (target: Object, propertyKey: string) => {
+    Reflect.defineMetadata(MetadataKeys.After, hook, target, propertyKey)
+  }
+}
 
 /**
  * TODO: 补注释
