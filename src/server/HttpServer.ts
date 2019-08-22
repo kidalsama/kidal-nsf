@@ -164,7 +164,10 @@ export default class HttpServer {
     }
 
     // 绑定
-    await this.bindingRegistry.init(Environment.S, this.expressApp)
+    if (this.config.pathToScan) {
+      const env = Environment.S
+      await this.bindingRegistry.init(this.expressApp, `${env.srcDir}/${this.config.pathToScan}`)
+    }
 
     // 静态文件
     if (this.config.staticMapping) {

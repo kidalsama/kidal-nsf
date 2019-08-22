@@ -2,7 +2,7 @@ import * as Express from "express";
 import * as p from "path";
 import * as lodash from "lodash";
 import {Container} from "../../ioc";
-import {Environment, Logs} from "../../application";
+import {Logs} from "../../application";
 import {createHandlers} from "./Handler";
 import ReflectUtils from "../../util/ReflectUtils";
 
@@ -67,9 +67,9 @@ export class ServerBindingRegistry {
   /**
    * 初始化
    */
-  public async init(env: Environment, router: Express.Router) {
+  public async init(router: Express.Router, pathToScan: string) {
     // 扫描控制器文件
-    Container.addSource("**/controller/**/*Controller.js", env.srcDir)
+    Container.addSource(pathToScan)
 
     // 注册
     await this.registerAllUnregisteredControllers(router)
