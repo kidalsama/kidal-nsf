@@ -54,7 +54,7 @@ describe("Http Binding", () => {
   });
 
   it("json", async () => {
-    const p1 = Math.random().toString()
+    const p1 = Math.random()
     const p2 = "echo-object-to-me"
     const q1 = "阿库嘛塔塔"
     const q2 = ""
@@ -63,7 +63,7 @@ describe("Http Binding", () => {
     const b2 = "✔️"
     const b = {b1, b2}
     const resp1 = await request(HttpServer.acquire().expressApp)
-      .post(`/test-binding/echo/${escape(p1)}/${p2}?${querystring.stringify(q)}`)
+      .post(`/test-binding/echo/${p1}/${p2}?${querystring.stringify(q)}`)
       .send(b)
 
     expect(resp1.status).toEqual(200)

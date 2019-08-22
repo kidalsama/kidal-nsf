@@ -112,7 +112,7 @@ class TestBindingController extends BaseController {
     @Next next: Function,
     @Query q: any,
     @Body b: any,
-    @Param("p1") p1: string,
+    @Param("p1") p1: number,
     @Param("p2") p2: string,
     @QueryParam("q1") q1?: string,
     @QueryParam("q2") q2?: string,

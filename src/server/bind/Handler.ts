@@ -3,6 +3,39 @@ import * as _ from "lodash";
 import {MetadataKeys} from "./ServerBindingRegistry";
 
 /**
+ * 转换类型
+ */
+function convert(val: any, to: Function) {
+  // 空参数原样返回
+  if (val === undefined || val === null) {
+    return val
+  }
+
+  // 如果值不是字符串则可能已经被自定义转换方法转换过了
+  if (typeof val !== "string") {
+    return val
+  }
+
+  // 布尔
+  if (to === Boolean) {
+    return ["true", "1", "✔"].includes(val)
+  }
+
+  // 数字
+  if (to === Number) {
+    return Number(val)
+  }
+
+  // 对象
+  if (to === Object) {
+    return JSON.parse(val)
+  }
+
+  // 字符串直接返回
+  return val
+}
+
+/**
  * 创建请求处理器
  */
 export function createHandler(
@@ -21,6 +54,7 @@ export function createHandler(
     Reflect.getMetadata(MetadataKeys.After, controllerType.prototype, funcName)
 
   // 元数据
+  const parameterTypes = Reflect.getMetadata("design:paramtypes", controllerType.prototype, funcName)
   const param = Reflect.getMetadata(MetadataKeys.Param, controllerType.prototype, funcName)
   const queryParam = Reflect.getMetadata(MetadataKeys.QueryParam, controllerType.prototype, funcName)
   const bodyParam = Reflect.getMetadata(MetadataKeys.BodyParam, controllerType.prototype, funcName)
@@ -47,15 +81,15 @@ export function createHandler(
     const args: any = []
     // Path param
     if (param) {
-      Object.keys(param).map((key) => args[param[key]] = req.params[key])
+      Object.keys(param).map((key) => args[param[key]] = convert(req.params[key], parameterTypes[param[key]]))
     }
     // Query param
     if (queryParam) {
-      Object.keys(queryParam).map((key) => args[queryParam[key]] = req.query[key])
+      Object.keys(queryParam).map((key) => args[queryParam[key]] = convert(req.query[key], parameterTypes[param[key]]))
     }
     // Body param
     if (bodyParam) {
-      Object.keys(bodyParam).map((key) => args[bodyParam[key]] = req.body[key])
+      Object.keys(bodyParam).map((key) => args[bodyParam[key]] = convert(req.body[key], parameterTypes[param[key]]))
     }
     // Query data
     if (query) {
