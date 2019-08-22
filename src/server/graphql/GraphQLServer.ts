@@ -62,18 +62,22 @@ export default class GraphQLServer {
       if (isLudmilaError) {
         const originalError: any = error.originalError;
         // 打印错误
-        GraphQLServer.LOG.error(
-          "LudmilaError",
-          originalError.code, originalError.message, originalError.stack,
-          printError(error),
-        )
+        if (this.httpServer.config.logError) {
+          GraphQLServer.LOG.error(
+            "LudmilaError",
+            originalError.code, originalError.message, originalError.stack,
+            printError(error),
+          )
+        }
         // 返回
         return Object.assign(
           {}, formattedError, {code: originalError.code, message: originalError.message},
         );
       } else {
         // 打印错误
-        GraphQLServer.LOG.error("Error", formattedError, printError(error))
+        if (this.httpServer.config.logError) {
+          GraphQLServer.LOG.error("Error", formattedError, printError(error))
+        }
         // 返回
         return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
       }

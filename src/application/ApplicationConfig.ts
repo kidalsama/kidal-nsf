@@ -85,6 +85,7 @@ export interface IServerConfig {
 
 export interface IHttpServerConfig {
   port: number;
+  logError?: boolean;
   staticMapping?: { [key: string]: string };
   graphQLEndpoint?: string;
   graphQLSubscriptionEndpoint?: string;
@@ -114,6 +115,8 @@ const completeHttpServerConfig = (key: string, config: any): IHttpServerConfig =
   return {
     port: orElse(`server.httpServerMap:${key}`, config,
       "port", 8080),
+    logError: orElse(`server.httpServerMap:${key}`, config,
+      "logError", true),
     staticMapping: orElse(`server.httpServerMap:${key}`, config,
       "staticMapping", undefined),
     graphQLEndpoint: orElse(`server.httpServerMap:${key}`, config,

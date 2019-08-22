@@ -44,9 +44,13 @@ describe("Http Binding", () => {
   it("hook", async () => {
     const resp1 = await request(HttpServer.acquire().expressApp)
       .get("/test-binding/hook1")
+    const resp2 = await request(HttpServer.acquire().expressApp)
+      .get("/test-binding/hook2")
 
     expect(resp1.status).toEqual(200)
     expect(resp1.text).toEqual("BeforeHookFunctionAfterHook")
+    expect(resp2.status).toEqual(200)
+    expect(resp2.text).toEqual("BeforeAllHookFunctionAfterAllHook")
   });
 
   it("json", async () => {
@@ -69,7 +73,11 @@ describe("Http Binding", () => {
   it("error", async () => {
     const resp1 = await request(HttpServer.acquire().expressApp)
       .get("/test-binding/error")
+    const resp2 = await request(HttpServer.acquire().expressApp)
+      .get("/test-binding/ludmila-error")
 
     expect(resp1.status).toEqual(500)
+    expect(resp2.status).toEqual(200)
+    expect(resp2.body).toMatchObject({code: 1, message: "testing"})
   });
 });

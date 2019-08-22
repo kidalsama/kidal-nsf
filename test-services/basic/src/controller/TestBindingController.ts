@@ -16,6 +16,7 @@ import {
   RequestMapping,
 } from "../../../../src/server";
 import {BaseController} from "./BaseController";
+import {LudmilaError} from "../../../../src/error";
 
 /**
  *
@@ -71,17 +72,31 @@ class TestBindingController extends BaseController {
     return "hello world"
   }
 
+  private async beforeHook(req: Express.Request, res: Express.Response, next: Express.NextFunction) {
+    res.write("BeforeHook")
+  }
+
+  private async afterHook(req: Express.Request, res: Express.Response, next: Express.NextFunction) {
+    res.write("AfterHook")
+  }
+
   /**
    *
    */
   @GetMapping("hook1")
-  @Before((req, res, next) => {
-    res.write("BeforeHook")
-  })
-  @After((req, res, next) => {
-    res.write("AfterHook")
-  })
+  @Before(TestBindingController.prototype.beforeHook)
+  @After(TestBindingController.prototype.afterHook)
   public async hook1(
+    @HttpResponse res: Express.Response,
+  ) {
+    res.write("Function")
+  }
+
+  /**
+   * 这个会被全局钩子给钩住，方法名必须是hook2
+   */
+  @GetMapping("hook2")
+  public async hook2(
     @HttpResponse res: Express.Response,
   ) {
     res.write("Function")
@@ -113,5 +128,13 @@ class TestBindingController extends BaseController {
   @GetMapping("error")
   public async error() {
     throw new Error("Testing error")
+  }
+
+  /**
+   *
+   */
+  @GetMapping("ludmila-error")
+  public async ludmilaError() {
+    throw new LudmilaError(1, "testing")
   }
 }

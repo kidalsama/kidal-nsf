@@ -2,7 +2,7 @@ import * as Express from "express";
 import * as p from "path";
 import * as lodash from "lodash";
 import {Container} from "../../ioc";
-import {Environment} from "../../application";
+import {Environment, Logs} from "../../application";
 import {createHandler} from "./Handler";
 import ReflectUtils from "../../util/ReflectUtils";
 
@@ -24,15 +24,22 @@ interface IRequestMappingOptions {
  */
 // tslint:disable-next-line
 export const MetadataKeys = {
+  // 标记
   Controller: Symbol("Controller"),
   MappingFunction: Symbol("MappingFunction"),
 
+  // 路由
   Path: Symbol("Path"),
   Method: Symbol("Method"),
 
+  // 钩子
   Before: Symbol("Before"),
   After: Symbol("After"),
+  BeforeAll: Symbol("BeforeAll"),
+  AfterAll: Symbol("AfterAll"),
+  OnError: Symbol("OnError"),
 
+  // 参数
   Param: Symbol("Param"),
   QueryParam: Symbol("QueryParam"),
   BodyParam: Symbol("BodyParam"),
@@ -47,6 +54,10 @@ export const MetadataKeys = {
  * @author tengda
  */
 export class ServerBindingRegistry {
+  /**
+   * 日志
+   */
+  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "ServerBindingRegistry")
   /**
    * 已经注册的控制器
    */
@@ -123,15 +134,37 @@ export class ServerBindingRegistry {
   private async register(router: Express.Router, type: Function) {
     // 实例化
     const controller = Container.get(type)
+    // 获取控制器的元数据
     const controllerRequestMappingOptions = this.retrieveRequestMappingOptions(type)
 
-    // 路由
-    const routes: Array<{
-      method: string;
-      path: string;
-      handlers: Express.Handler[];
-    }> = []
+    // 获取控制器范围内的钩子
+    let beforeAllHook: Express.Handler | undefined
+    let afterAllHook: Express.Handler | undefined
+    let onErrorHook: Express.ErrorRequestHandler | undefined
+    await ReflectUtils.doWithProperties(type.prototype,
+      async (propertyName, property) => {
+        // 获取元数据
+        if (!beforeAllHook) {
+          beforeAllHook = Reflect.hasMetadata(MetadataKeys.BeforeAll, type.prototype, propertyName)
+            ? property : undefined
+        }
+        if (!afterAllHook) {
+          afterAllHook = Reflect.hasMetadata(MetadataKeys.AfterAll, type.prototype, propertyName)
+            ? property : undefined
+        }
+        if (!onErrorHook) {
+          onErrorHook = Reflect.hasMetadata(MetadataKeys.OnError, type.prototype, propertyName)
+            ? property : undefined
+        }
+      },
+      async (propertyName, property) => {
+        return propertyName !== "constructor" &&
+          lodash.isFunction(property)
+      },
+    )
 
+    // 获取路由
+    const routes: Array<{ method: string; path: string; handlers: Express.Handler[] }> = []
     await ReflectUtils.doWithProperties(type.prototype,
       async (propertyName, property) => {
         // 获取参数
@@ -143,7 +176,10 @@ export class ServerBindingRegistry {
 
         // 路由
         for (const method of requestMappingOptions.method) {
-          const handler = createHandler(type, controller, property, propertyName)
+          const handler = createHandler(
+            type, controller, property, propertyName,
+            beforeAllHook, afterAllHook, onErrorHook,
+          )
           routes.push({method, path: requestMappingOptions.path, handlers: [handler]})
         }
       },

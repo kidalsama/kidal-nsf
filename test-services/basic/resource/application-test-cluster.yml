@@ -8,6 +8,7 @@ server:
   httpServerMap:
     primary:
       port: 0
+      logError: false
       graphQLEndpoint: "/graphql"
       webSocketEndpoint: "/ws"
 cluster:

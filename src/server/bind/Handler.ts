@@ -4,20 +4,21 @@ import {MetadataKeys} from "./ServerBindingRegistry";
 
 /**
  * 创建请求处理器
- * @param controllerType 控制器类型
- * @param controller 控制器实例
- * @param func 方法
- * @param funcName 方法名
  */
 export function createHandler(
   controllerType: Function,
   controller: Object,
   func: Function,
   funcName: string,
+  beforeAllHook?: Express.Handler,
+  afterAllHook?: Express.Handler,
+  onErrorHook?: Express.ErrorRequestHandler,
 ): Express.Handler {
   // 钩子
-  const beforeHook = Reflect.getMetadata(MetadataKeys.Before, controllerType.prototype, funcName)
-  const afterHook = Reflect.getMetadata(MetadataKeys.After, controllerType.prototype, funcName)
+  const beforeHook: Express.Handler | undefined =
+    Reflect.getMetadata(MetadataKeys.Before, controllerType.prototype, funcName)
+  const afterHook: Express.Handler | undefined =
+    Reflect.getMetadata(MetadataKeys.After, controllerType.prototype, funcName)
 
   // 元数据
   const param = Reflect.getMetadata(MetadataKeys.Param, controllerType.prototype, funcName)
@@ -30,44 +31,71 @@ export function createHandler(
   const nextFunc = Reflect.getMetadata(MetadataKeys.Next, controllerType.prototype, funcName)
 
   return (req, res, next) => {
+    // nex需要使用控制器错误处理方法给钩住
+    if (onErrorHook) {
+      const originalNext = next
+      next = (err?: Error) => {
+        if (err) {
+          onErrorHook.apply(controller, [err, req, res, originalNext])
+        } else {
+          originalNext()
+        }
+      }
+    }
+
+    // 获取参数
     const args: any = []
+    // Path param
     if (param) {
       Object.keys(param).map((key) => args[param[key]] = req.params[key])
     }
+    // Query param
     if (queryParam) {
       Object.keys(queryParam).map((key) => args[queryParam[key]] = req.query[key])
     }
+    // Body param
     if (bodyParam) {
       Object.keys(bodyParam).map((key) => args[bodyParam[key]] = req.body[key])
     }
+    // Query data
     if (query) {
       query.map((index: number) => args[index] = req.query)
     }
+    // Body data
     if (body) {
       body.map((index: number) => args[index] = req.body)
     }
+    // Http request
     if (httpRequest) {
       httpRequest.map((index: number) => args[index] = req)
     }
+    // Http response
     if (httpResponse) {
       httpResponse.map((index: number) => args[index] = res)
     }
+    // Next function
     if (nextFunc) {
       nextFunc.map((index: number) => args[index] = next)
     }
 
     (async (): Promise<any> => {
       // 前置钩子
+      if (beforeAllHook && typeof beforeAllHook === "function") {
+        await Promise.resolve(beforeAllHook.apply(controller, [req, res, next]))
+      }
       if (beforeHook && typeof beforeHook === "function") {
-        await Promise.resolve(beforeHook(req, res, next))
+        await Promise.resolve(beforeHook.apply(controller, [req, res, next]))
       }
 
       // 本体
       const resp: any = await Promise.resolve(func.apply(controller, args))
 
-      // 后置钩子
+      // 前置钩子
       if (afterHook && typeof afterHook === "function") {
-        await afterHook(req, res, next)
+        await Promise.resolve(afterHook.apply(controller, [req, res, next]))
+      }
+      if (afterAllHook && typeof afterAllHook === "function") {
+        await Promise.resolve(afterAllHook.apply(controller, [req, res, next]))
       }
 
       // 应答

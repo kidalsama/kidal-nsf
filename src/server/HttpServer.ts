@@ -183,8 +183,12 @@ export default class HttpServer {
 
     // 错误处理
     this.expressApp.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-      HttpServer.LOG.error(err);
-      if (!res.headersSent) {
+      if (this.config.logError) {
+        HttpServer.LOG.error(err);
+      }
+      if (res.headersSent) {
+        res.end()
+      } else {
         res.status(500).send("Server Internal Error");
       }
     });
