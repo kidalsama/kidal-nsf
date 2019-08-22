@@ -1,0 +1,12 @@
+id: "901"
+profiles:
+  - "test"
+configServer:
+  type: "local"
+server:
+  enabled: true
+  httpServerMap:
+    primary:
+      port: 0
+      graphQLEndpoint: "/graphql"
+      webSocketEndpoint: "/ws"

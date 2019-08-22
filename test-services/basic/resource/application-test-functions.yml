@@ -1,0 +1,5 @@
+id: "901"
+profiles:
+- "test"
+configServer:
+  type: "local"

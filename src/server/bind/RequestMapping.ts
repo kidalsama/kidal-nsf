@@ -1,7 +1,7 @@
 import {MetadataKeys, RequestMethod} from "./ServerBindingRegistry";
 
 /**
- * 映射Http请求
+ * TODO: 补注释
  */
 export function RequestMapping(
   path: string,
@@ -20,4 +20,39 @@ export function RequestMapping(
       Reflect.defineMetadata(MetadataKeys.Method, options.method, target, propertyKey)
     }
   }
+}
+
+/**
+ * TODO: 补注释
+ */
+export function GetMapping(path: string) {
+  return RequestMapping(path, {method: "GET"})
+}
+
+/**
+ * TODO: 补注释
+ */
+export function PostMapping(path: string) {
+  return RequestMapping(path, {method: "POST"})
+}
+
+/**
+ * TODO: 补注释
+ */
+export function PutMapping(path: string) {
+  return RequestMapping(path, {method: "PUT"})
+}
+
+/**
+ * TODO: 补注释
+ */
+export function PatchMapping(path: string) {
+  return RequestMapping(path, {method: "PATCH"})
+}
+
+/**
+ * TODO: 补注释
+ */
+export function DeleteMapping(path: string) {
+  return RequestMapping(path, {method: "DELETE"})
 }

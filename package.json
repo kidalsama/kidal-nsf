@@ -45,6 +45,7 @@
     "graphql-tools": "4.0.5",
     "jest": "24.5.0",
     "lb_pool": "1.7.1",
+    "lodash": "^4.17.15",
     "log4js": "3.0.6",
     "md5": "2.2.1",
     "merge-graphql-schemas": "1.5.8",
@@ -64,5 +65,8 @@
   },
   "publishConfig": {
     "registry": "http://nexus.dev.everybodygame.com/repository/npm-hosted/"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.136"
   }
 }

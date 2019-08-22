@@ -26,7 +26,7 @@ export const log4jsConfig = {
   appenders: {
     console: {
       type: "console",
-      level: "trace",
+      level: "info",
       maxLevel: "error",
       layout: {
         type: "pattern",
@@ -39,7 +39,7 @@ export const log4jsConfig = {
       appenders: [
         "console",
       ],
-      level: "all",
+      level: "info",
     },
   },
 }

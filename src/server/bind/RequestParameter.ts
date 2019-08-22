@@ -53,14 +53,14 @@ export const Body = createDataParameterAnnotation(MetadataKeys.Body)
 /**
  * TODO: 补注释
  */
-export const Request = createDataParameterAnnotation(MetadataKeys.Request)
+export const HttpRequest = createDataParameterAnnotation(MetadataKeys.HttpRequest)
 
 /**
  * TODO: 补注释
  */
-export const Response = createDataParameterAnnotation(MetadataKeys.Response)
+export const HttpResponse = createDataParameterAnnotation(MetadataKeys.HttpResponse)
 
 /**
  * TODO: 补注释
  */
-export const Next = createSingleParameterAnnotation(MetadataKeys.Next)
+export const Next = createDataParameterAnnotation(MetadataKeys.Next)

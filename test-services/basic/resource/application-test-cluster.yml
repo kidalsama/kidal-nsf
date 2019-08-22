@@ -1,0 +1,19 @@
+id: "901"
+profiles:
+  - "test"
+configServer:
+  type: "local"
+server:
+  enabled: true
+  httpServerMap:
+    primary:
+      port: 0
+      graphQLEndpoint: "/graphql"
+      webSocketEndpoint: "/ws"
+cluster:
+  enabled: true
+  javaClusterMap:
+    oa:
+      host: ldev.happyhouse.club
+      port: 80
+      path: oa

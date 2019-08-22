@@ -1,7 +1,8 @@
 import * as Express from "express";
 import * as p from "path";
-import {Autowired, Component, Container} from "../../ioc";
+import {Container} from "../../ioc";
 import {Environment} from "../../application";
+import {createHandler} from "./Handler";
 
 /**
  * 允许的请求方法
@@ -35,15 +36,14 @@ export const MetadataKeys = {
   BodyParam: Symbol("BodyParam"),
   Query: Symbol("Query"),
   Body: Symbol("Body"),
-  Request: Symbol("Request"),
-  Response: Symbol("Response"),
+  HttpRequest: Symbol("HttpRequest"),
+  HttpResponse: Symbol("HttpResponse"),
   Next: Symbol("Next"),
 }
 
 /**
  * @author tengda
  */
-@Component
 export class ServerBindingRegistry {
   /**
    * 已经注册的控制器
@@ -51,19 +51,11 @@ export class ServerBindingRegistry {
   private readonly registeredControllers = new Set<Function>()
 
   /**
-   *
-   */
-  public constructor(
-    @Autowired public readonly env: Environment,
-  ) {
-  }
-
-  /**
    * 初始化
    */
-  public async init(router: Express.Router) {
+  public async init(env: Environment, router: Express.Router) {
     // 扫描控制器文件
-    Container.addSource("**/controller/**/*Controller.js", this.env.srcDir)
+    Container.addSource("**/controller/**/*Controller.js", env.srcDir)
 
     // 注册
     this.registerAllUnregisteredControllers(router)
@@ -163,85 +155,36 @@ export class ServerBindingRegistry {
 
       // 路由
       for (const method of requestMappingOptions.method) {
-        const beforeHook = Reflect.getMetadata(MetadataKeys.Before, type.prototype, name)
-        const afterHook = Reflect.getMetadata(MetadataKeys.After, type.prototype, name)
-
-        const param = Reflect.getMetadata(MetadataKeys.Param, type.prototype, name)
-        const queryParam = Reflect.getMetadata(MetadataKeys.QueryParam, type.prototype, name)
-        const bodyParam = Reflect.getMetadata(MetadataKeys.BodyParam, type.prototype, name)
-        const query = Reflect.getMetadata(MetadataKeys.Query, type.prototype, name)
-        const body = Reflect.getMetadata(MetadataKeys.Body, type.prototype, name)
-        const request = Reflect.getMetadata(MetadataKeys.Request, type.prototype, name)
-        const response = Reflect.getMetadata(MetadataKeys.Response, type.prototype, name)
-        const nextFunc = Reflect.getMetadata(MetadataKeys.Next, type.prototype, name)
-
-        const handler: Express.Handler = (req, res, next) => {
-          const args: any = []
-          if (param) {
-            Object.keys(param).map((key) => args[param[key]] = req.params[key])
-          }
-          if (queryParam) {
-            Object.keys(queryParam).map((key) => args[queryParam[key]] = req.query[key])
-          }
-          if (bodyParam) {
-            Object.keys(bodyParam).map((key) => args[bodyParam[key]] = req.body[key])
-          }
-          if (query) {
-            query.map((index: number) => args[index] = req.query)
-          }
-          if (body) {
-            body.map((index: number) => args[index] = req.body)
-          }
-          if (request) {
-            request.map((index: number) => args[index] = req)
-          }
-          if (response) {
-            response.map((index: number) => args[index] = res)
-          }
-          if (nextFunc) {
-            response.map((index: number) => args[index] = next)
-          }
-
-          if (beforeHook && typeof beforeHook === "function") {
-            beforeHook(req, res, next)
-          }
-
-          Promise.resolve(func.apply(controller, args))
-            .then((resp) => {
-              if (afterHook && typeof afterHook === "function") {
-                afterHook(req, res, next)
-              }
-              if (resp) {
-                res.end(resp)
-              } else {
-                res.end()
-              }
-            })
-            .catch(next)
-        }
+        const handler = createHandler(type, controller, func, name)
         routes.push({method, path: requestMappingOptions.path, handlers: [handler]})
       }
     }
 
     // 注册路由
     for (const route of routes) {
-      switch (route.method) {
-        case "GET":
-          router.get(route.path, ...route.handlers)
-          break
-        case "POST":
-          router.post(route.path, ...route.handlers)
-          break
-        case "PUT":
-          router.put(route.path, ...route.handlers)
-          break
-        case "PATCH":
-          router.patch(route.path, ...route.handlers)
-          break
-        case "DELETE":
-          router.delete(route.path, ...route.handlers)
-          break
-      }
+      const handlers = route.handlers.map((handler) =>
+        (req: Express.Request, res: Express.Response, next: Express.NextFunction) =>
+          Promise.resolve(handler(req, res, next)).then(null, next),
+      )
+      const args = [route.path, ...handlers];
+      (router as any)[route.method.toLocaleLowerCase()].apply(router, args);
+      // switch (route.method) {
+      //   case "GET":
+      //     router.get(route.path, ...route.handlers)
+      //     break
+      //   case "POST":
+      //     router.post(route.path, ...route.handlers)
+      //     break
+      //   case "PUT":
+      //     router.put(route.path, ...route.handlers)
+      //     break
+      //   case "PATCH":
+      //     router.patch(route.path, ...route.handlers)
+      //     break
+      //   case "DELETE":
+      //     router.delete(route.path, ...route.handlers)
+      //     break
+      // }
     }
   }
 }

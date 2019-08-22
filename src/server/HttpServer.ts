@@ -1,7 +1,7 @@
 import * as bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import express from "express";
-import {Request, Response} from "express-serve-static-core";
+import {NextFunction, Request, Response} from "express-serve-static-core";
 import * as http from "http";
 import Logs from "../application/Logs";
 import Environment from "../application/Environment";
@@ -164,7 +164,7 @@ export default class HttpServer {
     }
 
     // 绑定
-    await this.bindingRegistry.init(this.expressApp)
+    await this.bindingRegistry.init(Environment.S, this.expressApp)
 
     // 静态文件
     if (this.config.staticMapping) {
@@ -175,16 +175,16 @@ export default class HttpServer {
     }
 
     // 404
-    this.expressApp.use("*", (req, res) => {
-      res.status(404).send("Not Found");
+    this.expressApp.use((req: Request, res: Response, next: NextFunction) => {
+      if (!res.headersSent) {
+        res.status(404).send("Not Found");
+      }
     });
 
     // 错误处理
-    this.expressApp.use((err: any, req: Request, res: Response) => {
-      if (err instanceof Error) {
-        res.status(200).json({error: {code: 1, message: err.message}});
-      } else {
-        HttpServer.LOG.error(err);
+    this.expressApp.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+      HttpServer.LOG.error(err);
+      if (!res.headersSent) {
         res.status(500).send("Server Internal Error");
       }
     });

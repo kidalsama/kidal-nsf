@@ -9,7 +9,7 @@ describe("Basic: Java Rpc", () => {
   })
 
   // beforeAll(async () => {
-  //   return Application.runTest("basic")
+  //   return Application.runTest("basic", "test-cluster")
   // })
   //
   // afterAll(async () => {

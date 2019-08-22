@@ -7,7 +7,7 @@ describe("Basic: IEntityCache", () => {
   // noinspection TsLint
   let userCache: IEntityCache<number, IUser>
   beforeAll(async () => {
-    await Application.runTest("basic");
+    await Application.runTest("basic", "test-database");
     userCache = Database.acquire().getCache("user")
     Database.acquire().getModel("user")
   })

@@ -1,11 +1,12 @@
 /* tslint:disable */
+import * as Express from "express";
 import {MetadataKeys} from "./ServerBindingRegistry";
 
 /**
  * TODO: 补注释
  */
 function createHookAnnotation(metadataKey: symbol) {
-  return (hook: Function) => {
+  return (hook: Express.Handler) => {
     return (target: Object, propertyKey: string) => {
       Reflect.defineMetadata(metadataKey, hook, target, propertyKey)
     }

@@ -4,7 +4,7 @@ import HttpServer from "../../src/server/HttpServer";
 
 describe("Basic: GraphQL", () => {
   beforeAll(async () => {
-    return Application.runTest("basic");
+    return Application.runTest("basic", "test-http");
   })
 
   afterAll(async () => {

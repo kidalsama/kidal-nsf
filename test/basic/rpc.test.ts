@@ -6,7 +6,7 @@ describe("Basic: Rpc", () => {
   const waitDiscoveryTimeout = 5 * 1000
 
   beforeAll(async () => {
-    await Application.runTest("basic")
+    await Application.runTest("basic", "test-cluster")
     await new Promise((resolve, reject) => setTimeout(resolve, waitDiscoveryTimeout))
   }, waitDiscoveryTimeout + 5 * 1000)
 

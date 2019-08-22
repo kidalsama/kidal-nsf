@@ -7,7 +7,7 @@ describe("Basic: Api", () => {
   let wsc: WebSocket
 
   beforeAll(async () => {
-    await Application.runTest("basic");
+    await Application.runTest("basic", "test-http");
   })
 
   afterAll(async () => {

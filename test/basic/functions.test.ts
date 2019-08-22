@@ -7,7 +7,7 @@ import GraphQLUtils from "../../src/server/graphql/GraphQLUtils";
 
 describe("Basic: Functions", () => {
   beforeAll(async () => {
-    return Application.runTest("basic");
+    return Application.runTest("basic", "test-functions");
   })
 
   afterAll(async () => {

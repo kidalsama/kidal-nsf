@@ -3,13 +3,6 @@ profiles:
 - "test"
 configServer:
   type: "local"
-server:
-  enabled: true
-  httpServerMap:
-    primary:
-      port: 0
-      graphQLEndpoint: "/graphql"
-      webSocketEndpoint: "/ws"
 data:
   enabled: true
   databaseMap:
@@ -29,10 +22,3 @@ data:
       password: "Mcg!2345"
       database: "test_nsf_2"
       timezone: "Asia/Shanghai"
-cluster:
-  enabled: true
-  javaClusterMap:
-    oa:
-      host: ldev.happyhouse.club
-      port: 80
-      path: oa

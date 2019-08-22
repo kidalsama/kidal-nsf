@@ -4,21 +4,21 @@ import HttpServer from "../../src/server/HttpServer";
 
 describe("Basic: Http", () => {
   beforeAll(async () => {
-    return Application.runTest("basic");
+    return Application.runTest("basic", "test-http");
   })
 
   afterAll(async () => {
     await Application.S.shutdown()
   })
 
-  it("Should get status 200", async () => {
+  it("应当返回状态码200", async () => {
     const resp = await request(HttpServer.acquire().expressApp)
       .get("/.nsf/health")
 
     expect(resp.status).toBe(200)
   });
 
-  it("Should get status 404", async () => {
+  it("应当返回状态码404", async () => {
     const resp = await request(HttpServer.acquire().expressApp)
       .get("/wrongUrl2018")
     expect(resp.status).toBe(404)
