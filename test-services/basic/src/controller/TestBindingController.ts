@@ -15,13 +15,14 @@ import {
   QueryParam,
   RequestMapping,
 } from "../../../../src/server";
+import {BaseController} from "./BaseController";
 
 /**
  *
  */
 @Controller
 @RequestMapping("test-binding")
-class TestBindingController {
+class TestBindingController extends BaseController {
   /**
    *
    */

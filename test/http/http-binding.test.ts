@@ -34,6 +34,13 @@ describe("Http Binding", () => {
     expect(resp5.text).toEqual("hello world")
   });
 
+  it("父类方法", async () => {
+    const resp1 = await request(HttpServer.acquire().expressApp)
+      .get("/test-binding/base-controller")
+
+    expect(resp1.text).toEqual("base-controller")
+  });
+
   it("hook", async () => {
     const resp1 = await request(HttpServer.acquire().expressApp)
       .get("/test-binding/hook1")

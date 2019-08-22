@@ -1,8 +1,10 @@
 import * as Express from "express";
 import * as p from "path";
+import * as lodash from "lodash";
 import {Container} from "../../ioc";
 import {Environment} from "../../application";
 import {createHandler} from "./Handler";
+import ReflectUtils from "../../util/ReflectUtils";
 
 /**
  * 允许的请求方法
@@ -58,13 +60,13 @@ export class ServerBindingRegistry {
     Container.addSource("**/controller/**/*Controller.js", env.srcDir)
 
     // 注册
-    this.registerAllUnregisteredControllers(router)
+    await this.registerAllUnregisteredControllers(router)
   }
 
   /**
    * 注册全部还未注册的控制器
    */
-  public registerAllUnregisteredControllers(router: Express.Router) {
+  public async registerAllUnregisteredControllers(router: Express.Router) {
     for (const type of Container.getAllTypes()) {
       if (this.registeredControllers.has(type)) {
         continue
@@ -72,7 +74,7 @@ export class ServerBindingRegistry {
       if (!Reflect.hasMetadata(MetadataKeys.Controller, type)) {
         continue
       }
-      this.register(router, type)
+      await this.register(router, type)
       this.registeredControllers.add(type)
     }
   }
@@ -118,7 +120,7 @@ export class ServerBindingRegistry {
   /**
    * 注册控制器
    */
-  private register(router: Express.Router, type: Function) {
+  private async register(router: Express.Router, type: Function) {
     // 实例化
     const controller = Container.get(type)
     const controllerRequestMappingOptions = this.retrieveRequestMappingOptions(type)
@@ -129,36 +131,28 @@ export class ServerBindingRegistry {
       path: string;
       handlers: Express.Handler[];
     }> = []
-    for (const name of Object.getOwnPropertyNames(type.prototype)) {
-      // 跳过构造方法
-      if (name === "constructor") {
-        continue
-      }
 
-      // 必须是个方法
-      const func: Function = controller[name]
-      if (typeof func !== "function") {
-        continue
-      }
+    await ReflectUtils.doWithProperties(type.prototype,
+      async (propertyName, property) => {
+        // 获取参数
+        const requestMappingOptions = this.retrieveRequestMappingOptions(
+          type.prototype,
+          propertyName,
+          controllerRequestMappingOptions,
+        )
 
-      // 必须是映射方法
-      if (!Reflect.hasMetadata(MetadataKeys.MappingFunction, type.prototype, name)) {
-        continue
-      }
-
-      // 获取参数
-      const requestMappingOptions = this.retrieveRequestMappingOptions(
-        type.prototype,
-        name,
-        controllerRequestMappingOptions,
-      )
-
-      // 路由
-      for (const method of requestMappingOptions.method) {
-        const handler = createHandler(type, controller, func, name)
-        routes.push({method, path: requestMappingOptions.path, handlers: [handler]})
-      }
-    }
+        // 路由
+        for (const method of requestMappingOptions.method) {
+          const handler = createHandler(type, controller, property, propertyName)
+          routes.push({method, path: requestMappingOptions.path, handlers: [handler]})
+        }
+      },
+      async (propertyName, property) => {
+        return propertyName !== "constructor" &&
+          lodash.isFunction(property) &&
+          Reflect.hasMetadata(MetadataKeys.MappingFunction, type.prototype, propertyName)
+      },
+    )
 
     // 注册路由
     for (const route of routes) {
@@ -168,23 +162,6 @@ export class ServerBindingRegistry {
       )
       const args = [route.path, ...handlers];
       (router as any)[route.method.toLocaleLowerCase()].apply(router, args);
-      // switch (route.method) {
-      //   case "GET":
-      //     router.get(route.path, ...route.handlers)
-      //     break
-      //   case "POST":
-      //     router.post(route.path, ...route.handlers)
-      //     break
-      //   case "PUT":
-      //     router.put(route.path, ...route.handlers)
-      //     break
-      //   case "PATCH":
-      //     router.patch(route.path, ...route.handlers)
-      //     break
-      //   case "DELETE":
-      //     router.delete(route.path, ...route.handlers)
-      //     break
-      // }
     }
   }
 }
