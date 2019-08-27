@@ -17,15 +17,15 @@ describe("Basic: IEntityCache", () => {
   })
 
   it("#get", async () => {
-    const user = await userCache.get(1)
+    const user = await userCache.get(2)
     expect(user).toBeNull()
   });
 
   it("#getOrCreate", async () => {
-    const user1 = await userCache.getOrCreate(1, {username: "sa", password: "sa"});
+    const user1 = await userCache.getOrCreate(2, {username: "sa", password: "sa"});
     expect(user1).not.toBeNull()
 
-    const user2 = await userCache.getOrCreate(1, {username: "sa", password: "sa"});
+    const user2 = await userCache.getOrCreate(2, {username: "sa", password: "sa"});
     expect(user2).not.toBeNull()
   })
 
@@ -49,28 +49,35 @@ describe("Basic: IEntityCache", () => {
   });
 
   it("#createOrUpdate", async () => {
-    const user = await userCache.createOrUpdate({id: 2, username: "sa2", password: "sa2"});
+    const user = await userCache.createOrUpdate({id: 3, username: "sa2", password: "sa2"});
     expect(user).not.toBeNull()
   });
 
   it("#updateOne", async () => {
-    const user = await userCache.updateOne({id: 2, username: "sa3", password: "sa2"});
+    const user = await userCache.updateOne({id: 3, username: "sa3", password: "sa2"});
     expect(user).not.toBeNull()
 
-    const user2 = await userCache.get(2)
+    const user2 = await userCache.get(3)
     expect(user2).not.toBeNull()
     expect(user2!.username).toEqual("sa3")
   });
 
   it("AutoUpdateChangedFields", async () => {
-    const user = await userCache.get(2)
+    const user = await userCache.get(3)
     expect(user).not.toBeNull()
 
     user!.username = "autoUpdate"
     await user!.waitAutoUpdateChangedFieldsComplete()
 
-    const updated = await userCache.get(2)
+    const updated = await userCache.get(3)
     expect(updated).not.toBeNull()
     expect(updated!.username).toEqual("autoUpdate")
+  })
+
+  it("dataInitializer", async () => {
+    const dataInitializerUser = await userCache.loadOne(async (model) => {
+      return await model.findOne({where: {username: "dataInitializer"}})
+    })
+    expect(dataInitializerUser).not.toBeNull()
   })
 });

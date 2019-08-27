@@ -54,4 +54,9 @@ export interface IEntityRegistry<TKey extends number | string, TEntity extends I
    * 迁移
    */
   readonly migrations: { [key: string]: IEntityMigration };
+
+  /**
+   * 初始化数据
+   */
+  readonly dataInitializer?: () => Promise<void>;
 }

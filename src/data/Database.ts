@@ -5,7 +5,7 @@ import Environment from "../application/Environment";
 import {IEntityBase, IEntityRegistry} from "./IEntity";
 import EntityCacheImpl from "./EntityCacheImpl";
 import * as events from "events";
-import {IDatabaseConfig} from "../application/ApplicationConfig";
+import {IDatabaseConfig} from "../application";
 import Maybe from "graphql/tsutils/Maybe";
 import IEntityCache from "./IEntityCache";
 import {createMigrationModel, IMigration} from "./Migration";
@@ -62,6 +62,11 @@ export default class Database extends events.EventEmitter {
     // 升级
     for (const database of this.databaseMap.values()) {
       await database.migrateUp()
+    }
+
+    // 初始化
+    for (const database of this.databaseMap.values()) {
+      await database.initializeData()
     }
   }
 
@@ -338,6 +343,15 @@ export default class Database extends events.EventEmitter {
 
         // 记录
         await migrationModel.create({modelName, migrationName})
+      }
+    }
+  }
+
+  // 初始化
+  private async initializeData() {
+    for (const registry of this.registryMap.values()) {
+      if (registry.dataInitializer) {
+        await registry.dataInitializer()
       }
     }
   }

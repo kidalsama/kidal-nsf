@@ -67,6 +67,12 @@ class Registry implements IEntityRegistry<number, IUser> {
       },
     }
   }
+
+  public readonly dataInitializer = async () => {
+    if (!(await model.findOne({where: {username: "dataInitializer"}}))) {
+      await model.create({username: "dataInitializer", password: "dataInitializer"})
+    }
+  }
 }
 
 export default new Registry();
