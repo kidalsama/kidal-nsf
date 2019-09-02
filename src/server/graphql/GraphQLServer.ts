@@ -7,7 +7,6 @@ import LudmilaError from "../../error/LudmilaError";
 import LudmilaErrors from "../../error/LudmilaErrors";
 import GraphQLApolloServer from "./GraphQLApolloServer";
 import {GraphQLExtension} from "graphql-extensions";
-import PayloadDispatcher from "../PayloadDispatcher";
 import {makeExecutableSchema, mergeSchemas} from "graphql-tools";
 
 /**
@@ -135,9 +134,8 @@ export default class GraphQLServer {
       extensions: [
         (): GraphQLExtension => ({
           willSendResponse: ({graphqlResponse}) => {
-            const extensions = graphqlResponse.extensions || {}
-            extensions.foundation = {sync: PayloadDispatcher.S.getSync()}
-            graphqlResponse.extensions = extensions
+            // const extensions = graphqlResponse.extensions || {}
+            // graphqlResponse.extensions = extensions
           },
         }),
       ],
