@@ -32,12 +32,16 @@ export function GQLSchema(): Function {
  * 声明该类是一个GraphQL的字段解析器
  * @param key 类: 类型名; 字段: 字段名.
  */
-export function GQLResolver(key: string): Function {
+export function GQLResolver(key?: string): Function {
   return (target: Function) => {
     // 标记
     Reflect.defineMetadata(MetadataKeys.GraphQLResolver, true, target)
     // 设置选项
-    setMetadataOption("key", key, target)
+    if (key) {
+      setMetadataOption("key", key, target)
+    } else {
+      setMetadataOption("key", target.name, target)
+    }
     // 注册为服务
     return Service(target)
   }

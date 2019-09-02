@@ -54,7 +54,7 @@ export const MetadataKeys = {
 
   // GraphQL
   GraphQLSchema: Symbol("GQLSchema"),
-  GraphQLResolver: Symbol("GQLResolver"),
+  GraphQLResolver: Symbol("GraphQLResolver"),
   GraphQLOptions: Symbol("GraphQLOptions"),
 }
 

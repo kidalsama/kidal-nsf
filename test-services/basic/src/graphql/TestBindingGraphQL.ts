@@ -18,8 +18,8 @@ type ServerTime {
   }
 }
 
-@GQLResolver("ServerTime")
-class ServerTimeResolver {
+@GQLResolver()
+class ServerTime {
   public constructor(
     @Autowired public readonly now: Date,
   ) {
