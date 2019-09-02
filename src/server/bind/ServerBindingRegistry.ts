@@ -5,6 +5,7 @@ import {Container} from "../../ioc";
 import {Logs} from "../../application";
 import {createHandlers} from "./Handler";
 import ReflectUtils from "../../util/ReflectUtils";
+import {HttpServer} from "../index";
 
 /**
  * 允许的请求方法
@@ -67,12 +68,12 @@ export class ServerBindingRegistry {
   /**
    * 初始化
    */
-  public async init(router: Express.Router, pathToScan: string) {
+  public async init(httpServer: HttpServer, pathToScan: string) {
     // 扫描控制器文件
     Container.addSource(pathToScan)
 
     // 注册
-    await this.registerAllUnregisteredControllers(router)
+    await this.registerAllUnregisteredControllers(httpServer.expressApp)
   }
 
   /**

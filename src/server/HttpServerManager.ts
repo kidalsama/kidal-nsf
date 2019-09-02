@@ -2,7 +2,9 @@ import HttpServer from "./HttpServer";
 import Environment from "../application/Environment";
 import * as fs from "fs";
 import Logs from "../application/Logs";
-import {Service} from "../ioc";
+import {Autowired, Service} from "../ioc";
+import {PathUtils} from "../util";
+import IHttpServerInitializer from "./IHttpServerInitializer";
 
 /**
  * @author tengda
@@ -13,11 +15,18 @@ export class HttpServerManager {
    * 日志
    */
   private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "HttpServerManager");
-
   /**
-   * 字典
+   * 服务器表
    */
   private readonly serverMap: Map<string, HttpServer> = new Map<string, HttpServer>()
+
+  /**
+   *
+   */
+  public constructor(
+    @Autowired public env: Environment,
+  ) {
+  }
 
   /**
    * 获取服务器
@@ -34,12 +43,11 @@ export class HttpServerManager {
    * 初始化全部
    */
   public async boot(): Promise<HttpServerManager> {
-    // 控制器
-    const initializerSrc = `${Environment.S.srcDir}/HttpServerInitializer.js`
-    let initializer: any = {}
-    if (fs.existsSync(initializerSrc)) {
-      initializer = require(initializerSrc).default
-    }
+    // 读取初始化器
+    const initializerSrc = PathUtils.path.join(this.env.srcDir, "HttpServerInitializer.ts")
+    const initializer: IHttpServerInitializer = fs.existsSync(initializerSrc)
+      ? require(PathUtils.replaceExt(initializerSrc, "js")).default
+      : {}
 
     const config = Environment.S.applicationConfig.server
     if (!config.enabled) {
@@ -51,7 +59,8 @@ export class HttpServerManager {
 
     // 这里要先添加
     for (const name of names) {
-      this.serverMap.set(name, new HttpServer(config.httpServerMap[name], initializer))
+      const server = new HttpServer(this.env, config.httpServerMap[name], initializer)
+      this.serverMap.set(name, server)
     }
 
     // 启动服务器
@@ -67,7 +76,7 @@ export class HttpServerManager {
   }
 
   /**
-   * 关闭全部数据库
+   * 关闭全部服务器
    */
   public async shutdownAll(): Promise<void> {
     for (const server of this.serverMap.values()) {

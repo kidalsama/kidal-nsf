@@ -16,6 +16,8 @@ import WebSocketServer from "./websocket/WebSocketServer";
 import {ServerBindingRegistry} from "./bind";
 import {Component, Container} from "../ioc";
 import {HttpServerManager} from "./HttpServerManager";
+import IHttpServerInitializer from "./IHttpServerInitializer";
+import {PathUtils} from "../util";
 
 /**
  * @author tengda
@@ -34,7 +36,6 @@ export default class HttpServer {
     return Container.get(HttpServerManager).acquire(name)
   }
 
-  public readonly config: IHttpServerConfig;
   public readonly expressApp: express.Express;
   public readonly server: http.Server;
   public readonly graphQLServer?: GraphQLServer
@@ -42,16 +43,24 @@ export default class HttpServer {
   public readonly bindingRegistry: ServerBindingRegistry = Container.get(ServerBindingRegistry)
 
   /**
-   *
+   * @param env 环境
+   * @param config 配置
+   * @param initializer 初始化器
    */
-  constructor(config: IHttpServerConfig, initializer: any) {
-    this.config = config;
+  constructor(
+    public readonly env: Environment,
+    public readonly config: IHttpServerConfig,
+    public readonly initializer?: IHttpServerInitializer,
+  ) {
     this.expressApp = express();
     this.server = http.createServer(this.expressApp);
 
+    // 参数解析
     this.expressApp.use(bodyParser.urlencoded({extended: false}));
     this.expressApp.use(bodyParser.json());
     this.expressApp.use(cookieParser());
+
+    // 要获取到反向代理后的真实IP需要信任代理
     this.expressApp.enable("trust proxy")
 
     // 跨域
@@ -62,7 +71,7 @@ export default class HttpServer {
       credentials: true,
     }))
 
-    // 路由
+    // 初始化路由
     if (initializer && initializer.routes) {
       HttpServer.LOG.warn("请不要再使用 HttpServerInitializer 的 routes 方法，使用 initRouter 方法替代")
       initializer.routes(this.expressApp)
@@ -70,7 +79,7 @@ export default class HttpServer {
       initializer.initRouter(this)
     }
 
-    // RPC
+    // 支持RPC
     this.expressApp.post("/.nsf/rpc", (req, res) => {
       Rpc.S.httpCallLocalProcedure(req.body)
         .then((ret) => {
@@ -95,12 +104,17 @@ export default class HttpServer {
     });
 
     // graphQL
-    this.graphQLServer = this.config.graphQLEndpoint ? new GraphQLServer(this) : undefined
+    this.graphQLServer = this.config.graphQLEndpoint
+      ? new GraphQLServer(this.env, this)
+      : undefined
     if (this.graphQLServer && initializer && initializer.initGraphQL) {
       initializer.initGraphQL(this, this.graphQLServer)
     }
+
     // WebSocket
-    this.webSocketServer = this.config.webSocketEndpoint ? new WebSocketServer(this) : undefined
+    this.webSocketServer = this.config.webSocketEndpoint
+      ? new WebSocketServer(this)
+      : undefined
   }
 
   /**
@@ -111,15 +125,15 @@ export default class HttpServer {
     if (this.graphQLServer) {
       this.graphQLServer.init()
     }
+
     // webSocket
     if (this.webSocketServer) {
       this.webSocketServer.init()
     }
 
-    // 绑定
+    // 扫描源码并绑定
     if (this.config.pathToScan) {
-      const env = Environment.S
-      await this.bindingRegistry.init(this.expressApp, `${env.srcDir}/${this.config.pathToScan}`)
+      await this.bindingRegistry.init(this, PathUtils.path.join(this.env.srcDir, this.config.pathToScan))
     }
 
     // 静态文件

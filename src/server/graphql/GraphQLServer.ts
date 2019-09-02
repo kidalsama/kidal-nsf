@@ -8,53 +8,29 @@ import LudmilaErrors from "../../error/LudmilaErrors";
 import GraphQLApolloServer from "./GraphQLApolloServer";
 import {GraphQLExtension} from "graphql-extensions";
 import {makeExecutableSchema, mergeSchemas} from "graphql-tools";
+import {Component} from "../../ioc";
 
 /**
  * @author tengda
  */
+@Component
 export default class GraphQLServer {
   // 日志
   private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "GraphQLServer");
-  // 服务器
-  public readonly httpServer: HttpServer
-  // 错误格式化器
+  /**
+   * 错误格式化器
+   */
   public errorFormatter: (error: GraphQLError) => GraphQLFormattedError
 
-  public constructor(httpServer: HttpServer) {
+  /**
+   * @param env 环境
+   * @param httpServer 服务器
+   */
+  public constructor(
+    public readonly env: Environment,
+    public readonly httpServer: HttpServer,
+  ) {
     this.httpServer = httpServer
-    // this.errorFormatter = (error) => {
-    //   const formattedError = formatError(error);
-    //   // 打印错误
-    //   if (formattedError &&
-    //     formattedError.extensions &&
-    //     formattedError.extensions.hasOwnProperty("code") &&
-    //     formattedError.extensions.code === "INTERNAL_SERVER_ERROR"
-    //   ) {
-    //     GraphQLServer.LOG.error("INTERNAL_SERVER_ERROR",
-    //       formattedError, formattedError.extensions.exception,
-    //       printError(error),
-    //     )
-    //   }
-    //   const originalError: any = error.originalError;
-    //   if (!originalError) {
-    //     return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
-    //   }
-    //   const errors: any = originalError.errors
-    //   if (!errors || errors.length < 0) {
-    //     return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
-    //   }
-    //   // 推测是否是标准错误形式
-    //   const maybeLudmilaError = errors[0].originalError
-    //   if (!(maybeLudmilaError instanceof LudmilaError)) {
-    //     return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
-    //   }
-    //   // 打印错误
-    //   // GraphQLServer.LOG.error("StdError", maybeLudmilaError.stack, error.source ? error.source.body : "")
-    //   // 返回
-    //   return Object.assign(
-    //     {}, formattedError, {code: maybeLudmilaError.code, message: maybeLudmilaError.message},
-    //   );
-    // }
     this.errorFormatter = (error) => {
       const formattedError = formatError(error);
       const isLudmilaError = error.originalError && (error.originalError instanceof LudmilaError)
@@ -87,12 +63,9 @@ export default class GraphQLServer {
    * 初始化
    */
   public init() {
-    // 配置
-    const env = Environment.S;
-
     // 加载注册列表
     const registryList = glob
-      .sync(`${env.srcDir}/**/graphql/**/*.js`)
+      .sync(`${this.env.srcDir}/**/graphql/**/*.js`)
       .map((it: string) => require(it).default)
       .filter((it: any) => !!it);
     const schemaList = registryList

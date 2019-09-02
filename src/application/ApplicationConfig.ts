@@ -101,10 +101,6 @@ const completeServerConfig = (config: any): IServerConfig => {
       {
         primary: {
           port: 8080,
-          staticMapping: undefined,
-          graphQLEndpoint: undefined,
-          graphQLSubscriptionEndpoint: undefined,
-          webSocketEndpoint: undefined,
         },
       },
       completeHttpServerConfig,
