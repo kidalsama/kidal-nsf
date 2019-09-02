@@ -5,7 +5,8 @@ import {Container} from "../../ioc";
 import {Logs} from "../../application";
 import {createHandlers} from "./Handler";
 import ReflectUtils from "../../util/ReflectUtils";
-import {HttpServer} from "../index";
+import {HttpServer, IGraphQLContext} from "../index";
+import {GraphQLSchema} from "graphql";
 
 /**
  * 允许的请求方法
@@ -50,6 +51,11 @@ export const MetadataKeys = {
   HttpRequest: Symbol("HttpRequest"),
   HttpResponse: Symbol("HttpResponse"),
   Next: Symbol("Next"),
+
+  // GraphQL
+  GraphQLSchema: Symbol("GQLSchema"),
+  GraphQLResolver: Symbol("GQLResolver"),
+  GraphQLOptions: Symbol("GraphQLOptions"),
 }
 
 /**
@@ -60,17 +66,23 @@ export class ServerBindingRegistry {
    * 日志
    */
   private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "ServerBindingRegistry")
+
   /**
    * 已经注册的控制器
    */
   private readonly registeredControllers = new Set<Function>()
 
   /**
+   * GraphQL绑定信息
+   */
+  private readonly graphQLSchema?: GraphQLSchema
+
+  /**
    * 初始化
    */
   public async init(httpServer: HttpServer, pathToScan: string) {
     // 扫描控制器文件
-    Container.addSource(pathToScan)
+    Container.addSource(pathToScan, httpServer.env.srcDir)
 
     // 注册
     await this.registerAllUnregisteredControllers(httpServer.expressApp)
@@ -79,7 +91,7 @@ export class ServerBindingRegistry {
   /**
    * 注册全部还未注册的控制器
    */
-  public async registerAllUnregisteredControllers(router: Express.Router) {
+  private async registerAllUnregisteredControllers(router: Express.Router) {
     for (const type of Container.getAllTypes()) {
       if (this.registeredControllers.has(type)) {
         continue
@@ -201,5 +213,84 @@ export class ServerBindingRegistry {
       const args = [route.path, ...handlers];
       (router as any)[route.method.toLocaleLowerCase()].apply(router, args);
     }
+  }
+
+  /**
+   * 创建GraphQL的可执行格式定义
+   */
+  public async createGraphQLExecutableSchemaDefinition(): Promise<{ typeDefs: string[], resolvers: any }> {
+    const typeDefs: string[] = []
+    const resolvers: any = {}
+
+    for (const type of Container.getAllTypes()) {
+      const isSchema: boolean = Reflect.hasMetadata(MetadataKeys.GraphQLSchema, type)
+      const isResolver: boolean = Reflect.hasMetadata(MetadataKeys.GraphQLResolver, type)
+
+      if (isSchema) {
+        const typeDef = await this.retrieveGraphQLTypeDefs(type)
+        typeDefs.push(typeDef)
+      } else if (isResolver) {
+        const [key, resolver] = await this.retrieveGraphQLTypeResolver(type)
+        resolvers[key] = resolver
+      }
+    }
+
+    return {
+      typeDefs,
+      resolvers,
+    }
+  }
+
+  /**
+   * 创建类型定义
+   */
+  private async retrieveGraphQLTypeDefs(type: Function): Promise<string> {
+    let typeDefs = ""
+    const schemaRegistry = Container.get(type)
+
+    await ReflectUtils.doWithProperties(type.prototype,
+      async (propertyName, property) => {
+        const options: any = Reflect.getMetadata(MetadataKeys.GraphQLOptions, type.prototype, propertyName) || {}
+        if (options.ignored) {
+          return
+        }
+        const results = schemaRegistry[propertyName].apply(schemaRegistry)
+        const typeDef: string = await Promise.resolve(results)
+        typeDefs = `${typeDefs}\n${typeDef}`
+      },
+      async (propertyName, property) => {
+        return propertyName !== "constructor" &&
+          lodash.isFunction(property)
+      },
+    )
+
+    return typeDefs
+  }
+
+  /**
+   * 创建
+   */
+  private async retrieveGraphQLTypeResolver(type: Function): Promise<[string, any]> {
+    const resolverRegistry = Container.get(type)
+    const {key: typeName} = Reflect.getMetadata(MetadataKeys.GraphQLOptions, type)
+    const resolver: any = {}
+
+    await ReflectUtils.doWithProperties(type.prototype,
+      async (propertyName, property) => {
+        const options: any = Reflect.getMetadata(MetadataKeys.GraphQLOptions, type.prototype, propertyName) || {}
+        if (options.ignored) {
+          return
+        }
+        resolver[propertyName] = async (root: any, args: any, ctx: IGraphQLContext) => {
+          return property.apply(resolverRegistry, [root, args, ctx])
+        }
+      },
+      async (propertyName, property) => {
+        return propertyName !== "constructor" &&
+          lodash.isFunction(property)
+      },
+    )
+
+    return [typeName, resolver]
   }
 }

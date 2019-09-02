@@ -23,4 +23,9 @@ export default interface IHttpInitializer {
    * @param graphQLServer GraphQL服务器
    */
   initGraphQL?(httpServer: HttpServer, graphQLServer: GraphQLServer): void
+
+  /**
+   * 获取GraphQL的可执图示定义
+   */
+  getGraphQLExecutableSchemaDefinition?(): { typeDefs: string[], resolvers: any }
 }

@@ -1,13 +1,12 @@
 import {formatError, GraphQLError, GraphQLFormattedError, printError} from "graphql";
 import HttpServer from "../HttpServer";
-import glob from "glob";
 import Environment from "../../application/Environment";
 import Logs from "../../application/Logs";
 import LudmilaError from "../../error/LudmilaError";
 import LudmilaErrors from "../../error/LudmilaErrors";
 import GraphQLApolloServer from "./GraphQLApolloServer";
 import {GraphQLExtension} from "graphql-extensions";
-import {makeExecutableSchema, mergeSchemas} from "graphql-tools";
+import {makeExecutableSchema} from "graphql-tools";
 import {Component} from "../../ioc";
 
 /**
@@ -60,29 +59,47 @@ export default class GraphQLServer {
   }
 
   /**
-   * 初始化
+   * 启动
    */
-  public init() {
-    // 加载注册列表
-    const registryList = glob
-      .sync(`${this.env.srcDir}/**/graphql/**/*.js`)
-      .map((it: string) => require(it).default)
-      .filter((it: any) => !!it);
-    const schemaList = registryList
-      .map((it: any) => makeExecutableSchema({
-        typeDefs: it.schema,
-        resolvers: it.resolvers,
-        allowUndefinedInResolve: true,
-      }))
-    let schema
-    if (schemaList.length === 0) {
-      throw new Error("No graphql schema")
-    } else if (schemaList.length > 1) {
-      GraphQLServer.LOG.warn("DON NOT use multiple graphql schema")
-      schema = mergeSchemas({schemas: schemaList})
-    } else {
-      schema = schemaList[0]
+  public async start() {
+    // 获取定义
+    let typeDefs: string[] = []
+    let resolvers: any = {}
+    let bindTypeDefs: string[] = []
+    let bindResolvers: any = {}
+
+    // 手动
+    if (this.httpServer.initializer && this.httpServer.initializer.getGraphQLExecutableSchemaDefinition) {
+      const manual = this.httpServer.initializer.getGraphQLExecutableSchemaDefinition()
+      if (manual.typeDefs.length > 0) {
+        typeDefs = manual.typeDefs
+        resolvers = manual.resolvers
+      }
     }
+
+    // 获取绑定的定义
+    const bind = await this.httpServer.bindingRegistry.createGraphQLExecutableSchemaDefinition()
+    if (bind.typeDefs.length > 0) {
+      bindTypeDefs = bind.typeDefs
+      bindResolvers = bind.resolvers
+    }
+
+    // 合并定义
+    if (bindTypeDefs.length > 0) {
+      typeDefs.push(...bindTypeDefs)
+      for (const key of Object.keys(bindResolvers)) {
+        if (resolvers.hasOwnProperty(key)) {
+          GraphQLServer.LOG.warn("Duplicated resolver: ", key)
+        } else {
+          resolvers[key] = bindResolvers[key]
+        }
+      }
+    }
+
+    const schema = makeExecutableSchema({
+      typeDefs, resolvers,
+      allowUndefinedInResolve: true,
+    })
 
     // 使用Apollo中间价
     const subscriptions = this.httpServer.config.graphQLSubscriptionEndpoint ?

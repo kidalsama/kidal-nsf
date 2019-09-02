@@ -46,7 +46,7 @@ export class HttpServerManager {
     // 读取初始化器
     const initializerSrc = PathUtils.path.join(this.env.srcDir, "HttpServerInitializer.ts")
     const initializer: IHttpServerInitializer = fs.existsSync(initializerSrc)
-      ? require(PathUtils.replaceExt(initializerSrc, "js")).default
+      ? require(PathUtils.replaceExt(initializerSrc, ".js")).default
       : {}
 
     const config = Environment.S.applicationConfig.server

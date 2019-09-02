@@ -13,7 +13,7 @@ export default {
     return path.format({
       root: parsed.root,
       dir: parsed.dir,
-      base: parsed.base,
+      // base: parsed.base,
       ext,
       name: parsed.name,
     })

@@ -3,6 +3,10 @@ export {
 } from "./HttpServer";
 
 export {
+  default as IHttpServerInitializer,
+} from "./IHttpServerInitializer";
+
+export {
   default as IPayload,
 } from "./IPayload";
 

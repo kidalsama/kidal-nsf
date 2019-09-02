@@ -29,6 +29,7 @@ query time {
 }`,
       })
     expect(resp.status).toBe(200)
+    expect(resp.body).not.toHaveProperty("errors")
   });
 
   it("Error", async () => {

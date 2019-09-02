@@ -1,34 +1,9 @@
-import {gql, PubSub} from "apollo-server";
+import {PubSub} from "apollo-server";
 import {LudmilaError} from "../../../../src/error";
-import {GraphQLUnits} from "../../../../src/server/graphql";
 
 const pubsub = new PubSub();
 
 const POST_SUB = "POST_SUB"
-
-class ServerTime {
-  private readonly _now = new Date();
-
-  public format(args: any) {
-    return GraphQLUnits.dateUnit(new Date(), args);
-  }
-
-  public timestamp() {
-    return GraphQLUnits.dateUnit(new Date(), {unit: "timestamp"});
-  }
-
-  public date() {
-    return GraphQLUnits.dateUnit(this._now, {unit: "date"});
-  }
-
-  public datetime() {
-    return GraphQLUnits.dateUnit(this._now, {unit: "datetime"});
-  }
-
-  public testingNull() {
-    return GraphQLUnits.dateUnit(null, {});
-  }
-}
 
 interface IResults {
   name: string
@@ -44,7 +19,7 @@ export default {
         return {}
       },
       serverTime() {
-        return new ServerTime();
+        return {};
       },
       async postSub(root: any, args: { content: string }) {
         await pubsub.publish(POST_SUB, {sub: args})
@@ -64,7 +39,7 @@ export default {
       },
     },
   },
-  schema: gql`
+  schema: `
 type Query {
   error: Boolean
   subType: SubTypeError
@@ -74,15 +49,6 @@ type Query {
 
 type Subscription {
   sub: Sub
-}
-
-type ServerTime {
-  # 格式化时间
-  format(unit: String): String!
-  timestamp: Float!
-  date: String!
-  datetime: String!
-  testingNull: String
 }
 
 type SubTypeError {

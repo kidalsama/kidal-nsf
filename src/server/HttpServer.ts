@@ -17,7 +17,6 @@ import {ServerBindingRegistry} from "./bind";
 import {Component, Container} from "../ioc";
 import {HttpServerManager} from "./HttpServerManager";
 import IHttpServerInitializer from "./IHttpServerInitializer";
-import {PathUtils} from "../util";
 
 /**
  * @author tengda
@@ -40,7 +39,7 @@ export default class HttpServer {
   public readonly server: http.Server;
   public readonly graphQLServer?: GraphQLServer
   public readonly webSocketServer?: WebSocketServer
-  public readonly bindingRegistry: ServerBindingRegistry = Container.get(ServerBindingRegistry)
+  public readonly bindingRegistry: ServerBindingRegistry = new ServerBindingRegistry()
 
   /**
    * @param env 环境
@@ -121,19 +120,19 @@ export default class HttpServer {
    * 启动服务器
    */
   public async start() {
+    // 扫描源码并绑定
+    if (this.config.pathToScan) {
+      await this.bindingRegistry.init(this, this.config.pathToScan)
+    }
+
     // graphQL
     if (this.graphQLServer) {
-      this.graphQLServer.init()
+      await this.graphQLServer.start()
     }
 
     // webSocket
     if (this.webSocketServer) {
       this.webSocketServer.init()
-    }
-
-    // 扫描源码并绑定
-    if (this.config.pathToScan) {
-      await this.bindingRegistry.init(this, PathUtils.path.join(this.env.srcDir, this.config.pathToScan))
     }
 
     // 静态文件

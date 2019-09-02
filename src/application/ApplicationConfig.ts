@@ -115,7 +115,7 @@ const completeHttpServerConfig = (key: string, config: any): IHttpServerConfig =
     logError: orElse(`server.httpServerMap:${key}`, config,
       "logError", true),
     pathToScan: orElse(`server.httpServerMap:${key}`, config,
-      "pathToScan", "**/controller/**/*Controller.js"),
+      "pathToScan", "**/@(controller|graphql)/**/*@(Controller|GraphQL).js"),
     staticMapping: orElse(`server.httpServerMap:${key}`, config,
       "staticMapping", undefined),
     graphQLEndpoint: orElse(`server.httpServerMap:${key}`, config,
