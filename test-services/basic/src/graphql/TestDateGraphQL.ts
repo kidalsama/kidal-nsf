@@ -12,6 +12,8 @@ type TestDate {
   date: Date!
   datetime: Date!
   testingNull: Date
+  testingDirective: Date! @DateUnit
+  testingDirectiveWithDefaultYear: Date! @DateUnit(unit: "yyyy")
 }
 `
   }
@@ -44,5 +46,13 @@ class TestDate {
 
   public async testingNull() {
     return GraphQLUnits.dateUnit(null, {});
+  }
+
+  public async testingDirective(r: any) {
+    return r.now
+  }
+
+  public async testingDirectiveWithDefaultYear(r: any) {
+    return r.now
   }
 }

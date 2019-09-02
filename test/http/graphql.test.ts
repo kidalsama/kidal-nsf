@@ -1,7 +1,6 @@
 import request from "supertest";
 import Application from "../../src/application/Application"
 import HttpServer from "../../src/server/HttpServer";
-import {GraphQLUnits} from "../../src/server/graphql";
 
 describe("GraphQL", () => {
   beforeAll(async () => {
@@ -27,6 +26,9 @@ query testDate($now: Date!) {
     date
     datetime
     testingNull
+    testingDirective
+    testingDirective_yy: testingDirective(unit: "yy")
+    testingDirectiveWithDefaultYear
   }
 }`,
         variables: {now},
@@ -42,6 +44,9 @@ query testDate($now: Date!) {
     expect(resp.body.data.testDate.date).toEqual("2011-10-11")
     expect(resp.body.data.testDate.datetime).toEqual("2011-10-11 23:55:17")
     expect(resp.body.data.testDate.testingNull).toBeNull()
+    expect(resp.body.data.testDate.testingDirective).toEqual("2011-10-11 23:55:17")
+    expect(resp.body.data.testDate.testingDirective_yy).toEqual("11")
+    expect(resp.body.data.testDate.testingDirectiveWithDefaultYear).toEqual("2011")
   });
 
   it("Error", async () => {

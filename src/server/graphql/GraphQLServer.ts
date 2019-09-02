@@ -10,6 +10,7 @@ import {GraphQLExtension} from "graphql-extensions";
 import {makeExecutableSchema} from "graphql-tools";
 import {Component} from "../../ioc";
 import {scalarDate} from "./GraphQLScalars";
+import {DateUnitDirective} from "./GraphQLDirectives";
 
 /**
  * @author tengda
@@ -120,10 +121,18 @@ export default class GraphQLServer {
       resolvers.Date = scalarDate.resolver
     }
 
+    // 设置指令
+    typeDefs.unshift(
+      DateUnitDirective.SCHEMA,
+    )
+
     const schema = makeExecutableSchema({
       typeDefs,
       resolvers,
       allowUndefinedInResolve: true,
+      schemaDirectives: {
+        DateUnit: DateUnitDirective,
+      },
     })
 
     // 使用Apollo中间价
