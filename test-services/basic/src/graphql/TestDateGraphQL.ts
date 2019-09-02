@@ -1,0 +1,48 @@
+import {GQLResolver, GQLSchema} from "../../../../src/server/bind";
+import {GraphQLUnits} from "../../../../src/server/graphql";
+
+@GQLSchema()
+class Schema {
+  public schema() {
+    return `
+type TestDate {
+  # 格式化时间
+  format(unit: String): Date!
+  timestamp: Float!
+  date: Date!
+  datetime: Date!
+  testingNull: Date
+}
+`
+  }
+}
+
+@GQLResolver()
+class Query {
+  public testDate(r: any, a: any) {
+    return {now: a.now}
+  }
+}
+
+@GQLResolver()
+class TestDate {
+  public format(r: any, a: any) {
+    return GraphQLUnits.dateUnit(r.now, a);
+  }
+
+  public timestamp(r: any) {
+    return GraphQLUnits.dateUnit(r.now, {unit: "timestamp"});
+  }
+
+  public async date(r: any) {
+    return GraphQLUnits.dateUnit(r.now, {unit: "date"});
+  }
+
+  public datetime(r: any) {
+    return GraphQLUnits.dateUnit(r.now, {unit: "datetime"});
+  }
+
+  public async testingNull() {
+    return GraphQLUnits.dateUnit(null, {});
+  }
+}

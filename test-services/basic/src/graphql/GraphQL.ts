@@ -18,9 +18,6 @@ export default {
       async subType() {
         return {}
       },
-      serverTime() {
-        return {};
-      },
       async postSub(root: any, args: { content: string }) {
         await pubsub.publish(POST_SUB, {sub: args})
         return true
@@ -43,7 +40,7 @@ export default {
 type Query {
   error: Boolean
   subType: SubTypeError
-  serverTime: ServerTime!
+  testDate(now: Date!): TestDate!
   postSub(content: String!): Boolean
 }
 

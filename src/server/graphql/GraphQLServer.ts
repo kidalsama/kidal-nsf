@@ -1,3 +1,4 @@
+import * as lodash from "lodash";
 import {formatError, GraphQLError, GraphQLFormattedError, printError} from "graphql";
 import HttpServer from "../HttpServer";
 import Environment from "../../application/Environment";
@@ -8,6 +9,7 @@ import GraphQLApolloServer from "./GraphQLApolloServer";
 import {GraphQLExtension} from "graphql-extensions";
 import {makeExecutableSchema} from "graphql-tools";
 import {Component} from "../../ioc";
+import {scalarDate} from "./GraphQLScalars";
 
 /**
  * @author tengda
@@ -86,18 +88,41 @@ export default class GraphQLServer {
 
     // 合并定义
     if (bindTypeDefs.length > 0) {
+      // 合并Schema
       typeDefs.push(...bindTypeDefs)
-      for (const key of Object.keys(bindResolvers)) {
-        if (resolvers.hasOwnProperty(key)) {
-          GraphQLServer.LOG.warn("Duplicated resolver: ", key)
-        } else {
-          resolvers[key] = bindResolvers[key]
+      // 合并Resolver
+      const mergeResolver = (prefix: string, to: any, from: any) => {
+        for (const key of Object.keys(from)) {
+          // 获取解析器
+          const resolver = from[key]
+          // 合并
+          if (lodash.isFunction(resolver)) {
+            if (to.hasOwnProperty(key)) {
+              GraphQLServer.LOG.warn("Duplicated resolver: ", `${prefix}${key}`)
+            } else {
+              to[key] = resolver
+            }
+          } else if (lodash.isObject(resolver)) {
+            if (to.hasOwnProperty(key)) {
+              mergeResolver(`${prefix}${key}.`, to[key], resolver)
+            } else {
+              mergeResolver(`${prefix}${key}.`, to[key] = {}, resolver)
+            }
+          }
         }
       }
+      mergeResolver("", resolvers, bindResolvers)
+    }
+
+    // 设置自定义标量
+    if (resolvers.Date === undefined) {
+      typeDefs.unshift(scalarDate.schema)
+      resolvers.Date = scalarDate.resolver
     }
 
     const schema = makeExecutableSchema({
-      typeDefs, resolvers,
+      typeDefs,
+      resolvers,
       allowUndefinedInResolve: true,
     })
 
