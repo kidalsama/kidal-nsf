@@ -141,6 +141,13 @@ export class Connection<TNode> {
   }
 
   /**
+   * 全部节点
+   */
+  public get nodes(): TNode[] {
+    return this.edges.map((it) => it.node)
+  }
+
+  /**
    * 是否有下一页
    */
   public get hasNextPage(): boolean {
