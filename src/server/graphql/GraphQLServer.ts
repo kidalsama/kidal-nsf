@@ -1,4 +1,3 @@
-import * as lodash from "lodash";
 import {formatError, GraphQLError, GraphQLFormattedError, printError} from "graphql";
 import HttpServer from "../HttpServer";
 import Environment from "../../application/Environment";
@@ -7,10 +6,11 @@ import LudmilaError from "../../error/LudmilaError";
 import LudmilaErrors from "../../error/LudmilaErrors";
 import GraphQLApolloServer from "./GraphQLApolloServer";
 import {GraphQLExtension} from "graphql-extensions";
-import {makeExecutableSchema} from "graphql-tools";
+import {makeExecutableSchema, SchemaDirectiveVisitor} from "graphql-tools";
 import {Component} from "../../ioc";
 import {scalarDate} from "./GraphQLScalars";
-import {DateUnitDirective} from "./GraphQLDirectives";
+import {ByteDirective, DateDirective, TimeDirective, UrlDirective} from "./GraphQLDirectives";
+import GraphQLUtils from "./GraphQLUtils";
 
 /**
  * @author tengda
@@ -92,27 +92,7 @@ export default class GraphQLServer {
       // 合并Schema
       typeDefs.push(...bindTypeDefs)
       // 合并Resolver
-      const mergeResolver = (prefix: string, to: any, from: any) => {
-        for (const key of Object.keys(from)) {
-          // 获取解析器
-          const resolver = from[key]
-          // 合并
-          if (lodash.isFunction(resolver)) {
-            if (to.hasOwnProperty(key)) {
-              GraphQLServer.LOG.warn("Duplicated resolver: ", `${prefix}${key}`)
-            } else {
-              to[key] = resolver
-            }
-          } else if (lodash.isObject(resolver)) {
-            if (to.hasOwnProperty(key)) {
-              mergeResolver(`${prefix}${key}.`, to[key], resolver)
-            } else {
-              mergeResolver(`${prefix}${key}.`, to[key] = {}, resolver)
-            }
-          }
-        }
-      }
-      mergeResolver("", resolvers, bindResolvers)
+      GraphQLUtils.mergeResolver("", resolvers, bindResolvers, GraphQLServer.LOG)
     }
 
     // 设置自定义标量
@@ -122,22 +102,31 @@ export default class GraphQLServer {
     }
 
     // 设置指令
+    const schemaDirectives: { [name: string]: typeof SchemaDirectiveVisitor } = {}
     typeDefs.unshift(
-      DateUnitDirective.SCHEMA,
+      ByteDirective.SCHEMA,
+      DateDirective.SCHEMA,
+      TimeDirective.SCHEMA,
+      UrlDirective.SCHEMA,
     )
+    schemaDirectives[ByteDirective.NAME] = ByteDirective
+    schemaDirectives[DateDirective.NAME] = DateDirective
+    schemaDirectives[TimeDirective.NAME] = TimeDirective
+    schemaDirectives[UrlDirective.NAME] = UrlDirective
 
+    // 创建图示
     const schema = makeExecutableSchema({
-      typeDefs,
-      resolvers,
+      typeDefs, resolvers,
       allowUndefinedInResolve: true,
-      schemaDirectives: {
-        DateUnit: DateUnitDirective,
-      },
+      schemaDirectives,
     })
 
-    // 使用Apollo中间价
-    const subscriptions = this.httpServer.config.graphQLSubscriptionEndpoint ?
-      {path: this.httpServer.config.graphQLSubscriptionEndpoint} : undefined
+    // 创建订阅
+    const subscriptions = this.httpServer.config.graphQLSubscriptionEndpoint
+      ? {path: this.httpServer.config.graphQLSubscriptionEndpoint}
+      : undefined
+
+    // 创建Apollo服务器
     const apolloServer = new GraphQLApolloServer({
       schema,
       subscriptions,
@@ -184,20 +173,17 @@ export default class GraphQLServer {
         },
       },
     });
+
+    // 注册中间件
     apolloServer.applyMiddleware({
       app: this.httpServer.expressApp,
       path: this.httpServer.config.graphQLEndpoint,
-      cors: {
-        origin: true,
-        allowedHeaders: "*",
-        methods: "*",
-        credentials: true,
-      },
+      cors: {origin: true, allowedHeaders: "*", methods: "*", credentials: true},
     })
+
+    // 注册订阅
     if (subscriptions) {
-      apolloServer.installSubscriptionHandlers(
-        this.httpServer.server,
-      )
+      apolloServer.installSubscriptionHandlers(this.httpServer.server)
     }
 
     // log

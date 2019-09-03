@@ -12,8 +12,8 @@ type TestDate {
   date: Date!
   datetime: Date!
   testingNull: Date
-  testingDirective: Date! @DateUnit
-  testingDirectiveWithDefaultYear: Date! @DateUnit(unit: "yyyy")
+  testingDirective: Date! @date
+  testingDirectiveWithDefaultYear: Date! @date(unit: "yyyy")
 }
 `
   }

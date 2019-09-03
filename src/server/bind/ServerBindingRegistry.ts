@@ -7,6 +7,7 @@ import {createHandlers} from "./Handler";
 import ReflectUtils from "../../util/ReflectUtils";
 import {HttpServer, IGraphQLContext} from "../index";
 import {GraphQLSchema} from "graphql";
+import GraphQLUtils from "../graphql/GraphQLUtils";
 
 /**
  * 允许的请求方法
@@ -231,7 +232,7 @@ export class ServerBindingRegistry {
         typeDefs.push(typeDef)
       } else if (isResolver) {
         const [key, resolver] = await this.retrieveGraphQLTypeResolver(type)
-        resolvers[key] = resolver
+        GraphQLUtils.mergeResolver("", resolvers, {[key]: resolver}, ServerBindingRegistry.LOG)
       }
     }
 
