@@ -144,7 +144,7 @@ export class Connection<TNode> {
    * 全部节点
    */
   public get nodes(): TNode[] {
-    return this.edges.map((it) => it.node)
+    return this.edges.map((it) => it.node!)
   }
 
   /**

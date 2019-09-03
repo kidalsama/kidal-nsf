@@ -140,7 +140,7 @@ export default {
       return null
     }
 
-    let proceed = result
+    let proceed: Maybe<string> = result
     if (args && args.unit !== undefined && args.unit !== null) {
       switch (args.unit) {
         case "//":

@@ -299,7 +299,7 @@ export default class DiscoveryClient extends events.EventEmitter {
    * 获取全部节点ID
    */
   public getNodeIds(): string[] {
-    const ids = new Set();
+    const ids = new Set<string>();
     this._nodes.forEach((it) => ids.add(it.data.id));
     return [...ids];
   }
