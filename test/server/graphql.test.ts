@@ -1,8 +1,9 @@
 import request from "supertest";
 import Application from "../../src/application/Application"
-import HttpServer from "../../src/server/HttpServer";
 import {InputObjectTypeDefinitionNode, parse} from "graphql";
 import mergeGraphQLNodes from "../../src/server/graphql/merges/merge-node";
+import {Container} from "../../src/ioc";
+import {HttpServerManager} from "../../src/server/HttpServerManager";
 
 describe("GraphQL: 合并", () => {
   describe("type", () => {
@@ -256,7 +257,7 @@ describe("GraphQL", () => {
 
   it("TestDate", async () => {
     const now = "2011-10-11 23:55:17"
-    const resp = await request(HttpServer.acquire().expressApp)
+    const resp = await request(Container.get(HttpServerManager).acquire().expressApp)
       .post("/graphql")
       .send({
         query: `
@@ -293,7 +294,7 @@ query testDate($now: Date!) {
   });
 
   it("TestDirective", async () => {
-    const resp = await request(HttpServer.acquire().expressApp)
+    const resp = await request(Container.get(HttpServerManager).acquire().expressApp)
       .post("/graphql")
       .send({
         query: `
@@ -337,7 +338,7 @@ query testDirective {
   });
 
   it("Error", async () => {
-    const resp = await request(HttpServer.acquire().expressApp)
+    const resp = await request(Container.get(HttpServerManager).acquire().expressApp)
       .post("/graphql")
       .send({
         query: `
@@ -350,7 +351,7 @@ query error {
   });
 
   it("SubTypeError", async () => {
-    const resp = await request(HttpServer.acquire().expressApp)
+    const resp = await request(Container.get(HttpServerManager).acquire().expressApp)
       .post("/graphql")
       .send({
         query: `

@@ -2,6 +2,8 @@ import request from "supertest";
 import Application from "../../src/application/Application";
 import HttpServer from "../../src/server/HttpServer";
 import * as querystring from "querystring";
+import {Container} from "../../src/ioc";
+import {HttpServerManager} from "../../src/server/HttpServerManager";
 
 describe("Http", () => {
   beforeAll(async () => {
@@ -13,30 +15,30 @@ describe("Http", () => {
   })
 
   it("应当返回状态码200", async () => {
-    const resp = await request(HttpServer.acquire().expressApp)
+    const resp = await request(Container.get(HttpServerManager).acquire().expressApp)
       .get("/.nsf/health")
 
     expect(resp.status).toBe(200)
   });
 
   it("应当返回状态码404", async () => {
-    const resp = await request(HttpServer.acquire().expressApp)
+    const resp = await request(Container.get(HttpServerManager).acquire().expressApp)
       .get("/wrongUrl2018")
     expect(resp.status).toBe(404)
   });
 
   it("基础类型直接返回", async () => {
-    const resp0 = await request(HttpServer.acquire().expressApp)
+    const resp0 = await request(Container.get(HttpServerManager).acquire().expressApp)
       .get("/test-binding")
-    const resp1 = await request(HttpServer.acquire().expressApp)
+    const resp1 = await request(Container.get(HttpServerManager).acquire().expressApp)
       .get("/test-binding/undefined")
-    const resp2 = await request(HttpServer.acquire().expressApp)
+    const resp2 = await request(Container.get(HttpServerManager).acquire().expressApp)
       .get("/test-binding/null")
-    const resp3 = await request(HttpServer.acquire().expressApp)
+    const resp3 = await request(Container.get(HttpServerManager).acquire().expressApp)
       .get("/test-binding/boolean")
-    const resp4 = await request(HttpServer.acquire().expressApp)
+    const resp4 = await request(Container.get(HttpServerManager).acquire().expressApp)
       .get("/test-binding/number")
-    const resp5 = await request(HttpServer.acquire().expressApp)
+    const resp5 = await request(Container.get(HttpServerManager).acquire().expressApp)
       .get("/test-binding/string")
 
     expect(resp0.text).toEqual("Welcome to binding test controller")
@@ -48,20 +50,20 @@ describe("Http", () => {
   });
 
   it("父类方法", async () => {
-    const resp1 = await request(HttpServer.acquire().expressApp)
+    const resp1 = await request(Container.get(HttpServerManager).acquire().expressApp)
       .get("/test-binding/base-controller")
 
     expect(resp1.text).toEqual("base-controller")
   });
 
   it("hook", async () => {
-    const resp1 = await request(HttpServer.acquire().expressApp)
+    const resp1 = await request(Container.get(HttpServerManager).acquire().expressApp)
       .get("/test-binding/hook1")
-    const resp2 = await request(HttpServer.acquire().expressApp)
+    const resp2 = await request(Container.get(HttpServerManager).acquire().expressApp)
       .get("/test-binding/hook2")
-    const resp3 = await request(HttpServer.acquire().expressApp)
+    const resp3 = await request(Container.get(HttpServerManager).acquire().expressApp)
       .get("/test-binding/hook3")
-    const resp4 = await request(HttpServer.acquire().expressApp)
+    const resp4 = await request(Container.get(HttpServerManager).acquire().expressApp)
       .get("/test-binding/hook4")
 
     expect(resp1.status).toEqual(200)
@@ -83,7 +85,7 @@ describe("Http", () => {
     const b1 = "鹅妈妈木木"
     const b2 = "✔️"
     const b = {b1, b2}
-    const resp1 = await request(HttpServer.acquire().expressApp)
+    const resp1 = await request(Container.get(HttpServerManager).acquire().expressApp)
       .post(`/test-binding/echo/${p1}/${p2}?${querystring.stringify(q)}`)
       .send(b)
 
@@ -92,9 +94,9 @@ describe("Http", () => {
   });
 
   it("error", async () => {
-    const resp1 = await request(HttpServer.acquire().expressApp)
+    const resp1 = await request(Container.get(HttpServerManager).acquire().expressApp)
       .get("/test-binding/error")
-    const resp2 = await request(HttpServer.acquire().expressApp)
+    const resp2 = await request(Container.get(HttpServerManager).acquire().expressApp)
       .get("/test-binding/ludmila-error")
 
     expect(resp1.status).toEqual(500)

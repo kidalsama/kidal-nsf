@@ -2,7 +2,8 @@ import * as zookeeper from "node-zookeeper-client";
 import Logs from "../application/Logs";
 import Environment from "../application/Environment";
 import * as events from "events";
-import HttpServer from "../server/HttpServer";
+import {Container} from "../ioc";
+import {HttpServerManager} from "../server/HttpServerManager";
 
 /**
  * @author tengda
@@ -226,13 +227,13 @@ export default class DiscoveryClient extends events.EventEmitter {
     }
 
     // 解析IP
-    const ip = HttpServer.acquire().ip;
+    const ip = Container.get(HttpServerManager).acquire().ip;
     if (!ip) {
       throw new Error("Resolve ip failed");
     }
 
     // uuid
-    const port = HttpServer.acquire().port
+    const port = Container.get(HttpServerManager).acquire().port
     this._uuid = `${ip}:${port}`;
 
     // 准备路径

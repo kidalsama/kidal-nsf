@@ -1,7 +1,8 @@
 import Application from "../../src/application/Application"
 import PayloadDispatcher from "../../src/server/PayloadDispatcher";
-import HttpServer from "../../src/server/HttpServer";
 import WebSocket from "ws";
+import {Container} from "../../src/ioc";
+import {HttpServerManager} from "../../src/server/HttpServerManager";
 
 describe("WebSocket", () => {
   let wsc: WebSocket
@@ -20,7 +21,7 @@ describe("WebSocket", () => {
   })
 
   it("Connect", (done) => {
-    const address = HttpServer.acquire().server.address()
+    const address = Container.get(HttpServerManager).acquire().server.address()
 
     if (address === null) {
       throw new Error("Server's address is null");
