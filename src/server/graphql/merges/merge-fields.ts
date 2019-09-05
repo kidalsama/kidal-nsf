@@ -14,7 +14,7 @@ export default function mergeFields<T extends FieldDefinitionNode | InputValueDe
     if (fieldAlreadyExists(result, field)) {
       const existing: any = result.find((f: any) => f.name.value === (field as any).name.value);
 
-      preventConflicts(type, existing, field, false);
+      preventConflicts(type, existing, field, true);
 
       if (isNonNullTypeNode(field.type) && !isNonNullTypeNode(existing.type)) {
         existing.type = field.type;
