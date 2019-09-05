@@ -2,11 +2,21 @@ import {GQLResolver, GQLSchema} from "../../../../src/server/bind";
 import {GraphQLUnits} from "../../../../src/server/graphql";
 
 @GQLSchema()
-class Schema {
+class QuerySchema {
+  public schema() {
+    return `
+type Query {
+  testDate(now: Date!): TestDate!
+}
+`
+  }
+}
+
+@GQLSchema()
+class TestDateSchema {
   public schema() {
     return `
 type TestDate {
-  # 格式化时间
   format(unit: String): Date!
   timestamp: Float!
   date: Date!

@@ -10,7 +10,7 @@ import {makeExecutableSchema, SchemaDirectiveVisitor} from "graphql-tools";
 import {Component} from "../../ioc";
 import {scalarDate} from "./GraphQLScalars";
 import {ByteDirective, DateDirective, TimeDirective, UrlDirective} from "./GraphQLDirectives";
-import GraphQLUtils from "./GraphQLUtils";
+import {mergeResolver, mergeTypeDefs} from "./merges";
 
 /**
  * @author tengda
@@ -66,57 +66,45 @@ export default class GraphQLServer {
    */
   public async start() {
     // 获取定义
-    let typeDefs: string[] = []
-    let resolvers: any = {}
-    let bindTypeDefs: string[] = []
-    let bindResolvers: any = {}
+    const typeDefs: string[] = []
+    const resolvers: any[] = []
 
     // 手动
     if (this.httpServer.initializer && this.httpServer.initializer.getGraphQLExecutableSchemaDefinition) {
       const manual = this.httpServer.initializer.getGraphQLExecutableSchemaDefinition()
       if (manual.typeDefs.length > 0) {
-        typeDefs = manual.typeDefs
-        resolvers = manual.resolvers
+        typeDefs.push(...manual.typeDefs)
+        resolvers.push(manual.resolvers)
       }
     }
 
     // 获取绑定的定义
     const bind = await this.httpServer.bindingRegistry.createGraphQLExecutableSchemaDefinition()
     if (bind.typeDefs.length > 0) {
-      bindTypeDefs = bind.typeDefs
-      bindResolvers = bind.resolvers
+      typeDefs.push(...bind.typeDefs)
+      resolvers.push(bind.resolvers)
     }
 
-    // 合并定义
-    if (bindTypeDefs.length > 0) {
-      // 合并Schema
-      typeDefs.push(...bindTypeDefs)
-      // 合并Resolver
-      GraphQLUtils.mergeResolver("", resolvers, bindResolvers, GraphQLServer.LOG)
-    }
+    // 标量
+    typeDefs.unshift(scalarDate.schema)
+    resolvers.push({Date: scalarDate.resolver})
 
-    // 设置自定义标量
-    if (resolvers.Date === undefined) {
-      typeDefs.unshift(scalarDate.schema)
-      resolvers.Date = scalarDate.resolver
-    }
-
-    // 设置指令
+    // 指令
     const schemaDirectives: { [name: string]: typeof SchemaDirectiveVisitor } = {}
-    typeDefs.unshift(
-      ByteDirective.SCHEMA,
-      DateDirective.SCHEMA,
-      TimeDirective.SCHEMA,
-      UrlDirective.SCHEMA,
-    )
+    typeDefs.unshift(ByteDirective.SCHEMA, DateDirective.SCHEMA, TimeDirective.SCHEMA, UrlDirective.SCHEMA)
     schemaDirectives[ByteDirective.NAME] = ByteDirective
     schemaDirectives[DateDirective.NAME] = DateDirective
     schemaDirectives[TimeDirective.NAME] = TimeDirective
     schemaDirectives[UrlDirective.NAME] = UrlDirective
 
+    // 合并
+    const mergedTypeDefs = mergeTypeDefs(typeDefs, GraphQLServer.LOG)
+    const mergedResolvers: any = resolvers.reduce((prev, cur) => mergeResolver("", prev, cur, GraphQLServer.LOG), {})
+
     // 创建图示
     const schema = makeExecutableSchema({
-      typeDefs, resolvers,
+      typeDefs: mergedTypeDefs,
+      resolvers: mergedResolvers,
       allowUndefinedInResolve: true,
       schemaDirectives,
     })

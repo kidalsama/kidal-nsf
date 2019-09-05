@@ -7,7 +7,7 @@ import {createHandlers} from "./Handler";
 import ReflectUtils from "../../util/ReflectUtils";
 import {HttpServer, IGraphQLContext} from "../index";
 import {GraphQLSchema} from "graphql";
-import GraphQLUtils from "../graphql/GraphQLUtils";
+import {mergeResolver} from "../graphql/merges";
 
 /**
  * 允许的请求方法
@@ -229,10 +229,10 @@ export class ServerBindingRegistry {
 
       if (isSchema) {
         const typeDef = await this.retrieveGraphQLTypeDefs(type)
-        typeDefs.push(typeDef)
+        typeDefs.push(...typeDef)
       } else if (isResolver) {
         const [key, resolver] = await this.retrieveGraphQLTypeResolver(type)
-        GraphQLUtils.mergeResolver("", resolvers, {[key]: resolver}, ServerBindingRegistry.LOG)
+        mergeResolver("", resolvers, {[key]: resolver}, ServerBindingRegistry.LOG)
       }
     }
 
@@ -245,19 +245,15 @@ export class ServerBindingRegistry {
   /**
    * 创建类型定义
    */
-  private async retrieveGraphQLTypeDefs(type: Function): Promise<string> {
-    let typeDefs = ""
+  private async retrieveGraphQLTypeDefs(type: Function): Promise<string[]> {
+    const typeDefs: string[] = []
     const schemaRegistry = Container.get(type)
 
     await ReflectUtils.doWithProperties(type.prototype,
       async (propertyName, property) => {
-        const options: any = Reflect.getMetadata(MetadataKeys.GraphQLOptions, type.prototype, propertyName) || {}
-        if (options.ignored) {
-          return
-        }
         const results = schemaRegistry[propertyName].apply(schemaRegistry)
         const typeDef: string = await Promise.resolve(results)
-        typeDefs = `${typeDefs}\n${typeDef}`
+        typeDefs.push(typeDef)
       },
       async (propertyName, property) => {
         return propertyName !== "constructor" &&
@@ -278,10 +274,6 @@ export class ServerBindingRegistry {
 
     await ReflectUtils.doWithProperties(type.prototype,
       async (propertyName, property) => {
-        const options: any = Reflect.getMetadata(MetadataKeys.GraphQLOptions, type.prototype, propertyName) || {}
-        if (options.ignored) {
-          return
-        }
         resolver[propertyName] = async (root: any, args: any, ctx: IGraphQLContext) => {
           return property.apply(resolverRegistry, [root, args, ctx])
         }

@@ -23,6 +23,7 @@ export function GQLSchema(): Function {
   return (target: Function) => {
     // 标记
     Reflect.defineMetadata(MetadataKeys.GraphQLSchema, true, target)
+
     // 注册为服务
     return Service(target)
   }
@@ -36,12 +37,10 @@ export function GQLResolver(key?: string): Function {
   return (target: Function) => {
     // 标记
     Reflect.defineMetadata(MetadataKeys.GraphQLResolver, true, target)
-    // 设置选项
-    if (key) {
-      setMetadataOption("key", key, target)
-    } else {
-      setMetadataOption("key", target.name, target)
-    }
+
+    // 设置key
+    setMetadataOption("key", key || target.name, target)
+
     // 注册为服务
     return Service(target)
   }

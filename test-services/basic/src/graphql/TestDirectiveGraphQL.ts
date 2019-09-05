@@ -1,7 +1,18 @@
 import {GQLResolver, GQLSchema} from "../../../../src/server/bind";
 
 @GQLSchema()
-class Schema {
+class QuerySchema {
+  public schema() {
+    return `
+type Query {
+  testDirective: TestDirective!
+}
+`
+  }
+}
+
+@GQLSchema()
+class TestDirectiveSchema {
   public schema() {
     return `
 type TestDirective {

@@ -1,34 +1,10 @@
 import {Connection, DEFAULT_LIMIT, DEFAULT_PAGE, MAX_LIMIT, PageArgs} from "../../util/Pagination";
 import Maybe from "graphql/tsutils/Maybe";
-import * as lodash from "lodash";
-import * as log4js from "log4js";
 
+/**
+ * GraphQL工具
+ */
 export default {
-  /**
-   * 合并解析器
-   */
-  mergeResolver(prefix: string, to: any, from: any, logger?: log4js.Logger) {
-    for (const key of Object.keys(from)) {
-      // 获取解析器
-      const resolver = from[key]
-      // 合并
-      if (lodash.isFunction(resolver)) {
-        if (to.hasOwnProperty(key)) {
-          if (logger) {
-            logger.warn("Duplicated resolver: ", `${prefix}${key}`)
-          }
-        } else {
-          to[key] = resolver
-        }
-      } else if (lodash.isObject(resolver)) {
-        if (to.hasOwnProperty(key)) {
-          this.mergeResolver(`${prefix}${key}.`, to[key], resolver, logger)
-        } else {
-          this.mergeResolver(`${prefix}${key}.`, to[key] = {}, resolver, logger)
-        }
-      }
-    }
-  },
   /**
    * 创建某类型的Connection的Schema
    * @param name 类型名

@@ -10,6 +10,7 @@ import RpcApiManager from "../cluster/RpcApiManager";
 import * as fs from "fs";
 import {Container, Scope, Service} from "../ioc";
 import {HttpServerManager} from "../server/HttpServerManager";
+import {PathUtils} from "../util";
 
 /**
  * @author tengda
@@ -85,7 +86,7 @@ export default class Application {
     this.LOG = logs.getFoundationLogger(__dirname, "Application");
 
     // 启动应用程序
-    await this.S.boot();
+    await this.S.boot(env);
 
     // timer
     const sec = ((Date.now() - startTs) / 1000).toFixed(3);
@@ -110,7 +111,7 @@ export default class Application {
   }
 
   // 启动应用
-  private async boot() {
+  private async boot(env: Environment) {
     // 启动数据库
     await Database.initAll()
 
@@ -126,9 +127,9 @@ export default class Application {
     await Rpc.S.init();
 
     // 加载入口
-    const entry = `${Environment.S.srcDir}/Entry.js`
-    if (fs.existsSync(entry)) {
-      require(entry)
+    const entrySrc = PathUtils.path.join(env.srcDir, "Entry.ts")
+    if (fs.existsSync(entrySrc)) {
+      require(PathUtils.replaceExt(entrySrc, ".js"))
     }
   }
 

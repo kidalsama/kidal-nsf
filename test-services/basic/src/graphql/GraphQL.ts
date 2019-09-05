@@ -40,8 +40,6 @@ export default {
 type Query {
   error: Boolean
   subType: SubTypeError
-  testDate(now: Date!): TestDate!
-  testDirective: TestDirective!
   postSub(content: String!): Boolean
 }
 
