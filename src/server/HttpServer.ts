@@ -16,7 +16,7 @@ import WebSocketServer from "./websocket/WebSocketServer";
 import {ServerBindingRegistry} from "./bind";
 import {Component, Container} from "../ioc";
 import {HttpServerManager} from "./HttpServerManager";
-import IHttpServerInitializer from "./IHttpServerInitializer";
+import IHttpServerInitializer from "./IServerInitializer";
 
 /**
  * @author tengda

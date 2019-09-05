@@ -4,7 +4,7 @@ import * as fs from "fs";
 import Logs from "../application/Logs";
 import {Autowired, Service} from "../ioc";
 import {PathUtils} from "../util";
-import IHttpServerInitializer from "./IHttpServerInitializer";
+import IServerInitializer from "./IServerInitializer";
 
 /**
  * @author tengda
@@ -44,8 +44,8 @@ export class HttpServerManager {
    */
   public async boot(): Promise<HttpServerManager> {
     // 读取初始化器
-    const initializerSrc = PathUtils.path.join(this.env.srcDir, "HttpServerInitializer.ts")
-    const initializer: IHttpServerInitializer = fs.existsSync(initializerSrc)
+    const initializerSrc = PathUtils.path.join(this.env.srcDir, "ServerInitializer.ts")
+    const initializer: IServerInitializer = fs.existsSync(initializerSrc)
       ? require(PathUtils.replaceExt(initializerSrc, ".js")).default
       : {}
 

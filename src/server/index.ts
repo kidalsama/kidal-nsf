@@ -4,7 +4,7 @@ export {
 
 export {
   default as IHttpServerInitializer,
-} from "./IHttpServerInitializer";
+} from "./IServerInitializer";
 
 export {
   default as IPayload,

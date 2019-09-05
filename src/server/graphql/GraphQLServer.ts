@@ -70,17 +70,15 @@ export default class GraphQLServer {
     const resolvers: any[] = []
 
     // 手动
-    if (this.httpServer.initializer && this.httpServer.initializer.getGraphQLExecutableSchemaDefinition) {
-      const manual = this.httpServer.initializer.getGraphQLExecutableSchemaDefinition()
-      if (manual.typeDefs.length > 0) {
-        typeDefs.push(...manual.typeDefs)
-        resolvers.push(manual.resolvers)
-      }
+    if (this.httpServer.initializer && this.httpServer.initializer.initGraphQLSchema) {
+      const manual = this.httpServer.initializer.initGraphQLSchema()
+      typeDefs.push(...manual.typeDefs)
+      resolvers.push(manual.resolvers)
     }
 
     // 获取绑定的定义
-    const bind = await this.httpServer.bindingRegistry.createGraphQLExecutableSchemaDefinition()
-    if (bind.typeDefs.length > 0) {
+    const bind = await this.httpServer.bindingRegistry.createGraphQLSchema()
+    if (bind) {
       typeDefs.push(...bind.typeDefs)
       resolvers.push(bind.resolvers)
     }

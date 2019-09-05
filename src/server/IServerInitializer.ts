@@ -4,7 +4,7 @@ import {GraphQLServer, HttpServer} from "./index";
 /**
  * Http服务器初始化器
  */
-export default interface IHttpInitializer {
+export default interface IServerInitializer {
   /**
    * 初始化路由
    * @param app Express程序
@@ -25,7 +25,7 @@ export default interface IHttpInitializer {
   initGraphQL?(httpServer: HttpServer, graphQLServer: GraphQLServer): void
 
   /**
-   * 获取GraphQL的可执图示定义
+   * 获取GraphQL的Schema
    */
-  getGraphQLExecutableSchemaDefinition?(): { typeDefs: string[], resolvers: any }
+  initGraphQLSchema?(): { typeDefs: string[], resolvers: any }
 }

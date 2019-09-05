@@ -219,7 +219,7 @@ export class ServerBindingRegistry {
   /**
    * 创建GraphQL的可执行格式定义
    */
-  public async createGraphQLExecutableSchemaDefinition(): Promise<{ typeDefs: string[], resolvers: any }> {
+  public async createGraphQLSchema(): Promise<{ typeDefs: string[], resolvers: any } | undefined> {
     const typeDefs: string[] = []
     const resolvers: any = {}
 
@@ -236,10 +236,9 @@ export class ServerBindingRegistry {
       }
     }
 
-    return {
-      typeDefs,
-      resolvers,
-    }
+    return typeDefs.length > 0
+      ? {typeDefs, resolvers}
+      : undefined
   }
 
   /**
