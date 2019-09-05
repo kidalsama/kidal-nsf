@@ -11,6 +11,10 @@ export {
 } from "./IPayload";
 
 export {
+  default as IServerInitializer,
+} from "./IServerInitializer";
+
+export {
   default as ISession,
 } from "./ISession";
 
