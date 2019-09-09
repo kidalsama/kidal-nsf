@@ -114,7 +114,7 @@ export default class HttpServer {
 
     // GraphQL
     this.graphQLServer = this.config.graphQLEndpoint
-      ? new GraphQLServer(this.env, this)
+      ? new GraphQLServer(this)
       : undefined
     if (this.graphQLServer && initializer && initializer.initGraphQL) {
       initializer.initGraphQL(this, this.graphQLServer)
@@ -142,7 +142,7 @@ export default class HttpServer {
 
     // webSocket
     if (this.webSocketServer) {
-      this.webSocketServer.init()
+      await this.webSocketServer.start()
     }
 
     // 静态文件

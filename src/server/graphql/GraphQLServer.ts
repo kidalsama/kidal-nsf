@@ -1,6 +1,5 @@
 import {formatError, GraphQLError, GraphQLFormattedError, printError} from "graphql";
 import HttpServer from "../HttpServer";
-import Environment from "../../application/Environment";
 import Logs from "../../application/Logs";
 import LudmilaError from "../../error/LudmilaError";
 import LudmilaErrors from "../../error/LudmilaErrors";
@@ -15,19 +14,20 @@ import {mergeResolver, mergeTypeDefs} from "./merges";
  * @author tengda
  */
 export default class GraphQLServer {
-  // 日志
+  /**
+   * 日志
+   */
   private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "GraphQLServer");
+
   /**
    * 错误格式化器
    */
   public errorFormatter: (error: GraphQLError) => GraphQLFormattedError
 
   /**
-   * @param env 环境
    * @param httpServer 服务器
    */
   public constructor(
-    public readonly env: Environment,
     public readonly httpServer: HttpServer,
   ) {
     this.httpServer = httpServer

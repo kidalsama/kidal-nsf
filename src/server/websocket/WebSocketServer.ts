@@ -2,20 +2,35 @@ import WebSocket from "ws";
 import WebSocketSessionManager from "./WebSocketSessionManager";
 import HttpServer from "../HttpServer";
 import Logs from "../../application/Logs";
+import {Environment} from "../../application";
 
 /**
  * @author tengda
  */
 export default class WebSocketServer {
+  /**
+   * 日志
+   */
   private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "WebSocketServer");
-  private wss?: WebSocket.Server;
-  public readonly httpServer: HttpServer
 
-  public constructor(httpServer: HttpServer) {
+  /**
+   * WebSocket服务器实例
+   */
+  private wss?: WebSocket.Server;
+
+  /**
+   *
+   */
+  public constructor(
+    public readonly httpServer: HttpServer,
+  ) {
     this.httpServer = httpServer
   }
 
-  public init() {
+  /**
+   * 启动
+   */
+  public async start() {
     const webSocketSessionManager = WebSocketSessionManager.S;
 
     // 服务器
