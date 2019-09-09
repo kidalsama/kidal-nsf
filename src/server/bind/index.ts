@@ -1,3 +1,3 @@
-export * from "./Controller"
-export * from "./GraphQL"
+export * from "./ControllerBinding"
+export * from "./GraphQLBinding"
 export * from "./ServerBindingRegistry"

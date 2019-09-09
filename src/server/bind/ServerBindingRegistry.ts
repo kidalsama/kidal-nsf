@@ -3,7 +3,7 @@ import * as p from "path";
 import * as lodash from "lodash";
 import {Container} from "../../ioc";
 import {Logs} from "../../application";
-import {createHandlers} from "./Handler";
+import {createHandlers} from "./BoundExpressHandler";
 import ReflectUtils from "../../util/ReflectUtils";
 import {HttpServer, IGraphQLContext} from "../index";
 import {GraphQLSchema} from "graphql";
@@ -28,7 +28,7 @@ interface IRequestMappingOptions {
 // tslint:disable-next-line
 export const MetadataKeys = {
   // 标记
-  Controller: Symbol("Controller"),
+  Controller: Symbol("ControllerBinding"),
   MappingFunction: Symbol("MappingFunction"),
 
   // 路由
