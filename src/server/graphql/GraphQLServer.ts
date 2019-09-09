@@ -7,7 +7,6 @@ import LudmilaErrors from "../../error/LudmilaErrors";
 import GraphQLApolloServer from "./GraphQLApolloServer";
 import {GraphQLExtension} from "graphql-extensions";
 import {makeExecutableSchema, SchemaDirectiveVisitor} from "graphql-tools";
-import {Component} from "../../ioc";
 import {scalarDate} from "./GraphQLScalars";
 import {ByteDirective, DateDirective, TimeDirective, UrlDirective} from "./GraphQLDirectives";
 import {mergeResolver, mergeTypeDefs} from "./merges";
@@ -15,7 +14,6 @@ import {mergeResolver, mergeTypeDefs} from "./merges";
 /**
  * @author tengda
  */
-@Component
 export default class GraphQLServer {
   // 日志
   private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "GraphQLServer");
