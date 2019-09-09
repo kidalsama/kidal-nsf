@@ -14,8 +14,7 @@ import {IHttpServerConfig} from "../application";
 import GraphQLServer from "./graphql/GraphQLServer";
 import WebSocketServer from "./websocket/WebSocketServer";
 import {ServerBindingRegistry} from "./bind";
-import {Component, Container} from "../ioc";
-import {HttpServerManager} from "./HttpServerManager";
+import {Component} from "../ioc";
 import IHttpServerInitializer from "./IServerInitializer";
 
 /**
@@ -29,16 +28,24 @@ export default class HttpServer {
   private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "HttpServer");
 
   /**
-   * 获取服务器
+   * Express实例
    */
-  public static acquire(name: string = "primary"): HttpServer {
-    return Container.get(HttpServerManager).acquire(name)
-  }
-
   public readonly expressApp: express.Express;
+  /**
+   * Http服务器实例
+   */
   public readonly server: http.Server;
+  /**
+   * GraphQL服务器
+   */
   public readonly graphQLServer?: GraphQLServer
+  /**
+   * WebSocket服务器
+   */
   public readonly webSocketServer?: WebSocketServer
+  /**
+   * 自动绑定注册器
+   */
   public readonly bindingRegistry: ServerBindingRegistry = new ServerBindingRegistry()
 
   /**
@@ -51,10 +58,11 @@ export default class HttpServer {
     public readonly config: IHttpServerConfig,
     public readonly initializer?: IHttpServerInitializer,
   ) {
+    // 创建Express实例和Http服务器实例
     this.expressApp = express();
     this.server = http.createServer(this.expressApp);
 
-    // 参数解析
+    // 注册Express中间件
     this.expressApp.use(bodyParser.urlencoded({extended: false}));
     this.expressApp.use(bodyParser.json());
     this.expressApp.use(cookieParser());
@@ -62,7 +70,8 @@ export default class HttpServer {
     // 要获取到反向代理后的真实IP需要信任代理
     this.expressApp.enable("trust proxy")
 
-    // 跨域
+    // 允许跨域
+    // TODO: 通过配置读取允许跨域的域名
     this.expressApp.use(cors({
       origin: ((requestOrigin, callback) => {
         callback(null, true)
@@ -79,6 +88,7 @@ export default class HttpServer {
     }
 
     // 支持RPC
+    // TODO: 应当在cluster模块注册这个
     this.expressApp.post("/.nsf/rpc", (req, res) => {
       Rpc.S.httpCallLocalProcedure(req.body)
         .then((ret) => {
@@ -102,7 +112,7 @@ export default class HttpServer {
       res.status(200).end();
     });
 
-    // graphQL
+    // GraphQL
     this.graphQLServer = this.config.graphQLEndpoint
       ? new GraphQLServer(this.env, this)
       : undefined
