@@ -36,6 +36,14 @@ class TestBindingController extends BaseController {
   /**
    *
    */
+  @GetMapping("echo-str")
+  public async echoStr(@QueryParam("str") str: string) {
+    return str
+  }
+
+  /**
+   *
+   */
   @RequestMapping("undefined")
   public async getUndefined() {
     return undefined

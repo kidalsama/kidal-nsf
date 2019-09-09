@@ -1,6 +1,5 @@
 import request from "supertest";
 import Application from "../../src/application/Application";
-import HttpServer from "../../src/server/HttpServer";
 import * as querystring from "querystring";
 import {Container} from "../../src/ioc";
 import {HttpServerManager} from "../../src/server/HttpServerManager";
@@ -26,6 +25,12 @@ describe("Http", () => {
       .get("/wrongUrl2018")
     expect(resp.status).toBe(404)
   });
+
+  it("空查询参数", async () => {
+    const resp0 = await request(Container.get(HttpServerManager).acquire().expressApp)
+      .get("/test-binding/echo-str")
+    expect(resp0.status).toEqual(200)
+  })
 
   it("基础类型直接返回", async () => {
     const resp0 = await request(Container.get(HttpServerManager).acquire().expressApp)

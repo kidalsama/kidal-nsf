@@ -82,16 +82,19 @@ export function createHandlers(
     // 获取参数
     const args: any = []
     // Path param
-    if (param) {
-      Object.keys(param).map((key) => args[param[key]] = convert(req.params[key], parameterTypes[param[key]]))
+    if (param && req.params) {
+      Object.keys(param).map(
+        (key) => args[param[key]] = convert(req.params[key], parameterTypes[param[key]]))
     }
     // Query param
-    if (queryParam) {
-      Object.keys(queryParam).map((key) => args[queryParam[key]] = convert(req.query[key], parameterTypes[param[key]]))
+    if (queryParam && req.query) {
+      Object.keys(queryParam).map(
+        (key) => args[queryParam[key]] = convert(req.query[key], parameterTypes[queryParam[key]]))
     }
     // Body param
-    if (bodyParam) {
-      Object.keys(bodyParam).map((key) => args[bodyParam[key]] = convert(req.body[key], parameterTypes[param[key]]))
+    if (bodyParam && req.body) {
+      Object.keys(bodyParam).map(
+        (key) => args[bodyParam[key]] = convert(req.body[key], parameterTypes[bodyParam[key]]))
     }
     // Query data
     if (query) {
