@@ -26,6 +26,15 @@ describe("Http", () => {
     expect(resp.status).toBe(404)
   });
 
+  it("同名路径", async () => {
+    const resp0 = await request(Container.get(HttpServerManager).acquire().expressApp)
+      .get("/test-binding/same-path")
+    const resp1 = await request(Container.get(HttpServerManager).acquire().expressApp)
+      .post("/test-binding/same-path")
+    expect(resp0.text).toEqual("GetMapping")
+    expect(resp1.text).toEqual("PostMapping")
+  })
+
   it("空查询参数", async () => {
     const resp0 = await request(Container.get(HttpServerManager).acquire().expressApp)
       .get("/test-binding/echo-str")

@@ -114,11 +114,12 @@ export class ServerBindingRegistry {
     prefix?: IRequestMappingOptions,
   ): IRequestMappingOptions {
     // 读取元数据
-    const pathOption: string | undefined = propertyKey ?
-      Reflect.getMetadata(MetadataKeys.Path, target, propertyKey) :
-      Reflect.getMetadata(MetadataKeys.Path, target)
-    const methodOption: string | string[] | undefined =
-      Reflect.getMetadata(MetadataKeys.Method, target)
+    const pathOption: string | undefined = propertyKey
+      ? Reflect.getMetadata(MetadataKeys.Path, target, propertyKey)
+      : Reflect.getMetadata(MetadataKeys.Path, target)
+    const methodOption: string | string[] | undefined = propertyKey
+      ? Reflect.getMetadata(MetadataKeys.Method, target, propertyKey)
+      : Reflect.getMetadata(MetadataKeys.Method, target)
 
     // 路径
     let path: string
