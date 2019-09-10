@@ -1,131 +1,104 @@
 import WebSocket from "ws";
-import ISession from "../ISession";
 import IPayload, {IPayloadData, payloadToText, VERSION} from "../IPayload";
-import WebSocketSessionManager from "./WebSocketSessionManager";
 import Logs from "../../application/Logs";
-import LudmilaError from "../../error/LudmilaError";
-import LudmilaErrors from "../../error/LudmilaErrors";
+import WebSocketServer from "./WebSocketServer";
+import Maybe from "../../util/Maybe";
 
 /**
  * @author tengda
  */
-export default class WebSocketSession implements ISession {
-  // log
+export default class WebSocketSession {
+  /**
+   * 日志
+   */
   private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "WebSocketSession");
-  // 管理器
-  public readonly manager: WebSocketSessionManager;
-  // WebSocket对象
-  public readonly ws: WebSocket;
-  // 会话ID
-  public readonly sessionId: string;
-  // 链接时间
-  public readonly connectedAt: Date;
-  // 上下文
-  private readonly context: Map<string, any> = new Map();
-
-  // 用户身份识别码
-  private _uin: string | null = null;
-  // 认证时间
-  private _authenticatedAt: Date | null = null;
-
-  public constructor(manager: WebSocketSessionManager, ws: WebSocket, sessionId: string, connectedAt: Date) {
-    this.manager = manager;
-    this.ws = ws;
-    this.sessionId = sessionId;
-    this.connectedAt = connectedAt;
-  }
-
-  public setUin(val: string | null) {
-    this._uin = val;
-
-    if (this._uin) {
-      this._authenticatedAt = new Date();
-    } else {
-      this._authenticatedAt = null;
-    }
-  }
-
-  public sendReplyPayload(payload: IPayload): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      this.ws.send(payloadToText(payload), (error?: Error) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve();
-        }
-      });
-    });
-  }
 
   /**
-   * @override
+   * 上下文
    */
-  public getSessionId(): string {
-    return this.sessionId;
-  }
-
+  public readonly context: Map<string, any> = new Map();
   /**
-   * @override
+   * 用户身份识别码
    */
-  public getConnectedAt(): Date {
-    return this.connectedAt;
-  }
-
+  private _uin?: string;
   /**
-   * @override
+   * 认证时间
    */
-  public getUin(): string | null {
-    return this._uin;
-  }
+  private _authenticatedAt?: Date;
 
   /**
-   * @override
+   * 关闭时间
    */
-  public requireUin(): string {
-    if (this._uin) {
-      return this._uin;
-    } else {
-      throw new LudmilaError(LudmilaErrors.NOT_AUTHENTICATED);
-    }
-  }
+  private _closedAt?: Date
 
   /**
-   * @override
+   * @param server 服务器
+   * @param ws 链接
+   * @param id 会话ID
+   * @param connectedAt 会话链接时间
    */
-  public getAuthenticatedAt(): Date | null {
-    return this._authenticatedAt;
+  public constructor(
+    public readonly server: WebSocketServer,
+    public readonly ws: WebSocket,
+    public readonly id: string,
+    public readonly connectedAt: Date,
+  ) {
   }
 
   /**
-   * @override
+   * 用户身份识别号
    */
-  public requireAuthenticatedAt(): Date {
-    if (this._authenticatedAt) {
-      return this._authenticatedAt;
-    } else {
-      throw new LudmilaError(LudmilaErrors.NOT_AUTHENTICATED);
-    }
+  public get uin(): string | undefined {
+    return this._uin
   }
 
   /**
-   * @override
+   * 用户认证时间
+   */
+  public get authenticatedAt(): Date | undefined {
+    return this._authenticatedAt
+  }
+
+  /**
+   * 会话关闭时间
+   */
+  public get closedAt(): Date | undefined {
+    return this._closedAt
+  }
+
+  /**
+   * 设置会话的用户身份识别号.
+   * 设置过后会话会由匿名会话转为已认证会话.
+   * @param val 用户身份识别号; null: 取消认证.
+   */
+  private setUin(val: Maybe<string>) {
+    this._uin = (val === undefined || val === null)
+      ? undefined
+      : val;
+    this._authenticatedAt = this._uin === undefined
+      ? undefined
+      : new Date()
+  }
+
+  /**
+   * 会话登录
    */
   public async login(uin: string): Promise<void> {
-    // 重复绑定
-    if (this.getUin() === uin) {
+    // 重复登录不做处理
+    if (this.uin === uin) {
       return;
     }
 
-    // 切换账号
-    if (this.getUin() && this.getUin() !== uin) {
-      await this.kick();
+    // 登出现有会话
+    if (this.uin) {
+      await this.logout();
     }
 
-    // 登出上一个会话
-    const lastSession = this.manager.getAuthenticatedSession(uin);
-    if (lastSession !== null) {
+    // 登出已登录的会话
+    const lastSession = this.server.getAuthenticatedSessionByUin(uin);
+    if (lastSession) {
       try {
-        await lastSession.kick();
+        await lastSession.logout();
       } catch (e) {
         WebSocketSession.LOG.error(e);
       }
@@ -133,41 +106,45 @@ export default class WebSocketSession implements ISession {
 
     // 先设置uin再通知登录
     this.setUin(uin);
-    this.manager.onLogin(this);
+    this.server.onLogin(this);
 
     // log
-    WebSocketSession.LOG.info(`Session ${this.sessionId} bound uin: ${uin}`);
-  }
-
-  public async logout(): Promise<void> {
-    const uin = this.getUin()
-    this.manager.onLogout(this)
-    this.setUin(null)
-
-    // log
-    WebSocketSession.LOG.info(`Session ${this.sessionId} logout uin: ${uin}`);
-
-    // done
-    return Promise.resolve();
+    if (WebSocketSession.LOG.isTraceEnabled()) {
+      WebSocketSession.LOG.trace(`Session ${this.id} bound uin: ${uin}`);
+    }
   }
 
   /**
-   * @override
+   * 会话登出
    */
-  public async kick(): Promise<void> {
-    // 发送被踢下线载荷
-    await this.push("_kicked", {});
+  public async logout(): Promise<void> {
+    // 通知服务器登出会话并清理uin
+    const uin = this.uin
+    this.server.onLogout(this)
+    this.setUin(null)
+
+    // log
+    if (WebSocketSession.LOG.isTraceEnabled()) {
+      WebSocketSession.LOG.trace(`Session ${this.id} logout uin: ${uin}`);
+    }
+  }
+
+  /**
+   * 关闭会话
+   */
+  public async close(): Promise<void> {
+    // 发送载荷明示关闭原因
+    await this.push("_close", {reason});
 
     // 先登出才能清理uin
-    const uin = this.getUin()
-    this.manager.onLogout(this);
+    const uin = this.uin
+    this.server.onLogout(this);
     this.setUin(null);
 
     // log
-    WebSocketSession.LOG.info(`Session ${this.sessionId} kicked uin: ${uin}`);
-
-    // done
-    return Promise.resolve();
+    if (WebSocketSession.LOG.isTraceEnabled()) {
+      WebSocketSession.LOG.trace(`Session ${this.id} kicked uin: ${uin}`);
+    }
   }
 
   /**
@@ -187,17 +164,15 @@ export default class WebSocketSession implements ISession {
     });
   }
 
-  /**
-   *
-   */
-  public getContextValue(key: string): any {
-    return this.context.get(key);
-  }
-
-  /**
-   *
-   */
-  public setContextValue(key: string, value: any): void {
-    this.context.set(key, value);
+  public sendReplyPayload(payload: IPayload): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.ws.send(payloadToText(payload), (error?: Error) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
+      });
+    });
   }
 }
