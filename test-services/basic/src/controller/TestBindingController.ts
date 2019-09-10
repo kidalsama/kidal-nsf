@@ -34,6 +34,22 @@ class TestBindingController extends BaseController {
   }
 
   /**
+   * 同名问题
+   */
+  @GetMapping("same-path")
+  public async getSamePath() {
+    return "GetMapping"
+  }
+
+  /**
+   * 同名问题
+   */
+  @PostMapping("same-path")
+  public async postSamePath() {
+    return "PostMapping"
+  }
+
+  /**
    *
    */
   @GetMapping("echo-str")
