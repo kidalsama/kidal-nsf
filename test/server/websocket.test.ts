@@ -7,7 +7,7 @@ describe("WebSocket", () => {
   let wsc: WebSocket
 
   beforeAll(async () => {
-    await Application.runTest("basic", "test-http");
+    await Application.runTest("basic", "test-server");
   })
 
   afterAll(async () => {

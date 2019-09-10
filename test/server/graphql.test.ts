@@ -248,7 +248,7 @@ describe("GraphQL: 合并", () => {
 
 describe("GraphQL", () => {
   beforeAll(async () => {
-    return Application.runTest("basic", "test-http");
+    return Application.runTest("basic", "test-server");
   })
 
   afterAll(async () => {

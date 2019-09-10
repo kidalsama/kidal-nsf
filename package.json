@@ -12,6 +12,7 @@
     "test": "jest --runInBand --forceExit --detectOpenHandles",
     "test:ioc": "jest --runInBand --forceExit --detectOpenHandles --config=jest-ioc.config.js",
     "test:server": "jest --runInBand --forceExit --detectOpenHandles --config=jest-server.config.js",
+    "test:data": "jest --runInBand --forceExit --detectOpenHandles --config=jest-data.config.js",
     "lint & test": "yarn run lint & yarn run test",
     "dev:basic@mac": "node $NODE_DEBUG_OPTION test-services/Bootstrap.js basic dev",
     "dev:basic@win": "node %NODE_DEBUG_OPTION% test-services/Bootstrap.js basic dev"

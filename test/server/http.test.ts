@@ -6,7 +6,7 @@ import {HttpServerManager} from "../../src/server/HttpServerManager";
 
 describe("Http", () => {
   beforeAll(async () => {
-    return Application.runTest("basic", "test-http");
+    return Application.runTest("basic", "test-server");
   })
 
   afterAll(async () => {
