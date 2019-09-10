@@ -16,6 +16,7 @@ import WebSocketServer from "./websocket/WebSocketServer";
 import {ServerBindingRegistry} from "./bind";
 import {Component} from "../ioc";
 import IHttpServerInitializer from "./IServerInitializer";
+import helmet from "helmet";
 
 /**
  * @author tengda
@@ -66,6 +67,7 @@ export default class HttpServer {
     this.expressApp.use(bodyParser.urlencoded({extended: false}));
     this.expressApp.use(bodyParser.json());
     this.expressApp.use(cookieParser());
+    this.expressApp.use(helmet());
 
     // 要获取到反向代理后的真实IP需要信任代理
     this.expressApp.enable("trust proxy")
