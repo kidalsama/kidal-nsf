@@ -1,4 +1,4 @@
-import Maybe from "../../util/Maybe";
+import {WebSocketLogoutReason} from "./WebSocketLogoutReason";
 
 /**
  * 载荷数据
@@ -33,46 +33,30 @@ export interface IPayload {
 }
 
 /**
- * 复制载荷元数据
- */
-export function duplicatePayloadMetadata(payload: IPayload, data?: IPayloadData): IPayload {
-  return {
-    id: payload.id,
-    ts: payload.ts,
-    type: payload.type,
-    data,
-  }
-}
-
-/**
  * 载荷序列化器
  */
 export interface IPayloadSerializer {
   /**
    * 序列化载荷
    */
-  serialize(payload: Maybe<IPayload>): Maybe<string>
+  serialize(payload: IPayload): string
 
   /**
    * 反序列化载荷
    */
-  deserialize(text: Maybe<string>): Maybe<IPayload>
+  deserialize(text: string): IPayload
 }
 
 /**
  * JSON载荷序列化器
  */
 export class JsonPayloadSerializer implements IPayloadSerializer {
-  public serialize(payload: Maybe<IPayload>): Maybe<string> {
-    return payload !== undefined && payload !== null
-      ? JSON.stringify(payload)
-      : payload
+  public serialize(payload: IPayload): string {
+    return JSON.stringify(payload)
   }
 
-  public deserialize(text: Maybe<string>): Maybe<IPayload> {
-    return text !== undefined && text !== null
-      ? JSON.parse(text)
-      : text
+  public deserialize(text: string): IPayload {
+    return JSON.parse(text)
   }
 }
 
@@ -80,10 +64,8 @@ export class JsonPayloadSerializer implements IPayloadSerializer {
  * 漂亮JSON载荷序列化器
  */
 export class PrettyJsonPayloadSerializer extends JsonPayloadSerializer {
-  public serialize(payload: Maybe<IPayload>): Maybe<string> {
-    return payload !== undefined && payload !== null
-      ? JSON.stringify(payload, null, 2)
-      : payload
+  public serialize(payload: IPayload): string {
+    return JSON.stringify(payload, null, 2)
   }
 }
 
@@ -123,9 +105,28 @@ export class WebSocketPayloads {
   }
 
   /**
+   * 创建回复载荷
+   */
+  public static createReplyPayload(payload: IPayload, data?: IPayloadData): IPayload {
+    return {
+      id: payload.id,
+      ts: payload.ts,
+      type: payload.type,
+      data,
+    }
+  }
+
+  /**
    * 创建登录载荷
    */
   public static createLoginPayload(uin: string, authenticatedAt: Date): IPayload {
     return this.createPayload("__login", {uin, authenticatedAt})
+  }
+
+  /**
+   * 创建登出载荷
+   */
+  public static createLogoutPayload(reason: WebSocketLogoutReason): IPayload {
+    return this.createPayload("__logout", {reason})
   }
 }

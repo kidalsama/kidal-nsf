@@ -1,8 +1,9 @@
 import WebSocket from "ws";
-import IPayload, {IPayloadData, payloadToText, VERSION} from "../IPayload";
 import Logs from "../../application/Logs";
 import WebSocketServer from "./WebSocketServer";
 import Maybe from "../../util/Maybe";
+import {IPayload, IPayloadData, WebSocketPayloads} from "./WebSocketPayloads";
+import {WebSocketLogoutReason} from "./WebSocketLogoutReason";
 
 /**
  * @author tengda
@@ -46,17 +47,32 @@ export default class WebSocketSession {
   }
 
   /**
+   * 链接是否已经关闭
+   */
+  public get closed(): boolean {
+    return this.ws.readyState === WebSocket.CLOSING
+      || this.ws.readyState === WebSocket.CLOSED
+  }
+
+  /**
+   * 已经登录
+   */
+  public get loggedIn(): boolean {
+    return this._uin !== undefined
+  }
+
+  /**
    * 用户身份识别号
    */
-  public get uin(): string | undefined {
-    return this._uin
+  public get uin(): string {
+    return this._uin!
   }
 
   /**
    * 用户认证时间
    */
-  public get authenticatedAt(): Date | undefined {
-    return this._authenticatedAt
+  public get authenticatedAt(): Date {
+    return this._authenticatedAt!
   }
 
   /**
@@ -84,21 +100,21 @@ export default class WebSocketSession {
    * 会话登录
    */
   public async login(uin: string): Promise<void> {
-    // 重复登录不做处理
-    if (this.uin === uin) {
-      return;
-    }
+    if (this.loggedIn) {
+      // 重复登录不做处理
+      if (this.uin === uin) {
+        return;
+      }
 
-    // 登出现有会话
-    if (this.uin) {
-      await this.logout();
+      // 登出现有会话
+      await this.logout(WebSocketLogoutReason.SWITCH);
     }
 
     // 登出已登录的会话
     const lastSession = this.server.getAuthenticatedSessionByUin(uin);
     if (lastSession) {
       try {
-        await lastSession.logout();
+        await lastSession.logout(WebSocketLogoutReason.ELSEWHERE);
       } catch (e) {
         WebSocketSession.LOG.error(e);
       }
@@ -107,6 +123,9 @@ export default class WebSocketSession {
     // 先设置uin再通知登录
     this.setUin(uin);
     this.server.onLogin(this);
+
+    // 发送登录载荷
+    await this.sendPayload(WebSocketPayloads.createLoginPayload(this.uin, this.authenticatedAt))
 
     // log
     if (WebSocketSession.LOG.isTraceEnabled()) {
@@ -117,11 +136,19 @@ export default class WebSocketSession {
   /**
    * 会话登出
    */
-  public async logout(): Promise<void> {
+  public async logout(reason: WebSocketLogoutReason = WebSocketLogoutReason.NORMAL): Promise<void> {
+    // 未登录不做处理
+    if (!this.loggedIn) {
+      return
+    }
+
     // 通知服务器登出会话并清理uin
     const uin = this.uin
     this.server.onLogout(this)
     this.setUin(null)
+
+    // 发送载荷
+    await this.sendPayload(WebSocketPayloads.createLogoutPayload(reason))
 
     // log
     if (WebSocketSession.LOG.isTraceEnabled()) {
@@ -133,46 +160,52 @@ export default class WebSocketSession {
    * 关闭会话
    */
   public async close(): Promise<void> {
-    // 发送载荷明示关闭原因
-    await this.push("_close", {reason});
+    // 获取uin
+    const uin = this.loggedIn ? this.uin : undefined
 
-    // 先登出才能清理uin
-    const uin = this.uin
-    this.server.onLogout(this);
-    this.setUin(null);
+    // 登出
+    await this.logout(WebSocketLogoutReason.CLOSE)
+
+    // 关闭会话
+    if (!this.closed) {
+      this.ws.close()
+    }
 
     // log
     if (WebSocketSession.LOG.isTraceEnabled()) {
-      WebSocketSession.LOG.trace(`Session ${this.id} kicked uin: ${uin}`);
+      WebSocketSession.LOG.trace(`Session ${this.id} closed uin: ${uin}`);
     }
   }
 
   /**
-   * @override
+   * 发送消息
    */
-  public push(type: string, data: IPayloadData): Promise<void> {
-    const payload = {version: VERSION, type, data};
-
-    return new Promise<void>((resolve, reject) => {
-      this.ws.send(payloadToText(payload), (error?: Error) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve();
-        }
-      });
-    });
+  public async sendMessage(type: string, data?: IPayloadData): Promise<void> {
+    const payload = WebSocketPayloads.createPayload(type, data)
+    return await this.sendPayload(payload)
   }
 
-  public sendReplyPayload(payload: IPayload): Promise<void> {
+  /**
+   * 发送载荷
+   */
+  public async sendPayload(payload: IPayload): Promise<void> {
+    // 关闭后不能再发送载荷
+    if (this.closed) {
+      return
+    }
+
+    // 发送载荷
     return new Promise<void>((resolve, reject) => {
-      this.ws.send(payloadToText(payload), (error?: Error) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve();
-        }
-      });
-    });
+      const text = this.server.payloadSerializer.serialize(payload)
+      if (text) {
+        this.ws.send(text, (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        })
+      }
+    })
   }
 }

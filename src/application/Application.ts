@@ -5,7 +5,6 @@ import Database from "../data/Database";
 import DiscoveryClient from "../cluster/DiscoveryClient";
 import Rpc from "../cluster/Rpc";
 import {applicationBanner} from "./ApplicationConstants";
-import WebSocketApiManager from "../server/websocket/WebSocketApiManager";
 import RpcApiManager from "../cluster/RpcApiManager";
 import * as fs from "fs";
 import {Container, Scope, Service} from "../ioc";
@@ -116,7 +115,6 @@ export default class Application {
     await Database.initAll()
 
     // 启动服务器
-    await WebSocketApiManager.S.init();
     this.httpServerManager = await Container.get(HttpServerManager).boot()
 
     // 启动发现服务

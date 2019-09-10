@@ -1,5 +1,7 @@
 import * as Express from "express";
-import {GraphQLServer, HttpServer} from "./index";
+import {HttpServer} from "./index";
+import WebSocketServer from "./websocket/WebSocketServer";
+import GraphQLServer from "./graphql/GraphQLServer";
 
 /**
  * Http服务器初始化器
@@ -13,19 +15,21 @@ export default interface IServerInitializer {
 
   /**
    * 初始化路由
-   * @param httpServer Http服务器
    */
   initRouter?(httpServer: HttpServer): void
 
   /**
    * 初始化GraphQL
-   * @param httpServer 服务器
-   * @param graphQLServer GraphQL服务器
    */
-  initGraphQL?(httpServer: HttpServer, graphQLServer: GraphQLServer): void
+  initGraphQL?(graphQLServer: GraphQLServer): void
 
   /**
    * 获取GraphQL的Schema
    */
   initGraphQLSchema?(): { typeDefs: string[], resolvers: any }
+
+  /**
+   * 初始化WebSocket
+   */
+  initWebSocket?(webSocketServer: WebSocketServer): void
 }

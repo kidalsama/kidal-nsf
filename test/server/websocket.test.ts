@@ -1,5 +1,4 @@
 import Application from "../../src/application/Application"
-import PayloadDispatcher from "../../src/server/PayloadDispatcher";
 import WebSocket from "ws";
 import {Container} from "../../src/ioc";
 import {HttpServerManager} from "../../src/server/HttpServerManager";
@@ -36,42 +35,31 @@ describe("WebSocket", () => {
     })
   })
 
-  it("Login & Logout & Kick", (done) => {
+  it("Login & Logout & Close", (done) => {
     wsc.on("message", (payload: string) => {
+      // console.log(payload)
       const data = JSON.parse(payload)
       if (data.data && data.data.error) {
         throw new Error(data.data.error.code)
       }
-      if (data.type === "commons/kick") {
+      if (data.type === "closed") {
         done()
       }
     })
     wsc.send(JSON.stringify({
-      type: "commons/login",
+      type: "login",
     }))
     wsc.send(JSON.stringify({
-      type: "commons/login",
+      type: "login",
     }))
     wsc.send(JSON.stringify({
-      type: "commons/logout",
+      type: "logout",
     }))
     wsc.send(JSON.stringify({
-      type: "commons/login",
+      type: "login",
     }))
     wsc.send(JSON.stringify({
-      type: "commons/kick",
+      type: "close",
     }))
   })
-
-  it("PayloadDispatcher#dispatchWebSocket", async () => {
-    const results = await PayloadDispatcher.S.dispatchWebSocket(null, {
-      version: 1,
-      id: 1,
-      type: "commons/time",
-      data: {
-        fmt: "yyyy",
-      },
-    })
-    expect(results).not.toBeNull()
-  });
 });

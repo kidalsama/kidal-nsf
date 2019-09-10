@@ -117,7 +117,7 @@ export default class HttpServer {
       ? new GraphQLServer(this)
       : undefined
     if (this.graphQLServer && initializer && initializer.initGraphQL) {
-      initializer.initGraphQL(this, this.graphQLServer)
+      initializer.initGraphQL(this.graphQLServer)
     }
 
     // WebSocket
