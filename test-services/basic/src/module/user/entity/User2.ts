@@ -2,6 +2,8 @@ import {IEntityBase, IEntityMigration, IEntityRegistry} from "../../../../../../
 import Database from "../../../../../../src/data/Database";
 import Sequelize from "sequelize";
 import IEntityCache from "../../../../../../src/data/IEntityCache";
+import {Container} from "../../../../../../src/ioc";
+import {DatabaseManager} from "../../../../../../src/data/DatabaseManager";
 
 export interface IUser2 extends IEntityBase<number> {
   id: number;
@@ -11,7 +13,7 @@ export interface IUser2 extends IEntityBase<number> {
   updatedAt: Date;
 }
 
-const database = Database.acquire("secondary")
+const database = Container.get(DatabaseManager).acquire("secondary")
 const model = database.sequelize.define<IUser2, any>(
   "user2",
   {

@@ -3,7 +3,7 @@ import Environment from "../application/Environment";
 import * as fs from "fs";
 import Logs from "../application/Logs";
 import {Autowired, Service} from "../ioc";
-import {PathUtils} from "../util";
+import {PathUtils} from "../util/index";
 import IServerInitializer from "./IServerInitializer";
 
 /**
@@ -24,7 +24,7 @@ export class HttpServerManager {
    *
    */
   public constructor(
-    @Autowired public env: Environment,
+    @Autowired public readonly env: Environment,
   ) {
   }
 
@@ -43,16 +43,17 @@ export class HttpServerManager {
    * 初始化全部
    */
   public async boot(): Promise<HttpServerManager> {
+    // 检查开放
+    const config = this.env.applicationConfig.server
+    if (!config.enabled) {
+      return this
+    }
+
     // 读取初始化器
     const initializerSrc = PathUtils.path.join(this.env.srcDir, "ServerInitializer.ts")
     const initializer: IServerInitializer = fs.existsSync(initializerSrc)
       ? require(PathUtils.replaceExt(initializerSrc, ".js")).default
       : {}
-
-    const config = Environment.S.applicationConfig.server
-    if (!config.enabled) {
-      return this
-    }
 
     // vars
     const names = Object.keys(config.httpServerMap)
@@ -79,6 +80,12 @@ export class HttpServerManager {
    * 关闭全部服务器
    */
   public async shutdownAll(): Promise<void> {
+    // 检查开放
+    const config = this.env.applicationConfig.server
+    if (!config.enabled) {
+      return
+    }
+
     for (const server of this.serverMap.values()) {
       try {
         await server.shutdown()

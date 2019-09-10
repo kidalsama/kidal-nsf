@@ -1,15 +1,16 @@
 import Application from "../../src/application/Application"
 import IEntityCache from "../../src/data/IEntityCache";
 import {IUser} from "../../test-services/basic/src/module/user/entity/User";
-import Database from "../../src/data/Database";
+import {Container} from "../../src/ioc";
+import {DatabaseManager} from "../../src/data/DatabaseManager";
 
 describe("Basic: IEntityCache", () => {
   // noinspection TsLint
   let userCache: IEntityCache<number, IUser>
   beforeAll(async () => {
     await Application.runTest("basic", "test-database");
-    userCache = Database.acquire().getCache("user")
-    Database.acquire().getModel("user")
+    userCache = Container.get(DatabaseManager).acquire().getCache("user")
+    Container.get(DatabaseManager).acquire().getModel("user")
   })
 
   afterAll(async () => {

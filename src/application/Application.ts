@@ -1,7 +1,6 @@
 import * as log4js from "log4js";
 import Environment from "./Environment";
 import Logs from "./Logs";
-import Database from "../data/Database";
 import DiscoveryClient from "../cluster/DiscoveryClient";
 import Rpc from "../cluster/Rpc";
 import {applicationBanner} from "./ApplicationConstants";
@@ -10,6 +9,7 @@ import * as fs from "fs";
 import {Container, Scope, Service} from "../ioc";
 import {HttpServerManager} from "../server/HttpServerManager";
 import {PathUtils} from "../util";
+import {DatabaseManager} from "../data/DatabaseManager";
 
 /**
  * @author tengda
@@ -98,6 +98,11 @@ export default class Application {
   }
 
   /**
+   * 数据库管理器
+   */
+  private databaseManager: DatabaseManager
+
+  /**
    * Http服务器管理器
    */
   private httpServerManager: HttpServerManager
@@ -112,7 +117,7 @@ export default class Application {
   // 启动应用
   private async boot(env: Environment) {
     // 启动数据库
-    await Database.initAll()
+    this.databaseManager = await Container.get(DatabaseManager).boot()
 
     // 启动服务器
     this.httpServerManager = await Container.get(HttpServerManager).boot()
@@ -147,6 +152,6 @@ export default class Application {
     await DiscoveryClient.S.shutdown()
 
     // 关闭数据库
-    await Database.shutdownAll()
+    await this.databaseManager.shutdownAll()
   }
 }
