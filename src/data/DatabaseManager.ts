@@ -3,7 +3,6 @@ import Logs from "../application/Logs";
 import Database from "./Database";
 import Environment from "../application/Environment";
 import {IDatabaseConfig} from "../application";
-import Maybe from "graphql/tsutils/Maybe";
 import Sequelize from "sequelize";
 
 /**
@@ -58,22 +57,24 @@ export class DatabaseManager {
       // 载入配置
       const databaseConfig = this.loadDatabaseConfig(name)
 
-      // 创建Sequlize并测试连接
+      // 创建Sequelize并测试连接
       const sequelize = this.createSequelize(databaseConfig)
       await sequelize.authenticate()
 
       // 日志
-      const options = sequelize.options
-      DatabaseManager.LOG.info(
-        `Connect database ${options.dialect}://${options.host}:${options.port}/${options.database} successful`)
+      if (DatabaseManager.LOG.isInfoEnabled()) {
+        const options = sequelize.options
+        DatabaseManager.LOG.info(
+          `Connect database ${options.dialect}://${options.host}:${options.port}/${options.database} successful`)
+      }
 
       // 添加到字典
       this.databaseMap.set(name, new Database(this.env, name, databaseConfig, sequelize))
     }
 
-    // 注册
+    // 扫描实体和数据模型
     for (const database of this.databaseMap.values()) {
-      await database.registerCaches()
+      await database.scanEntities()
     }
 
     // 升级
@@ -114,7 +115,7 @@ export class DatabaseManager {
    */
   private loadDatabaseConfig(name: string): IDatabaseConfig {
     const databaseMap = this.env.applicationConfig.data.databaseMap
-    let databaseConfig: Maybe<IDatabaseConfig> = databaseMap[name];
+    let databaseConfig: IDatabaseConfig = databaseMap[name];
     if (!databaseConfig) {
       throw new Error(`Database config ${name} not found`)
     }

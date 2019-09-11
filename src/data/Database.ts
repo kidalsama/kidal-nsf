@@ -1,6 +1,5 @@
 import Sequelize = require("sequelize");
 import Logs from "../application/Logs";
-import glob from "glob";
 import Environment from "../application/Environment";
 import {IEntityBase, IEntityRegistry} from "./IEntity";
 import EntityCacheImpl from "./EntityCacheImpl";
@@ -9,6 +8,8 @@ import {IDatabaseConfig} from "../application";
 import IEntityCache from "./IEntityCache";
 import {createMigrationModel, IMigration} from "./Migration";
 import {Component} from "../ioc";
+import glob from "glob";
+import PathUtils from "../util/PathUtils";
 
 /**
  * @author tengda
@@ -71,13 +72,17 @@ export default class Database extends events.EventEmitter {
   }
 
   // 注册缓存
-  public async registerCaches() {
-    const env = Environment.S;
+  public async scanEntities() {
+    // 没有设定扫描路劲则跳过
+    if (!this.config.pathToScan) {
+      return
+    }
 
     // 注册缓存
     const registryList: Array<IEntityRegistry<any, any>> = glob
-      .sync(`${env.srcDir}/**/entity/*.js`)
-      .map((it: string) => require(it).default);
+      .sync(PathUtils.path.join(this.env.srcDir, this.config.pathToScan))
+      .map((it: string) => require(it).default)
+      .filter((it: any) => !!it)
 
     // 创建缓存
     for (const registry of registryList) {
@@ -106,7 +111,9 @@ export default class Database extends events.EventEmitter {
       Reflect.set(registry, "cache", cache)
 
       // log
-      Database.LOG.info(`Registered cache: ${name}`);
+      if (Database.LOG.isDebugEnabled()) {
+        Database.LOG.debug(`Registered cache: ${name}`);
+      }
     }
   }
 

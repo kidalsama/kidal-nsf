@@ -1,8 +1,8 @@
-import {IEntityBase, IEntityMigration, IEntityRegistry} from "../../../../../../src/data/IEntity";
+import {IEntityBase, IEntityMigration, IEntityRegistry} from "../../../../../../src/data";
 import Database from "../../../../../../src/data/Database";
 import Sequelize from "sequelize";
 import IEntityCache from "../../../../../../src/data/IEntityCache";
-import {Container} from "../../../../../../src/ioc";
+import {Autowired, Component, Container, Lazy} from "../../../../../../src/ioc";
 import {DatabaseManager} from "../../../../../../src/data/DatabaseManager";
 
 export interface IUser2 extends IEntityBase<number> {
@@ -13,62 +13,45 @@ export interface IUser2 extends IEntityBase<number> {
   updatedAt: Date;
 }
 
-const database = Container.get(DatabaseManager).acquire("secondary")
-const model = database.sequelize.define<IUser2, any>(
-  "user2",
-  {
-    id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    username: {
-      type: Sequelize.STRING(20),
-      allowNull: false,
-      defaultValue: "",
-      validate: {
-        len: [2, 20],
-      },
-    },
-    password: {
-      type: Sequelize.STRING(128),
-      allowNull: false,
-      defaultValue: "",
-      validate: {
-        len: [2, 128],
-      },
-    },
-  },
-  {
-    indexes: [
-      {
-        name: "unique_username",
-        unique: true,
-        fields: ["username"],
-      },
-    ],
-  });
-
+@Component
 class Registry implements IEntityRegistry<number, IUser2> {
+  public constructor(
+    @Autowired public readonly manager: DatabaseManager,
+  ) {
+  }
+
+  @Lazy()
   public get database(): Database {
-    return database
+    return this.manager.acquire("secondary")
   }
 
+  @Lazy()
   public get model(): Sequelize.Model<IUser2, any> {
-    return model;
+    return this.database.sequelize.define<IUser2, any>(
+      "user2",
+      {
+        id: {type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true},
+        username: {type: Sequelize.STRING(20), allowNull: false, defaultValue: ""},
+        password: {type: Sequelize.STRING(128), allowNull: false, defaultValue: ""},
+      },
+      {
+        indexes: [
+          {name: "unique_username", unique: true, fields: ["username"]},
+        ],
+      });
   }
 
-  public readonly cache: IEntityCache<number, IUser2> = null!
+  public readonly cache: IEntityCache<number, IUser2>
 
   public get migrations(): { [key: string]: IEntityMigration } {
     return {
       init: {
         up: async () => {
-          await model.sync()
+          await this.model.sync()
         },
       },
     }
   }
 }
 
-export default new Registry();
+export default Container.get(Registry)

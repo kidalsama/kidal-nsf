@@ -3,3 +3,7 @@ profiles:
 - "test"
 configServer:
   type: "local"
+settings:
+  test:
+    test:
+      tes: 998.88

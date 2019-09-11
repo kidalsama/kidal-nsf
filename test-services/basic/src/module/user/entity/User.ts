@@ -2,7 +2,7 @@ import {IEntityBase, IEntityMigration, IEntityRegistry} from "../../../../../../
 import Database from "../../../../../../src/data/Database";
 import Sequelize from "sequelize";
 import IEntityCache from "../../../../../../src/data/IEntityCache";
-import {Container, Lazy} from "../../../../../../src/ioc";
+import {Autowired, Component, Container, Lazy} from "../../../../../../src/ioc";
 import {DatabaseManager} from "../../../../../../src/data/DatabaseManager";
 
 export interface IUser extends IEntityBase<number> {
@@ -13,10 +13,16 @@ export interface IUser extends IEntityBase<number> {
   updatedAt: Date;
 }
 
+@Component
 class Registry implements IEntityRegistry<number, IUser> {
+  public constructor(
+    @Autowired public readonly manager: DatabaseManager,
+  ) {
+  }
+
   @Lazy()
   public get database(): Database {
-    return Container.get(DatabaseManager).acquire()
+    return this.manager.acquire()
   }
 
   @Lazy()
@@ -24,40 +30,18 @@ class Registry implements IEntityRegistry<number, IUser> {
     return this.database.sequelize.define<IUser, any>(
       "user",
       {
-        id: {
-          type: Sequelize.INTEGER,
-          primaryKey: true,
-          autoIncrement: true,
-        },
-        username: {
-          type: Sequelize.STRING(20),
-          allowNull: false,
-          defaultValue: "",
-          validate: {
-            len: [2, 20],
-          },
-        },
-        password: {
-          type: Sequelize.STRING(128),
-          allowNull: false,
-          defaultValue: "",
-          validate: {
-            len: [2, 128],
-          },
-        },
+        id: {type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true},
+        username: {type: Sequelize.STRING(20), allowNull: false, defaultValue: ""},
+        password: {type: Sequelize.STRING(128), allowNull: false, defaultValue: ""},
       },
       {
         indexes: [
-          {
-            name: "unique_username",
-            unique: true,
-            fields: ["username"],
-          },
+          {name: "unique_username", unique: true, fields: ["username"]},
         ],
       });
   }
 
-  public readonly cache: IEntityCache<number, IUser> = null!
+  public readonly cache: IEntityCache<number, IUser>
 
   public get migrations(): { [key: string]: IEntityMigration } {
     return {
@@ -76,4 +60,4 @@ class Registry implements IEntityRegistry<number, IUser> {
   }
 }
 
-export default new Registry();
+export default Container.get(Registry)

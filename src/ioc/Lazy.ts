@@ -3,13 +3,27 @@
  */
 export function Lazy() {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-    let prop: any
-    const oldGet = descriptor.get
-    descriptor.get = function (): any {
-      if (prop === undefined && oldGet) {
-        prop = oldGet.apply(this)
+    let initialized = false
+    let property: any
+
+    const {value, get} = descriptor
+
+    if (value) {
+      descriptor.value = function (...argArray: any) {
+        if (!initialized) {
+          property = (value as Function).apply(this, argArray)
+          initialized = true
+        }
+        return property
       }
-      return prop
+    } else if (get) {
+      descriptor.get = function () {
+        if (!initialized) {
+          property = (get as Function).apply(this)
+          initialized = true
+        }
+        return property
+      }
     }
   }
 }

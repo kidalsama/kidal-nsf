@@ -10,6 +10,7 @@
     "lint": "tslint './**/*.ts' -c tslint.json -e './node_modules/**/*.ts'",
     "build": "tsc -p .",
     "test": "./pretest-init-database.sh && jest --runInBand --forceExit --detectOpenHandles",
+    "test:basic": "jest --runInBand --forceExit --detectOpenHandles --config=jest-basic.config.js",
     "test:ioc": "jest --runInBand --forceExit --detectOpenHandles --config=jest-ioc.config.js",
     "test:server": "jest --runInBand --forceExit --detectOpenHandles --config=jest-server.config.js",
     "test:data": "./pretest-init-database.sh && jest --runInBand --forceExit --detectOpenHandles --config=jest-data.config.js",

@@ -23,3 +23,5 @@ export {
 export {
   default as Logs,
 } from "./Logs";
+
+export * from "./bind/ConfigValue"

@@ -115,7 +115,7 @@ const completeHttpServerConfig = (key: string, config: any): IHttpServerConfig =
     logError: orElse(`server.httpServerMap:${key}`, config,
       "logError", true),
     pathToScan: orElse(`server.httpServerMap:${key}`, config,
-      "pathToScan", "**/@(controller|graphql)/**/*@(Controller|GraphQL).js"),
+      "pathToScan", "**/@(controller|graphql|websocket)/**/*@(Controller|GraphQL|WebSocket).js"),
     staticMapping: orElse(`server.httpServerMap:${key}`, config,
       "staticMapping", undefined),
     graphQLEndpoint: orElse(`server.httpServerMap:${key}`, config,
@@ -137,6 +137,7 @@ export interface IDataConfig {
 
 export interface IDatabaseConfig {
   alias?: string;
+  pathToScan?: string;
   dialect: string;
   host: string;
   port: number;
@@ -171,6 +172,8 @@ const completeDataConfig = (config: any): IDataConfig => {
 const completeDatabaseConfig = (key: string, config: any): IDatabaseConfig => {
   return {
     alias: orElse(`server.databaseMap:${key}`, config, "alias", undefined),
+    pathToScan: orElse(`server.databaseMap:${key}`, config,
+      "pathToScan", "**/entity/**/*.js"),
     dialect: orElse(`server.databaseMap:${key}`, config, "dialect", "mysql"),
     host: orElse(`server.databaseMap:${key}`, config, "host", "192.168.93.222"),
     port: orElse(`server.databaseMap:${key}`, config, "port", 3306),

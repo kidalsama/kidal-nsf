@@ -3,6 +3,10 @@ export {
 } from "./Maybe"
 
 export {
+  default as ObjectUtils,
+} from "./ObjectUtils"
+
+export {
   PageArgs,
   IEdge,
   Connection,
