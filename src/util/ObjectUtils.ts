@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 
 export default {
-  getProperty<T>(obj: any, keys: string | string[], defaults?: T): T {
+  getProperty<T>(obj: any, keys: string | string[], defaults?: T): T | undefined {
     // 检查根对象
     if (!_.isPlainObject(obj)) {
       return defaults
