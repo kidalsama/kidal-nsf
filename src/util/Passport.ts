@@ -37,7 +37,7 @@ export class Passport {
    *
    */
   public toString(): string {
-    return `1-${this.uin}-${this.token}`
+    return Buffer.from(`1-${this.uin}-${this.token}`).toString("base64")
   }
 
   /**
@@ -49,13 +49,16 @@ export class Passport {
       throw new LudmilaError(LudmilaErrors.INCORRECT_PASSPORT)
     }
 
+    // 解码
+    const ds = Buffer.from(s, "base64").toString("utf8")
+
     // 分割版本和内容
-    const pos = s.indexOf("-")
+    const pos = ds.indexOf("-")
     if (pos === -1) {
       throw new LudmilaError(LudmilaErrors.INCORRECT_PASSPORT)
     }
-    const version = s.substring(0, pos)
-    const text = s.substring(pos + 1)
+    const version = ds.substring(0, pos)
+    const text = ds.substring(pos + 1)
     if (version.length === 0 || text.length === 1) {
       throw new LudmilaError(LudmilaErrors.INCORRECT_PASSPORT)
     }
