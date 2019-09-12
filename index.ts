@@ -41,6 +41,9 @@ export {
 } from "./src/data/Database";
 
 export * from "./src/data/DatabaseManager";
+export {
+  default as DatabaseUtils,
+} from "./src/data/DatabaseUtils";
 
 export {
   EntityEvents,
