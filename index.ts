@@ -144,6 +144,8 @@ export {
   Connection,
 } from "./src/util/Pagination";
 
+export * from "./src/util/Passport"
+
 export {
   default as PathUtils,
 } from "./src/util/PathUtils"

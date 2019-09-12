@@ -23,6 +23,11 @@ export default abstract class LudmilaErrors {
   public static readonly NOT_AUTHENTICATED = 3;
 
   /**
+   * 无效的通行证
+   */
+  public static readonly INCORRECT_PASSPORT = "nsf:IncorrectPassport"
+
+  /**
    * Server
    * 无效的载荷
    */
