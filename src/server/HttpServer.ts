@@ -147,14 +147,6 @@ export default class HttpServer {
       await this.webSocketServer.start()
     }
 
-    // 静态文件
-    if (this.config.staticMapping) {
-      for (const path of Object.keys(this.config.staticMapping)) {
-        const dir = this.config.staticMapping[path]
-        this.expressApp.use(path, express.static(dir));
-      }
-    }
-
     // 404
     this.expressApp.use((req: Request, res: Response, next: NextFunction) => {
       if (!res.headersSent) {
