@@ -18,7 +18,7 @@ export class Passport {
   /**
    * 用户身份识别码
    */
-  public readonly uid: number;
+  public readonly uin: number;
 
   /**
    * 识别号
@@ -29,7 +29,7 @@ export class Passport {
    *
    */
   public constructor(uin: number, token: string) {
-    this.uid = uin;
+    this.uin = uin;
     this.token = token
   }
 
@@ -37,7 +37,7 @@ export class Passport {
    *
    */
   public toString(): string {
-    return `1-${this.uid}-${this.token}`
+    return `1-${this.uin}-${this.token}`
   }
 
   /**
