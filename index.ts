@@ -40,6 +40,8 @@ export {
   default as Database,
 } from "./src/data/Database";
 
+export * from "./src/data/DatabaseManager";
+
 export {
   EntityEvents,
 } from "./src/data/EntityEvents";

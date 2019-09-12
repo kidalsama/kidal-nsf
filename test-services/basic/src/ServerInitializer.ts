@@ -1,4 +1,4 @@
-import IHttpServerInitializer from "../../../src/server/IServerInitializer";
+import IServerInitializer from "../../../src/server/IServerInitializer";
 import GraphQL from "./graphql/GraphQL";
 import WebSocketServer from "../../../src/server/websocket/WebSocketServer";
 import {close, login, logout} from "./websocket/manual";
@@ -12,4 +12,4 @@ export default {
     webSocketServer.setMessageHandler("logout", logout)
     webSocketServer.setMessageHandler("close", close)
   },
-} as IHttpServerInitializer
+} as IServerInitializer
