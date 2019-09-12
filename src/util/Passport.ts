@@ -13,7 +13,7 @@ export class Passport {
   /**
    * 日志
    */
-  private static readonly LOG = Logs.S.getLogger(__dirname, "Passport")
+  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "Passport")
 
   /**
    * 用户身份识别码
