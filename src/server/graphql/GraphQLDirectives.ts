@@ -26,7 +26,9 @@ export class ByteDirective extends SchemaDirectiveVisitor {
 
     // 重写解析
     field.resolve = async function (source, {unit, precision, ...otherArgs}, context, info) {
-      const result = defaultResolve ? await defaultResolve.call(this, source, otherArgs, context, info) : null
+      const result = defaultResolve
+        ? await defaultResolve.call(this, source, otherArgs, context, info)
+        : source[info.fieldName]
 
       return GraphQLUnits.byteUnit(result, {
         unit: unit || defaultUnit,
@@ -57,7 +59,9 @@ export class DateDirective extends SchemaDirectiveVisitor {
 
     // 重写解析
     field.resolve = async function (source, {unit, ...otherArgs}, context, info) {
-      const date = defaultResolve ? await defaultResolve.call(this, source, otherArgs, context, info) : null
+      const date = defaultResolve
+        ? await defaultResolve.call(this, source, otherArgs, context, info)
+        : source[info.fieldName]
       const typeOfDate = typeof date
       const instanceOfDate = date instanceof Date
 
@@ -98,7 +102,9 @@ export class TimeDirective extends SchemaDirectiveVisitor {
 
     // 重写解析
     field.resolve = async function (source, {unit, precision, ...otherArgs}, context, info) {
-      const result = defaultResolve ? await defaultResolve.call(this, source, otherArgs, context, info) : null
+      const result = defaultResolve
+        ? await defaultResolve.call(this, source, otherArgs, context, info)
+        : source[info.fieldName]
 
       return GraphQLUnits.timeUnit(result, {
         unit: unit || defaultUnit,
@@ -129,7 +135,9 @@ export class UrlDirective extends SchemaDirectiveVisitor {
 
     // 重写解析
     field.resolve = async function (source, {unit, precision, ...otherArgs}, context, info) {
-      const result = defaultResolve ? await defaultResolve.call(this, source, otherArgs, context, info) : null
+      const result = defaultResolve
+        ? await defaultResolve.call(this, source, otherArgs, context, info)
+        : source[info.fieldName]
 
       return GraphQLUnits.urlUnit(result, {
         unit: unit || defaultUnit,

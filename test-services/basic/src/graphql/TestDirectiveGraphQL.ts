@@ -16,10 +16,10 @@ class TestDirectiveSchema {
   public schema() {
     return `
 type TestDirective {
-  byte: Float @byte
-  date: Date @date
-  time: Float @time
-  url: String @url
+  byte: Float! @byte
+  date: Date! @date
+  time: Float! @time
+  url: String! @url
 }
 `
   }
