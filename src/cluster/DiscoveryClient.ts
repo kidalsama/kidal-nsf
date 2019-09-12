@@ -2,7 +2,7 @@ import * as zookeeper from "node-zookeeper-client";
 import Logs from "../application/Logs";
 import Environment from "../application/Environment";
 import * as events from "events";
-import {Container} from "../ioc";
+import {Container} from "../ioc/Container";
 import {HttpServerManager} from "../server/HttpServerManager";
 
 /**

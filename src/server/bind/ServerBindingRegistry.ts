@@ -1,13 +1,14 @@
 import * as Express from "express";
 import * as p from "path";
 import * as lodash from "lodash";
-import {Container} from "../../ioc";
-import {Logs} from "../../application";
+import {Container} from "../../ioc/Container";
+import Logs from "../../application/Logs";
 import {createHandlers} from "./BoundExpressHandler";
 import ReflectUtils from "../../util/ReflectUtils";
-import {HttpServer, IGraphQLContext} from "../index";
 import {GraphQLSchema} from "graphql";
-import {mergeResolver} from "../graphql/merges";
+import {mergeResolver} from "../graphql/merges/merges";
+import HttpServer from "../HttpServer";
+import IGraphQLContext from "../graphql/IGraphQLContext";
 
 /**
  * 允许的请求方法

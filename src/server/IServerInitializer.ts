@@ -1,5 +1,5 @@
 import * as Express from "express";
-import {HttpServer} from "./index";
+import HttpServer from "./HttpServer";
 import WebSocketServer from "./websocket/WebSocketServer";
 import GraphQLServer from "./graphql/GraphQLServer";
 

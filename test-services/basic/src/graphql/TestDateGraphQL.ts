@@ -1,5 +1,5 @@
-import {GQLResolver, GQLSchema} from "../../../../src/server/bind";
-import {GraphQLUnits} from "../../../../src/server/graphql";
+import {GQLResolver, GQLSchema} from "../../../../src/server/bind/GraphQLBinding";
+import GraphQLUnits from "../../../../src/server/graphql/GraphQLUnits";
 
 @GQLSchema()
 class QuerySchema {

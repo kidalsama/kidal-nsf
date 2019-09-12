@@ -8,7 +8,7 @@ import {GraphQLExtension} from "graphql-extensions";
 import {makeExecutableSchema, SchemaDirectiveVisitor} from "graphql-tools";
 import {scalarDate} from "./GraphQLScalars";
 import {ByteDirective, DateDirective, TimeDirective, UrlDirective} from "./GraphQLDirectives";
-import {mergeResolver, mergeTypeDefs} from "./merges";
+import {mergeResolver, mergeTypeDefs} from "./merges/merges";
 
 /**
  * @author tengda

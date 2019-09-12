@@ -1,4 +1,4 @@
-import {GQLResolver, GQLSchema} from "../../../../src/server/bind";
+import {GQLResolver, GQLSchema} from "../../../../src/server/bind/GraphQLBinding";
 
 @GQLSchema()
 class QuerySchema {

@@ -1,7 +1,7 @@
 import request from "supertest";
 import Application from "../../src/application/Application";
 import * as querystring from "querystring";
-import {Container} from "../../src/ioc";
+import {Container} from "../../src/ioc/Container";
 import {HttpServerManager} from "../../src/server/HttpServerManager";
 
 describe("Http", () => {

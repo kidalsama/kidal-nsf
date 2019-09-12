@@ -15,9 +15,9 @@ import {
   Query,
   QueryParam,
   RequestMapping,
-} from "../../../../src/server";
+} from "../../../../src/server/bind/ControllerBinding";
 import {BaseController} from "./BaseController";
-import {LudmilaError} from "../../../../src/error";
+import LudmilaError from "../../../../src/error/LudmilaError";
 
 /**
  *

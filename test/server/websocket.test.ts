@@ -1,6 +1,6 @@
 import Application from "../../src/application/Application"
 import WebSocket from "ws";
-import {Container} from "../../src/ioc";
+import {Container} from "../../src/ioc/Container";
 import {HttpServerManager} from "../../src/server/HttpServerManager";
 
 describe("WebSocket", () => {

@@ -1,7 +1,7 @@
 import Application from "../../src/application/Application"
 import IEntityCache from "../../src/data/IEntityCache";
 import {IUser} from "../../test-services/basic/src/module/user/entity/User";
-import {Container} from "../../src/ioc";
+import {Container} from "../../src/ioc/Container";
 import {DatabaseManager} from "../../src/data/DatabaseManager";
 
 describe("Basic: IEntityCache", () => {

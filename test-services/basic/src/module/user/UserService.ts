@@ -1,6 +1,6 @@
 import {IUser} from "./entity/User";
-import {EntityEvents} from "../../../../../src/data";
-import {Container} from "../../../../../src/ioc";
+import {EntityEvents} from "../../../../../src/data/EntityEvents";
+import {Container} from "../../../../../src/ioc/Container";
 import {DatabaseManager} from "../../../../../src/data/DatabaseManager";
 
 export default class UserService {

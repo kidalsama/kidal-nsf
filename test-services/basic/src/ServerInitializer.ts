@@ -1,6 +1,6 @@
 import IHttpServerInitializer from "../../../src/server/IServerInitializer";
 import GraphQL from "./graphql/GraphQL";
-import {WebSocketServer} from "../../../src/server";
+import WebSocketServer from "../../../src/server/websocket/WebSocketServer";
 import {close, login, logout} from "./websocket/manual";
 
 export default {

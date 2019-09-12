@@ -6,10 +6,12 @@ import Rpc from "../cluster/Rpc";
 import {applicationBanner} from "./ApplicationConstants";
 import RpcApiManager from "../cluster/RpcApiManager";
 import * as fs from "fs";
-import {Container, Scope, Service} from "../ioc";
+import {Service} from "../ioc/Annotation";
 import {HttpServerManager} from "../server/HttpServerManager";
-import {PathUtils} from "../util";
+import PathUtils from "../util/PathUtils";
 import {DatabaseManager} from "../data/DatabaseManager";
+import {Container} from "../ioc/Container";
+import {Scope} from "../ioc/Scope";
 
 /**
  * @author tengda

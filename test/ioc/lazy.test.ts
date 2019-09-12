@@ -1,4 +1,4 @@
-import {Lazy} from "../../src/ioc";
+import {Lazy} from "../../src/ioc/Lazy";
 
 describe("@Lazy", () => {
   class LazyTester {

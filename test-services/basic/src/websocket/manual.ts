@@ -1,4 +1,4 @@
-import {WebSocketMessageHandler} from "../../../../src/server/websocket";
+import {WebSocketMessageHandler} from "../../../../src/server/websocket/WebSocketServer";
 
 export const close: WebSocketMessageHandler = async (payload, session) => {
   await session.sendMessage("closed")

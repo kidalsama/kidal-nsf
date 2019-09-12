@@ -2,8 +2,10 @@ import {IEntityBase, IEntityMigration, IEntityRegistry} from "../../../../../../
 import Database from "../../../../../../src/data/Database";
 import Sequelize from "sequelize";
 import IEntityCache from "../../../../../../src/data/IEntityCache";
-import {Autowired, Component, Container, Lazy} from "../../../../../../src/ioc";
+import {Autowired, Component} from "../../../../../../src/ioc/Annotation";
 import {DatabaseManager} from "../../../../../../src/data/DatabaseManager";
+import {Lazy} from "../../../../../../src/ioc/Lazy";
+import {Container} from "../../../../../../src/ioc/Container";
 
 export interface IUser extends IEntityBase<number> {
   id: number;

@@ -1,6 +1,6 @@
 import * as Express from "express";
-import {AfterAll, BeforeAll, GetMapping, OnError} from "../../../../src/server/bind";
-import {LudmilaError} from "../../../../src/error";
+import {AfterAll, BeforeAll, GetMapping, OnError} from "../../../../src/server/bind/ControllerBinding";
+import LudmilaError from "../../../../src/error/LudmilaError";
 
 export class BaseController {
   /**

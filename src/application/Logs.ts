@@ -1,7 +1,7 @@
 import * as log4js from "log4js";
 import Environment from "./Environment";
 import * as path from "path";
-import {Container} from "../ioc";
+import {Container} from "../ioc/Container";
 
 /**
  * @author tengda

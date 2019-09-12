@@ -4,10 +4,10 @@ import Environment from "../application/Environment";
 import {IEntityBase, IEntityRegistry} from "./IEntity";
 import EntityCacheImpl from "./EntityCacheImpl";
 import * as events from "events";
-import {IDatabaseConfig} from "../application";
+import {IDatabaseConfig} from "../application/ApplicationConfig";
 import IEntityCache from "./IEntityCache";
 import {createMigrationModel, IMigration} from "./Migration";
-import {Component} from "../ioc";
+import {Component} from "../ioc/Annotation";
 import glob from "glob";
 import PathUtils from "../util/PathUtils";
 

@@ -1,9 +1,11 @@
 import Application from "../../src/application/Application";
+import {ConfigValue} from "../../src/application/bind/ConfigValue";
 
 describe("@ConfigValue", () => {
   class TestConfigValue {
     // 单元测试有某种bug，需要延迟引用进来
-    @require("../../src/application/bind/ConfigValue").ConfigValue("settings.test.test.tes", 0)
+    // @require("../../src/application/bind/ConfigValue").ConfigValue("settings.test.test.tes", 0)
+    @ConfigValue("settings.test.test.tes", 0)
     public tes: number
   }
 

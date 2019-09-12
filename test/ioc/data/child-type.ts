@@ -1,4 +1,4 @@
-import {Component, Provides} from "../../../src/ioc";
+import {Component, Provides} from "../../../src/ioc/Annotation";
 import IBaseType from "./parent-type";
 
 @Provides(IBaseType)

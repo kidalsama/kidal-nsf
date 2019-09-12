@@ -1,8 +1,8 @@
-import {Autowired, Service} from "../ioc";
+import {Autowired, Service} from "../ioc/Annotation";
 import Logs from "../application/Logs";
 import Database from "./Database";
 import Environment from "../application/Environment";
-import {IDatabaseConfig} from "../application";
+import {IDatabaseConfig} from "../application/ApplicationConfig";
 import Sequelize from "sequelize";
 
 /**

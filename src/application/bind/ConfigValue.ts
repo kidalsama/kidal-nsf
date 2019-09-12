@@ -1,4 +1,4 @@
-import {Container} from "../../ioc";
+import {Container} from "../../ioc/Container";
 import Environment from "../Environment";
 import ObjectUtils from "../../util/ObjectUtils";
 

@@ -1,5 +1,5 @@
 import {PubSub} from "apollo-server";
-import {LudmilaError} from "../../../../src/error";
+import LudmilaError from "../../../../src/error/LudmilaError";
 
 const pubsub = new PubSub();
 

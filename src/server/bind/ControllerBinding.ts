@@ -1,6 +1,6 @@
 /* tslint:disable */
 import * as Express from "express";
-import {Service} from "../../ioc";
+import {Service} from "../../ioc/Annotation";
 import {MetadataKeys, RequestMethod} from "./ServerBindingRegistry";
 
 /**

@@ -1,5 +1,5 @@
 import {MetadataKeys} from "./ServerBindingRegistry";
-import {Service} from "../../ioc";
+import {Service} from "../../ioc/Annotation";
 
 /**
  * 设置选项

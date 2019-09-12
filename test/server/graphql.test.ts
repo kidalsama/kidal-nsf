@@ -2,7 +2,7 @@ import request from "supertest";
 import Application from "../../src/application/Application"
 import {InputObjectTypeDefinitionNode, parse} from "graphql";
 import mergeGraphQLNodes from "../../src/server/graphql/merges/merge-node";
-import {Container} from "../../src/ioc";
+import {Container} from "../../src/ioc/Container";
 import {HttpServerManager} from "../../src/server/HttpServerManager";
 
 describe("GraphQL: 合并", () => {

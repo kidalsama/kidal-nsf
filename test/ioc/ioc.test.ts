@@ -1,4 +1,6 @@
-import {Autowired, Component, Container, Provided, Provides, Scope, Scoped, Service, Singleton} from "../../src/ioc";
+import {Autowired, Component, Provided, Provides, Scoped, Service, Singleton} from "../../src/ioc/Annotation";
+import {Container} from "../../src/ioc/Container";
+import {Scope} from "../../src/ioc/Scope";
 
 describe("@Autowired 应用于字段", () => {
   @Component

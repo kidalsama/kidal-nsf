@@ -2,8 +2,8 @@ import HttpServer from "./HttpServer";
 import Environment from "../application/Environment";
 import * as fs from "fs";
 import Logs from "../application/Logs";
-import {Autowired, Service} from "../ioc";
-import {PathUtils} from "../util/index";
+import {Autowired, Service} from "../ioc/Annotation";
+import PathUtils from "../util/PathUtils";
 import IServerInitializer from "./IServerInitializer";
 
 /**

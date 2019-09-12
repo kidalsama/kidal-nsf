@@ -5,7 +5,7 @@ import * as yaml from "yaml";
 import {log4jsConfig} from "./ApplicationConstants";
 import {completeApplicationConfig, IApplicationConfig, mergeConfig} from "./ApplicationConfig";
 import fetch from "node-fetch";
-import {Container} from "../ioc";
+import {Container} from "../ioc/Container";
 
 /**
  * 框架配置

@@ -10,11 +10,11 @@ import Rpc from "../cluster/Rpc";
 import LudmilaError from "../error/LudmilaError";
 import cors from "cors";
 import LudmilaErrors from "../error/LudmilaErrors";
-import {IHttpServerConfig} from "../application";
+import {IHttpServerConfig} from "../application/ApplicationConfig";
 import GraphQLServer from "./graphql/GraphQLServer";
 import WebSocketServer from "./websocket/WebSocketServer";
-import {ServerBindingRegistry} from "./bind";
-import {Component} from "../ioc";
+import {ServerBindingRegistry} from "./bind/ServerBindingRegistry";
+import {Component} from "../ioc/Annotation";
 import IHttpServerInitializer from "./IServerInitializer";
 import helmet from "helmet";
 
