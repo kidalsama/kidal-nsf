@@ -120,7 +120,7 @@ export default class Database extends events.EventEmitter {
   // 迁移
   public async migrateUp() {
     // 关闭迁移
-    if (this.config.enableMigration) {
+    if (this.config.disableMigration) {
       return
     }
 

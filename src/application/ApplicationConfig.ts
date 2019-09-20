@@ -142,7 +142,7 @@ export interface IDatabaseConfig {
   password: string;
   database: string;
   timezone: string;
-  enableMigration?: boolean;
+  disableMigration?: boolean;
   enableAutoUpdateChangedFields?: boolean;
 }
 
@@ -178,7 +178,7 @@ const completeDatabaseConfig = (key: string, config: any): IDatabaseConfig => {
     password: orElse(`server.databaseMap:${key}`, config, "password", "Mcg!2345"),
     database: orElse(`server.databaseMap:${key}`, config, "database", "dev_node_server_foundation"),
     timezone: orElse(`server.databaseMap:${key}`, config, "timezone", "Asia/Shanghai"),
-    enableMigration: orElse(`server.databaseMap:${key}`, config, "enableMigration", undefined),
+    disableMigration: orElse(`server.databaseMap:${key}`, config, "disableMigration", undefined),
     enableAutoUpdateChangedFields:
       orElse(`server.databaseMap:${key}`, config, "enableAutoUpdateChangedFields", undefined),
   }

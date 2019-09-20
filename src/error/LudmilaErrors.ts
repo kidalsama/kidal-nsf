@@ -5,7 +5,7 @@ export default abstract class LudmilaErrors {
   /**
    *
    */
-  public static readonly OK = 0;
+  public static readonly OK = "nsf:OK";
 
   /**
    *
@@ -26,6 +26,11 @@ export default abstract class LudmilaErrors {
    * 无效的通行证
    */
   public static readonly INCORRECT_PASSPORT = "nsf:IncorrectPassport"
+
+  /**
+   * 接口无法链接
+   */
+  public static readonly API_UNAVAILABLE = "nsf:ApiUnavailable"
 
   /**
    * Server
