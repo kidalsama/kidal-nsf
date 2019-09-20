@@ -1,5 +1,4 @@
 import * as Express from "express";
-import * as p from "path";
 import * as lodash from "lodash";
 import {Container} from "../../ioc/Container";
 import Logs from "../../application/Logs";
@@ -125,7 +124,11 @@ export class ServerBindingRegistry {
     // 路径
     let path: string
     if (pathOption) {
-      path = prefix ? p.join(prefix.path, pathOption) : pathOption
+      if (prefix) {
+        path = pathOption.startsWith("/") ? prefix.path + pathOption : prefix.path + "/" + pathOption
+      } else {
+        path = pathOption
+      }
     } else {
       path = prefix ? prefix.path : "/"
     }
