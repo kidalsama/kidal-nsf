@@ -77,6 +77,7 @@ export {
 } from "./src/error/LudmilaErrors";
 
 export * from "./src/ioc/Annotation"
+export {IProvider} from "./src/ioc/IProvider"
 export {Scope} from "./src/ioc/Scope"
 export {Container} from "./src/ioc/Container"
 export {Lazy} from "./src/ioc/Lazy"
