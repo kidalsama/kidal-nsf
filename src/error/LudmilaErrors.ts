@@ -10,17 +10,17 @@ export default abstract class LudmilaErrors {
   /**
    *
    */
-  public static readonly FAIL = 1;
+  public static readonly FAIL = "nsf:Fail";
 
   /**
    * 内部错误
    */
-  public static readonly INTERNAL_ERROR = 2;
+  public static readonly INTERNAL_ERROR = "nsf:InternalError";
 
   /**
    * 未认证
    */
-  public static readonly NOT_AUTHENTICATED = 3;
+  public static readonly NOT_AUTHENTICATED = "nsf:NotAuthenticated";
 
   /**
    * 无效的通行证
@@ -31,17 +31,6 @@ export default abstract class LudmilaErrors {
    * 接口无法链接
    */
   public static readonly API_UNAVAILABLE = "nsf:ApiUnavailable"
-
-  /**
-   * Server
-   * 无效的载荷
-   */
-  public static readonly SERVER_101 = 101;
-  /**
-   * Server
-   * 没有载荷处理器
-   */
-  public static readonly SERVER_102 = 102;
 
   /**
    * Cluster
