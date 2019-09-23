@@ -72,6 +72,11 @@ export default class HttpServer {
     // 要获取到反向代理后的真实IP需要信任代理
     this.expressApp.enable("trust proxy")
 
+    // JSON格式
+    if (this.config.jsonSpaces) {
+      this.expressApp.set("json spaces", this.config.jsonSpaces)
+    }
+
     // 允许跨域
     // TODO: 通过配置读取允许跨域的域名
     this.expressApp.use(cors({

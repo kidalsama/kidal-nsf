@@ -87,6 +87,7 @@ export interface IHttpServerConfig {
   port: number;
   logError?: boolean;
   pathToScan?: string;
+  jsonSpaces?: number;
   graphQLEndpoint?: string;
   graphQLSubscriptionEndpoint?: string;
   webSocketEndpoint?: string;
@@ -115,6 +116,8 @@ const completeHttpServerConfig = (key: string, config: any): IHttpServerConfig =
       "logError", true),
     pathToScan: orElse(`server.httpServerMap:${key}`, config,
       "pathToScan", "**/@(controller|graphql|websocket)/**/*@(Controller|GraphQL|WebSocket).js"),
+    jsonSpaces: orElse(`server.httpServerMap:${key}`, config,
+      "jsonSpaces", undefined),
     graphQLEndpoint: orElse(`server.httpServerMap:${key}`, config,
       "graphQLEndpoint", undefined),
     graphQLSubscriptionEndpoint: orElse(`server.httpServerMap:${key}`, config,
