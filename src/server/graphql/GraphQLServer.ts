@@ -32,7 +32,13 @@ export default class GraphQLServer {
   ) {
     this.httpServer = httpServer
     this.errorFormatter = (error) => {
-      const formattedError = formatError(error);
+      let formattedError = formatError(error);
+      // 移除extensions
+      formattedError = {
+        message: formattedError.message,
+        locations: formattedError.locations,
+        path: formattedError.path,
+      }
       const isLudmilaError = error.originalError && (error.originalError instanceof LudmilaError)
       if (isLudmilaError) {
         const originalError: any = error.originalError;
