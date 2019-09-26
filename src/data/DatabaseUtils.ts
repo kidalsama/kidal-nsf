@@ -1,4 +1,5 @@
 import * as lodash from "lodash"
+import {col, FindOptionsOrderArray, fn, literal} from "sequelize"
 
 export default {
   /**
@@ -32,11 +33,34 @@ export default {
   /**
    * 标准化排序条件
    */
-  normalizeOrderValues(values: string[][] | undefined | null): string[][] | undefined {
-    if (!values) {
+  normalizeOrderValues(
+    values: string[] | undefined | null,
+    allows?: string[],
+    builder?: (instruction: string) => string | col | literal | FindOptionsOrderArray | fn | undefined,
+  ): Array<string | col | literal | FindOptionsOrderArray | fn> | undefined {
+    if (values === undefined || values === null || values.length === 0) {
       return undefined
     }
-    return values
+    const orderValues: Array<string | col | literal | FindOptionsOrderArray | fn> = []
+    values.forEach((instruction) => {
+      let orderValue
+      if (instruction.startsWith(".") && builder) {
+        orderValue = builder(instruction)
+      } else {
+        const kv = instruction.split(" ")
+        if (
+          kv.length === 2
+          && (allows === undefined || (allows.includes(kv[0])))
+          && ["asc", "desc"].includes(kv[1])
+        ) {
+          orderValue = [kv[0], kv[1]]
+        }
+      }
+      if (orderValue !== undefined) {
+        orderValues.push(orderValue)
+      }
+    })
+    return orderValues
   },
   /**
    * 使用like语法
