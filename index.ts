@@ -87,6 +87,10 @@ export {
 } from "./src/server/HttpServer";
 
 export {
+  HttpServerManager,
+} from "./src/server/HttpServerManager";
+
+export {
   default as IHttpServerInitializer,
 } from "./src/server/IServerInitializer";
 
