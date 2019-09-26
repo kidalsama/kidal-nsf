@@ -1,5 +1,5 @@
 import {SchemaDirectiveVisitor} from "graphql-tools";
-import {GraphQLField, GraphQLInt, GraphQLInterfaceType, GraphQLObjectType, GraphQLString} from "graphql";
+import {GraphQLField, GraphQLInt, GraphQLInterfaceType, GraphQLList, GraphQLObjectType, GraphQLString} from "graphql";
 import GraphQLUnits from "./GraphQLUnits";
 
 /**
@@ -142,6 +142,34 @@ export class UrlDirective extends SchemaDirectiveVisitor {
       return GraphQLUnits.urlUnit(result, {
         unit: unit || defaultUnit,
       })
+    }
+  }
+}
+
+/**
+ * 集合
+ */
+export class ConnectionDirective extends SchemaDirectiveVisitor {
+  public static readonly NAME = "connection"
+  public static readonly SCHEMA =
+    `directive @connection(page: Int, limit: Int, order: [String]) on FIELD_DEFINITION`
+
+  public visitFieldDefinition(
+    field: GraphQLField<any, any>,
+    details: { objectType: GraphQLObjectType | GraphQLInterfaceType },
+  ): GraphQLField<any, any> | void | null {
+    const {resolve: defaultResolve} = field
+    const {unit: defaultUnit, precision: defaultPrecision} = this.args
+
+    // 在参数列表末尾添加page、limit、order参数
+    if (!field.args.find((it) => it.name === "page")) {
+      field.args.push({name: "page", type: GraphQLInt})
+    }
+    if (!field.args.find((it) => it.name === "limit")) {
+      field.args.push({name: "limit", type: GraphQLInt})
+    }
+    if (!field.args.find((it) => it.name === "order")) {
+      field.args.push({name: "order", type: new GraphQLList(GraphQLString)})
     }
   }
 }

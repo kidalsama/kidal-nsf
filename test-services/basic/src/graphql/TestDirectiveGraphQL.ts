@@ -20,6 +20,7 @@ type TestDirective {
   date: Date! @date
   time: Float! @time
   url: String! @url
+  connection: String @connection
 }
 `
   }
@@ -48,5 +49,9 @@ class TestDirective {
 
   public url() {
     return "http://gitlab.dev.everybodygame.com"
+  }
+
+  public connection(_: any, a: any) {
+    return JSON.stringify(a)
   }
 }

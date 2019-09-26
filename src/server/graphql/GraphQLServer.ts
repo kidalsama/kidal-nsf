@@ -7,7 +7,7 @@ import GraphQLApolloServer from "./GraphQLApolloServer";
 import {GraphQLExtension} from "graphql-extensions";
 import {makeExecutableSchema, SchemaDirectiveVisitor} from "graphql-tools";
 import {scalarDate} from "./GraphQLScalars";
-import {ByteDirective, DateDirective, TimeDirective, UrlDirective} from "./GraphQLDirectives";
+import {ByteDirective, ConnectionDirective, DateDirective, TimeDirective, UrlDirective} from "./GraphQLDirectives";
 import {mergeResolver, mergeTypeDefs} from "./merges/merges";
 
 /**
@@ -93,11 +93,12 @@ export default class GraphQLServer {
 
     // 指令
     const schemaDirectives: { [name: string]: typeof SchemaDirectiveVisitor } = {}
-    typeDefs.unshift(ByteDirective.SCHEMA, DateDirective.SCHEMA, TimeDirective.SCHEMA, UrlDirective.SCHEMA)
+    typeDefs.unshift(ByteDirective.SCHEMA, DateDirective.SCHEMA, TimeDirective.SCHEMA, UrlDirective.SCHEMA, ConnectionDirective.SCHEMA)
     schemaDirectives[ByteDirective.NAME] = ByteDirective
     schemaDirectives[DateDirective.NAME] = DateDirective
     schemaDirectives[TimeDirective.NAME] = TimeDirective
     schemaDirectives[UrlDirective.NAME] = UrlDirective
+    schemaDirectives[ConnectionDirective.NAME] = ConnectionDirective
 
     // 合并
     const mergedTypeDefs = mergeTypeDefs(typeDefs, GraphQLServer.LOG)
