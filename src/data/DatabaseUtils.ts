@@ -1,3 +1,5 @@
+import * as lodash from "lodash"
+
 export default {
   /**
    * 标准化更新的参数
@@ -35,5 +37,36 @@ export default {
       return undefined
     }
     return values
+  },
+  /**
+   * 使用like语法
+   */
+  wcUseLike(val: any) {
+    if (val === undefined || val === null) {
+      return val
+    }
+    if (lodash.isArray(val)) {
+      return {$like: val.map((it) => `%${it}%`)}
+    } else {
+      return {$like: `%${val}%`}
+    }
+  },
+  /**
+   * 使用between语法
+   */
+  wcUseBetween(val: any, orGTE?: boolean) {
+    if (val === undefined || val === null) {
+      return val
+    }
+    if (!lodash.isArray(val)) {
+      return orGTE ? {$gte: val} : undefined
+    }
+    if (val.length === 0) {
+      return undefined
+    } else if (val.length === 1) {
+      return orGTE ? {$gte: val[0]} : undefined
+    } else {
+      return {$between: [val[0], val[1]]}
+    }
   },
 }
