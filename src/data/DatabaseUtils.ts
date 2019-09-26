@@ -37,9 +37,9 @@ export default {
     values: string[] | undefined | null,
     allows?: string[],
     builder?: (instruction: string) => string | col | literal | FindOptionsOrderArray | fn | undefined,
-  ): Array<string | col | literal | FindOptionsOrderArray | fn> | undefined {
+  ): Array<string | col | literal | FindOptionsOrderArray | fn> {
     if (values === undefined || values === null || values.length === 0) {
-      return undefined
+      return []
     }
     const orderValues: Array<string | col | literal | FindOptionsOrderArray | fn> = []
     values.forEach((instruction) => {
