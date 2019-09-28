@@ -17,6 +17,7 @@ export {
 
 export {
   default as Environment,
+  default as Env,
   IFoundationConfig,
 } from "./src/application//Environment";
 
