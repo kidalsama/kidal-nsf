@@ -5,12 +5,12 @@ export default {
   /**
    * 标准化更新的参数
    */
-  normalizeUpdateValues(values: { [key: string]: any }): { [key: string]: any } {
+  normalizeUpdateValues(values: { [key: string]: any }, allowNull?: boolean): { [key: string]: any } {
     const keys = Object.keys(values)
     const normalized: { [key: string]: any } = {}
     for (const key of keys) {
       const value = values[key]
-      if (value !== undefined && value !== null) {
+      if (value !== undefined && (allowNull || value !== null)) {
         normalized[key] = value
       }
     }
@@ -19,12 +19,12 @@ export default {
   /**
    * 标准化查询条件
    */
-  normalizeWhereValues(values: { [key: string]: any }): { [key: string]: any } {
+  normalizeWhereValues(values: { [key: string]: any }, allowNull?: boolean): { [key: string]: any } {
     const keys = Object.keys(values)
     const normalized: { [key: string]: any } = {}
     for (const key of keys) {
       const value = values[key]
-      if (value !== undefined && value !== null) {
+      if (value !== undefined && (allowNull || value !== null)) {
         normalized[key] = value
       }
     }
