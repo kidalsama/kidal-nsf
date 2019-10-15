@@ -1,5 +1,4 @@
 import {Connection, DEFAULT_LIMIT, DEFAULT_PAGE, MAX_LIMIT, PageArgs} from "../../util/Pagination";
-import Maybe from "graphql/tsutils/Maybe";
 
 /**
  * GraphQL工具
@@ -82,7 +81,7 @@ type ${name}PageArgs {
   /**
    * 解析分页参数
    */
-  parsePageArgs(args: { page: Maybe<number>, limit: Maybe<number> }): PageArgs {
+  parsePageArgs(args: any): PageArgs {
     let fixedPage = args.page ? args.page : DEFAULT_PAGE
     if (fixedPage < 1) {
       fixedPage = 1
@@ -94,5 +93,17 @@ type ${name}PageArgs {
       fixedLimit = MAX_LIMIT
     }
     return PageArgs.page(fixedPage, fixedLimit)
+  },
+
+  /**
+   * 分离分页排序参数
+   */
+  detachPageOrderArgs(args: any): { pageArgs: PageArgs, order: string[] | undefined } {
+    const pageArgs = this.parsePageArgs(args)
+    const order: string[] = args.order ? args.order.filter((it: string | null) => it !== null) : undefined
+    delete args.page
+    delete args.limit
+    delete args.order
+    return {pageArgs, order: order.length > 0 ? order : undefined}
   },
 }
