@@ -104,6 +104,6 @@ type ${name}PageArgs {
     delete args.page
     delete args.limit
     delete args.order
-    return {pageArgs, order: order.length > 0 ? order : undefined}
+    return {pageArgs, order: (order && order.length > 0) ? order : undefined}
   },
 }

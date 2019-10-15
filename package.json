@@ -1,6 +1,6 @@
 {
   "name": "mcg-nsf",
-  "version": "0.17.22",
+  "version": "0.17.23",
   "repository": "http://gitlab.dev.happyhouse.club/mcg-game/server-foundation",
   "author": "MCG RND DEPARTMENT",
   "main": "./index.js",
