@@ -125,7 +125,9 @@ export class ServerBindingRegistry {
     let path: string
     if (pathOption) {
       if (prefix) {
-        path = pathOption.startsWith("/") ? prefix.path + pathOption : prefix.path + "/" + pathOption
+        path = (pathOption.startsWith("/") || prefix.path.endsWith("/"))
+          ? prefix.path + pathOption
+          : prefix.path + "/" + pathOption
       } else {
         path = pathOption
       }
