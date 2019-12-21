@@ -18,10 +18,24 @@ export class ByteDirective extends SchemaDirectiveVisitor {
 
     // 在参数列表末尾添加unit、precision参数
     if (!field.args.find((it) => it.name === "unit")) {
-      field.args.push({name: "unit", type: GraphQLString})
+      field.args.push({
+        name: "unit",
+        description: undefined,
+        type: GraphQLString,
+        defaultValue: null,
+        extensions: undefined,
+        astNode: undefined,
+      })
     }
     if (!field.args.find((it) => it.name === "precision")) {
-      field.args.push({name: "precision", type: GraphQLInt})
+      field.args.push({
+        name: "precision",
+        description: undefined,
+        type: GraphQLInt,
+        defaultValue: null,
+        extensions: undefined,
+        astNode: undefined,
+      })
     }
 
     // 重写解析
@@ -54,7 +68,14 @@ export class DateDirective extends SchemaDirectiveVisitor {
 
     // 在参数列表末尾添加unit参数
     if (!field.args.find((it) => it.name === "unit")) {
-      field.args.push({name: "unit", type: GraphQLString})
+      field.args.push({
+        name: "unit",
+        description: undefined,
+        type: GraphQLString,
+        defaultValue: null,
+        extensions: undefined,
+        astNode: undefined,
+      })
     }
 
     // 重写解析
@@ -94,10 +115,24 @@ export class TimeDirective extends SchemaDirectiveVisitor {
 
     // 在参数列表末尾添加unit、precision参数
     if (!field.args.find((it) => it.name === "unit")) {
-      field.args.push({name: "unit", type: GraphQLString})
+      field.args.push({
+        name: "unit",
+        description: undefined,
+        type: GraphQLString,
+        defaultValue: null,
+        extensions: undefined,
+        astNode: undefined,
+      })
     }
     if (!field.args.find((it) => it.name === "precision")) {
-      field.args.push({name: "precision", type: GraphQLInt})
+      field.args.push({
+        name: "precision",
+        description: undefined,
+        type: GraphQLInt,
+        defaultValue: null,
+        extensions: undefined,
+        astNode: undefined,
+      })
     }
 
     // 重写解析
@@ -130,7 +165,14 @@ export class UrlDirective extends SchemaDirectiveVisitor {
 
     // 在参数列表末尾添加unit参数
     if (!field.args.find((it) => it.name === "unit")) {
-      field.args.push({name: "unit", type: GraphQLString})
+      field.args.push({
+        name: "unit",
+        description: undefined,
+        type: GraphQLString,
+        defaultValue: null,
+        extensions: undefined,
+        astNode: undefined,
+      })
     }
 
     // 重写解析
@@ -163,13 +205,34 @@ export class ConnectionDirective extends SchemaDirectiveVisitor {
 
     // 在参数列表末尾添加page、limit、order参数
     if (!field.args.find((it) => it.name === "page")) {
-      field.args.push({name: "page", type: GraphQLInt})
+      field.args.push({
+        name: "page",
+        description: undefined,
+        type: GraphQLInt,
+        defaultValue: null,
+        extensions: undefined,
+        astNode: undefined,
+      })
     }
     if (!field.args.find((it) => it.name === "limit")) {
-      field.args.push({name: "limit", type: GraphQLInt})
+      field.args.push({
+        name: "limit",
+        description: undefined,
+        type: GraphQLInt,
+        defaultValue: null,
+        extensions: undefined,
+        astNode: undefined,
+      })
     }
     if (!field.args.find((it) => it.name === "order")) {
-      field.args.push({name: "order", type: new GraphQLList(GraphQLString)})
+      field.args.push({
+        name: "order",
+        description: undefined,
+        type: new GraphQLList(GraphQLString),
+        defaultValue: null,
+        extensions: undefined,
+        astNode: undefined,
+      })
     }
   }
 }
