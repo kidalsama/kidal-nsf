@@ -180,7 +180,7 @@ const completeDatabaseConfig = (key: string, config: any): IDatabaseConfig => {
     username: orElse(`server.databaseMap:${key}`, config, "username", "mcg"),
     password: orElse(`server.databaseMap:${key}`, config, "password", "Mcg!2345"),
     database: orElse(`server.databaseMap:${key}`, config, "database", "dev_node_server_foundation"),
-    timezone: orElse(`server.databaseMap:${key}`, config, "timezone", "Asia/Shanghai"),
+    timezone: orElse(`server.databaseMap:${key}`, config, "timezone", "+08:00"),
     disableMigration: orElse(`server.databaseMap:${key}`, config, "disableMigration", undefined),
     enableAutoUpdateChangedFields:
       orElse(`server.databaseMap:${key}`, config, "enableAutoUpdateChangedFields", undefined),
