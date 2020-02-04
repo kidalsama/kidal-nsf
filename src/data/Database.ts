@@ -151,20 +151,18 @@ export default class Database extends events.EventEmitter {
 
     // 数据库整体升级
     if (initializer.getMigrations) {
-      await this.migrateUpSingleModel(
-        ranDict.get(".database") || [],
-        ".database",
-        initializer.getMigrations(this)
-      );
+      const name = ".db";
+      const ranList = ranDict.get(name) || [];
+      const migrations = await initializer.getMigrations(this);
+      await this.migrateUpSingleModel(ranList, name, migrations);
     }
 
     // 单模型升级
     for (const registry of this.registryMap.values()) {
-      await this.migrateUpSingleModel(
-        ranDict.get(registry.model.name) || [],
-        registry.model.name,
-        registry.migrations
-      );
+      const name = registry.model.name;
+      const ranList = ranDict.get(registry.model.name) || [];
+      const migrations = registry.migrations;
+      await this.migrateUpSingleModel(ranList, name, migrations);
     }
   }
 
