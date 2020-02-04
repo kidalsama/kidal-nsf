@@ -150,11 +150,11 @@ export default class Database extends events.EventEmitter {
     }
 
     // 数据库整体升级
-    if (initializer.migrations) {
+    if (initializer.getMigrations) {
       await this.migrateUpSingleModel(
         ranDict.get(".database") || [],
         ".database",
-        initializer.migrations
+        initializer.getMigrations(this)
       );
     }
 
