@@ -4,6 +4,9 @@ import Database from "./Database";
 import Environment from "../application/Environment";
 import {IDatabaseConfig} from "../application/ApplicationConfig";
 import Sequelize from "sequelize";
+import PathUtils from "../util/PathUtils";
+import * as fs from "fs";
+import {IDatabaseInitializer} from "./IDatabaseInitializer";
 
 /**
  * @author tengda
@@ -48,6 +51,12 @@ export class DatabaseManager {
       return this
     }
 
+    // 读取初始化器
+    const initializerSrc = PathUtils.path.join(this.env.srcDir, "DatabaseInitializer.ts")
+    const initializer: IDatabaseInitializer = fs.existsSync(initializerSrc)
+      ? require(PathUtils.replaceExt(initializerSrc, ".js")).default
+      : {}
+
     // 获取全部数据库名
     const names = Object.keys(config.databaseMap)
 
@@ -79,7 +88,7 @@ export class DatabaseManager {
 
     // 升级
     for (const database of this.databaseMap.values()) {
-      await database.migrateUp()
+      await database.migrateUp(initializer)
     }
 
     // 初始化

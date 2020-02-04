@@ -338,8 +338,8 @@ query testDirective {
     expect(resp.body.data.testDirective.commonUrl).toEqual("//gitlab.dev.everybodygame.com")
     expect(resp.body.data.testDirective.httpUrl).toEqual("http://gitlab.dev.everybodygame.com")
     expect(resp.body.data.testDirective.httpsUrl).toEqual("https://gitlab.dev.everybodygame.com")
-    expect(resp.body.data.testDirective.connection0).toEqual(`{}`)
-    expect(resp.body.data.testDirective.connection1).toEqual(`{"page":3,"limit":9}`)
+    expect(resp.body.data.testDirective.connection0).toEqual(`{"page":null,"limit":null,"order":null}`)
+    expect(resp.body.data.testDirective.connection1).toEqual(`{"page":3,"limit":9,"order":null}`)
     expect(resp.body.data.testDirective.connection2).toEqual(`{"page":0,"limit":7,"order":["id desc"]}`)
   });
 

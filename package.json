@@ -71,5 +71,8 @@
   },
   "publishConfig": {
     "registry": "http://nexus.dev.everybodygame.com/repository/npm-hosted/"
+  },
+  "devDependencies": {
+    "prettier": "^1.19.1"
   }
 }
