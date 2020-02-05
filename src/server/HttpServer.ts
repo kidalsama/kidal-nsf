@@ -1,7 +1,7 @@
 import * as bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import express from "express";
-import {NextFunction, Request, Response} from "express-serve-static-core";
+import { NextFunction, Request, Response } from "express-serve-static-core";
 import * as http from "http";
 import Logs from "../application/Logs";
 import Environment from "../application/Environment";
@@ -10,11 +10,11 @@ import Rpc from "../cluster/Rpc";
 import LudmilaError from "../error/LudmilaError";
 import cors from "cors";
 import LudmilaErrors from "../error/LudmilaErrors";
-import {IHttpServerConfig} from "../application/ApplicationConfig";
+import { IHttpServerConfig } from "../application/ApplicationConfig";
 import GraphQLServer from "./graphql/GraphQLServer";
 import WebSocketServer from "./websocket/WebSocketServer";
-import {ServerBindingRegistry} from "./bind/ServerBindingRegistry";
-import {Component} from "../ioc/Annotation";
+import { ServerBindingRegistry } from "./bind/ServerBindingRegistry";
+import { Component } from "../ioc/Annotation";
 import IHttpServerInitializer from "./IServerInitializer";
 import helmet from "helmet";
 
@@ -26,7 +26,10 @@ export default class HttpServer {
   /**
    * 日志
    */
-  private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "HttpServer");
+  private static readonly LOG = Logs.S.getFoundationLogger(
+    __dirname,
+    "HttpServer"
+  );
 
   /**
    * Express实例
@@ -39,15 +42,15 @@ export default class HttpServer {
   /**
    * GraphQL服务器
    */
-  public readonly graphQLServer?: GraphQLServer
+  public readonly graphQLServer?: GraphQLServer;
   /**
    * WebSocket服务器
    */
-  public readonly webSocketServer?: WebSocketServer
+  public readonly webSocketServer?: WebSocketServer;
   /**
    * 自动绑定注册器
    */
-  public readonly bindingRegistry: ServerBindingRegistry = new ServerBindingRegistry()
+  public readonly bindingRegistry: ServerBindingRegistry = new ServerBindingRegistry();
 
   /**
    * @param env 环境
@@ -57,60 +60,70 @@ export default class HttpServer {
   constructor(
     public readonly env: Environment,
     public readonly config: IHttpServerConfig,
-    public readonly initializer?: IHttpServerInitializer,
+    public readonly initializer?: IHttpServerInitializer
   ) {
     // 创建Express实例和Http服务器实例
     this.expressApp = express();
     this.server = http.createServer(this.expressApp);
 
     // 注册Express中间件
-    this.expressApp.use(bodyParser.urlencoded({extended: false}));
+    this.expressApp.use(bodyParser.urlencoded({ extended: false }));
     this.expressApp.use(bodyParser.json());
     this.expressApp.use(cookieParser());
     this.expressApp.use(helmet());
 
     // 要获取到反向代理后的真实IP需要信任代理
-    this.expressApp.enable("trust proxy")
+    this.expressApp.enable("trust proxy");
 
     // JSON格式
     if (this.config.jsonSpaces) {
-      this.expressApp.set("json spaces", this.config.jsonSpaces)
+      this.expressApp.set("json spaces", this.config.jsonSpaces);
     }
 
     // 允许跨域
     // TODO: 通过配置读取允许跨域的域名
-    this.expressApp.use(cors({
-      origin: ((requestOrigin, callback) => {
-        callback(null, true)
-      }),
-      credentials: true,
-    }))
+    this.expressApp.use(
+      cors({
+        origin: (requestOrigin, callback) => {
+          callback(null, true);
+        },
+        credentials: true
+      })
+    );
 
     // 初始化路由
     if (initializer && initializer.routes) {
-      HttpServer.LOG.warn("请不要再使用 HttpServerInitializer 的 routes 方法，使用 initRouter 方法替代")
-      initializer.routes(this.expressApp)
+      HttpServer.LOG.warn(
+        "请不要再使用 HttpServerInitializer 的 routes 方法，使用 initRouter 方法替代"
+      );
+      initializer.routes(this.expressApp);
     } else if (initializer && initializer.initRouter) {
-      initializer.initRouter(this)
+      initializer.initRouter(this);
     }
 
     // 支持RPC
     // TODO: 应当在cluster模块注册这个
     this.expressApp.post("/.nsf/rpc", (req, res) => {
       Rpc.S.httpCallLocalProcedure(req.body)
-        .then((ret) => {
-          res.status(200).json(ret)
+        .then(ret => {
+          res.status(200).json(ret);
         })
-        .catch((e) => {
+        .catch(e => {
           if (e instanceof LudmilaError) {
-            res.status(200).json({error: {code: e.code, message: e.message}})
+            res
+              .status(200)
+              .json({ error: { code: e.code, message: e.message } });
           } else {
             if (HttpServer.LOG.isDebugEnabled()) {
-              HttpServer.LOG.error(e)
+              HttpServer.LOG.error(e);
             }
-            res.status(200).json({error: {code: LudmilaErrors.FAIL, message: e.message}})
+            res
+              .status(200)
+              .json({
+                error: { code: LudmilaErrors.FAIL, message: e.message }
+              });
           }
-        })
+        });
     });
 
     // docker 健康检查支持
@@ -122,15 +135,15 @@ export default class HttpServer {
     // GraphQL
     this.graphQLServer = this.config.graphQLEndpoint
       ? new GraphQLServer(this)
-      : undefined
+      : undefined;
     if (this.graphQLServer && initializer && initializer.initGraphQL) {
-      initializer.initGraphQL(this.graphQLServer)
+      initializer.initGraphQL(this.graphQLServer);
     }
 
     // WebSocket
     this.webSocketServer = this.config.webSocketEndpoint
       ? new WebSocketServer(this)
-      : undefined
+      : undefined;
   }
 
   /**
@@ -139,17 +152,17 @@ export default class HttpServer {
   public async start() {
     // 扫描源码并绑定
     if (this.config.pathToScan) {
-      await this.bindingRegistry.init(this, this.config.pathToScan)
+      await this.bindingRegistry.init(this, this.config.pathToScan);
     }
 
     // graphQL
     if (this.graphQLServer) {
-      await this.graphQLServer.start()
+      await this.graphQLServer.start();
     }
 
     // webSocket
     if (this.webSocketServer) {
-      await this.webSocketServer.start()
+      await this.webSocketServer.start();
     }
 
     // 404
@@ -160,20 +173,22 @@ export default class HttpServer {
     });
 
     // 错误处理
-    this.expressApp.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-      if (this.config.logError) {
-        HttpServer.LOG.error(err);
+    this.expressApp.use(
+      (err: Error, req: Request, res: Response, next: NextFunction) => {
+        if (this.config.logError) {
+          HttpServer.LOG.error(err);
+        }
+        if (res.headersSent) {
+          res.end();
+        } else {
+          res.status(500).send("Server Internal Error");
+        }
       }
-      if (res.headersSent) {
-        res.end()
-      } else {
-        res.status(500).send("Server Internal Error");
-      }
-    });
+    );
 
     // 监听http
     return new Promise((resolve, reject) => {
-      const port = this.config.port
+      const port = this.config.port;
       const listeningListener = () => {
         const address = this.server.address();
         if (address === null) {
@@ -184,11 +199,11 @@ export default class HttpServer {
           HttpServer.LOG.info(`Listen at ${address.address}:${address.port}`);
         }
         resolve();
-      }
+      };
       if (port < 0) {
-        resolve()
+        resolve();
       } else if (port === 0) {
-        this.server.listen(listeningListener)
+        this.server.listen(listeningListener);
       } else {
         this.server.listen(this.config.port, "0.0.0.0", listeningListener);
       }
@@ -199,13 +214,19 @@ export default class HttpServer {
    * 关闭服务器
    */
   public async shutdown() {
-    this.server.close()
+    this.server.close();
   }
 
   /**
    * 获取Ip
    */
   public get ip(): string | null {
+    // 手动设定了IP时使用手动设定的IP
+    if (this.config.ip) {
+      return this.config.ip;
+    }
+
+    // 读取网卡的IP
     const networkInterfaces = os.networkInterfaces();
 
     for (const networkInterfaceKey in networkInterfaces) {
@@ -214,12 +235,17 @@ export default class HttpServer {
       }
       const networkInterface = networkInterfaces[networkInterfaceKey];
       for (const alias of networkInterface) {
-        if (alias.family === "IPv4" && alias.address !== "127.0.0.1" && !alias.internal) {
+        if (
+          alias.family === "IPv4" &&
+          alias.address !== "127.0.0.1" &&
+          !alias.internal
+        ) {
           return alias.address;
         }
       }
     }
 
+    // 没有找到IP
     return null;
   }
 
@@ -231,9 +257,9 @@ export default class HttpServer {
     if (address === null) {
       return -1;
     } else if (typeof address === "string") {
-      return Number(address.split(":")[1])
+      return Number(address.split(":")[1]);
     } else {
-      return address.port
+      return address.port;
     }
   }
 }
