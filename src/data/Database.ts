@@ -150,10 +150,10 @@ export default class Database extends events.EventEmitter {
     }
 
     // 数据库整体升级
-    if (initializer.getMigrations) {
-      const name = ".db";
+    if (initializer.getPreMigrations) {
+      const name = ".pre";
       const ranList = ranDict.get(name) || [];
-      const migrations = await initializer.getMigrations(this);
+      const migrations = await initializer.getPreMigrations(this);
       await this.migrateUpSingleModel(ranList, name, migrations);
     }
 
@@ -162,6 +162,14 @@ export default class Database extends events.EventEmitter {
       const name = registry.model.name;
       const ranList = ranDict.get(registry.model.name) || [];
       const migrations = registry.migrations;
+      await this.migrateUpSingleModel(ranList, name, migrations);
+    }
+
+    // 数据库整体升级
+    if (initializer.getPostMigrations) {
+      const name = ".post";
+      const ranList = ranDict.get(name) || [];
+      const migrations = await initializer.getPostMigrations(this);
       await this.migrateUpSingleModel(ranList, name, migrations);
     }
   }

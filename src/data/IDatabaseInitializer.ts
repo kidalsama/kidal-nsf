@@ -8,7 +8,14 @@ export interface IDatabaseInitializer {
   /**
    * 迁移
    */
-  getMigrations?(
+  getPreMigrations?(
+    database: Database
+  ): Promise<{ [key: string]: IEntityMigration }>;
+
+  /**
+   * 迁移
+   */
+  getPostMigrations?(
     database: Database
   ): Promise<{ [key: string]: IEntityMigration }>;
 }
