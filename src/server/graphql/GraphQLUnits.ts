@@ -12,7 +12,7 @@ const formatTime = (date: Date, fmt: string = "yyyy-MM-dd hh:mm:ss") => {
     d: date.getDate(),
     h: date.getHours(),
     m: date.getMinutes(),
-    s: date.getSeconds(),
+    s: date.getSeconds()
   };
   fmt = fmt.replace(/([Mdhms])+/g, (rez: string, key) => {
     return (o[key] + "").padStart(rez.length, "0");
@@ -24,45 +24,51 @@ export default {
   /**
    * 字节单位
    */
-  byteUnit(result: Maybe<number>, args?: { unit?: string, precision?: number }): number | null {
+  byteUnit(
+    result: Maybe<number>,
+    args?: { unit?: string; precision?: number }
+  ): number | null {
     if (!result) {
-      return null
+      return null;
     }
 
-    let proceed = result
+    let proceed = Number(result);
     if (args && args.unit !== undefined && args.unit !== null) {
       switch (args.unit) {
         case "b":
         case "byte":
-          proceed = result
-          break
+          proceed = result;
+          break;
         case "kb":
         case "kilobyte":
-          proceed = result / 1024
-          break
+          proceed = result / 1024;
+          break;
         case "mb":
         case "megabyte":
-          proceed = result / (1024 * 1024)
-          break
+          proceed = result / (1024 * 1024);
+          break;
         case "gb":
         case "gigabyte":
-          proceed = result / (1024 * 1024 * 1024)
-          break
+          proceed = result / (1024 * 1024 * 1024);
+          break;
       }
     }
 
     if (args && args.precision && args.precision > 0) {
-      proceed = Number(proceed.toFixed(args.precision))
+      proceed = Number(proceed.toFixed(args.precision));
     } else {
-      proceed = Math.floor(proceed)
+      proceed = Math.floor(proceed);
     }
 
-    return proceed
+    return proceed;
   },
   /**
    * 日期单位
    */
-  dateUnit(result: Maybe<Date>, args?: { unit?: string }): Maybe<string | number> {
+  dateUnit(
+    result: Maybe<Date>,
+    args?: { unit?: string }
+  ): Maybe<string | number> {
     if (!result) {
       return null;
     }
@@ -81,10 +87,12 @@ export default {
           fmt = "yyyy-MM-dd hh:mm:ss";
           break;
         case "datetime-no-sec":
+        case "without-sec":
+        case "no-sec":
           fmt = "yyyy-MM-dd hh:mm";
           break;
         default:
-          fmt = args.unit
+          fmt = args.unit;
           break;
       }
     }
@@ -93,68 +101,71 @@ export default {
   /**
    * 时间单位
    */
-  timeUnit(result: Maybe<number>, args?: { unit?: string, precision?: number }): Maybe<number> {
+  timeUnit(
+    result: Maybe<number>,
+    args?: { unit?: string; precision?: number }
+  ): Maybe<number> {
     if (!result) {
-      return null
+      return null;
     }
 
-    let proceed = result
+    let proceed = Number(result);
     if (args && args.unit !== undefined && args.unit !== null) {
       switch (args.unit) {
         case "ms":
         case "milliseconds":
-          proceed = result
-          break
+          proceed = result;
+          break;
         case "s":
         case "seconds":
-          proceed = result / 1000
-          break
+          proceed = result / 1000;
+          break;
         case "m":
         case "minutes":
-          proceed = result / (1000 * 60)
-          break
+          proceed = result / (1000 * 60);
+          break;
         case "h":
         case "hours":
-          proceed = result / (1000 * 60 * 60)
-          break
+          proceed = result / (1000 * 60 * 60);
+          break;
         case "d":
         case "days":
-          proceed = result / (1000 * 60 * 60 * 24)
-          break
+          proceed = result / (1000 * 60 * 60 * 24);
+          break;
       }
     }
 
     if (args && args.precision && args.precision > 0) {
-      proceed = Number(proceed.toFixed(args.precision))
+      proceed = Number(proceed.toFixed(args.precision));
     } else {
-      proceed = Math.floor(proceed)
+      proceed = Math.floor(proceed);
     }
 
-    return proceed
+    return proceed;
   },
   /**
    * Url单位
    */
   urlUnit(result: Maybe<string>, args?: { unit?: string }): Maybe<string> {
     if (!result) {
-      return null
+      return null;
     }
 
-    let proceed: Maybe<string> = result
+    let proceed: Maybe<string> = result;
     if (args && args.unit !== undefined && args.unit !== null) {
       switch (args.unit) {
         case "//":
-          proceed = UrlUtils.removeProtocol(result)
-          break
+          proceed = UrlUtils.removeProtocol(result);
+          break;
         case "http":
-          proceed = "http:" + UrlUtils.removeProtocol(result)
-          break
+          proceed = "http:" + UrlUtils.removeProtocol(result);
+          break;
         case "https":
-          proceed = "https:" + UrlUtils.removeProtocol(result)
-          break
+          proceed = "https:" + UrlUtils.removeProtocol(result);
+          break;
       }
     }
 
-    return proceed
-  },
+    return proceed;
+  }
 };
