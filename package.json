@@ -1,7 +1,7 @@
 {
-  "name": "@kidal/nsf",
-  "version": "0.18.9",
-  "repository": "http://gitlab.dev.happyhouse.club/mcg-game/server-foundation",
+  "name": "kidal-nsf",
+  "version": "0.18.10",
+  "repository": "https://github.com/kidalsama/kidal-nsf",
   "author": "MCG RND DEPARTMENT",
   "main": "./index.js",
   "types": "./index.ts",

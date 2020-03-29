@@ -5,12 +5,12 @@
     "requireUpstream": false
   },
   "github": {
-    "release": false
+    "release": true
   },
   "gitlab": {
     "release": false
   },
   "npm": {
-    "publish": false
+    "publish": true
   }
 }
