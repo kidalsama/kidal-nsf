@@ -177,12 +177,12 @@ export class DatabaseManager {
         : undefined;
 
     // 创建
-    return new Sequelize({
+    return new Sequelize(config.database, config.username, config.password, {
       host: config.host,
       port: config.port,
-      username: config.username,
-      password: config.password,
-      database: config.database,
+      // username: config.username,
+      // password: config.password,
+      // database: config.database,
       timezone,
       dialect: config.dialect,
       dialectOptions,
