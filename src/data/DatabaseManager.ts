@@ -148,19 +148,44 @@ export class DatabaseManager {
     config: IDatabaseConfig,
     logFunc?: (message: any) => void
   ): Sequelize.Sequelize {
+    // 修正老版本的时区问题
+    const timezone =
+      config.timezone === "Asia/Shanghai" ? "+08:00" : config.timezone;
+
+    // 参数
+    const dialectOptions: Object | undefined =
+      config.dialect === "mysql"
+        ? {
+            supportBigNumbers: true,
+            bigNumberStrings: true
+          }
+        : undefined;
+
+    // 定义
+    const define: Sequelize.DefineOptions<any> | undefined =
+      config.dialect === "mysql"
+        ? {
+            charset: "utf8mb4",
+            collate: "utf8mb4_unicode_ci",
+            engine: "InnoDB",
+            freezeTableName: true
+          }
+        : config.dialect === "mssql"
+        ? {
+            freezeTableName: true
+          }
+        : undefined;
+
+    // 创建
     return new Sequelize({
       host: config.host,
       port: config.port,
       username: config.username,
       password: config.password,
       database: config.database,
-      timezone:
-        config.timezone === "Asia/Shanghai" ? "+08:00" : config.timezone,
+      timezone,
       dialect: config.dialect,
-      dialectOptions: {
-        supportBigNumbers: true,
-        bigNumberStrings: true
-      },
+      dialectOptions,
       operatorsAliases: {
         $eq: Sequelize.Op.eq,
         $ne: Sequelize.Op.ne,
@@ -198,12 +223,7 @@ export class DatabaseManager {
         $col: Sequelize.Op.col,
         $raw: Sequelize.Op.raw
       },
-      define: {
-        charset: "utf8mb4",
-        collate: "utf8mb4_unicode_ci",
-        engine: "InnoDB",
-        freezeTableName: true
-      },
+      define,
       query: {
         raw: true
       },
