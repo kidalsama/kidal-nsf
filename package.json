@@ -1,6 +1,6 @@
 {
   "name": "kidal-nsf",
-  "version": "0.18.15",
+  "version": "0.18.16",
   "repository": "https://github.com/kidalsama/kidal-nsf",
   "author": "MCG RND DEPARTMENT",
   "main": "./index.js",
@@ -64,7 +64,7 @@
     "sequelize": "^4.42.1",
     "superagent": "^4.1.0",
     "supertest": "^3.4.2",
-    "tedious": "^8.2.0",
+    "tedious": "^5.0.0",
     "tslint": "^5.14.0",
     "typescript": "^3.6.2",
     "uuid": "^3.3.2",
