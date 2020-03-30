@@ -153,28 +153,26 @@ export class DatabaseManager {
       config.timezone === "Asia/Shanghai" ? "+08:00" : config.timezone;
 
     // 参数
-    const dialectOptions: Object | undefined =
-      config.dialect === "mysql"
-        ? {
-            supportBigNumbers: true,
-            bigNumberStrings: true
-          }
-        : undefined;
+    const dialectOptions: Object | undefined = config.dialectOptions
+      ? config.dialectOptions
+      : config.dialect === "mysql"
+      ? {
+          supportBigNumbers: true,
+          bigNumberStrings: true
+        }
+      : undefined;
 
     // 定义
-    const define: Sequelize.DefineOptions<any> | undefined =
-      config.dialect === "mysql"
-        ? {
-            charset: "utf8mb4",
-            collate: "utf8mb4_unicode_ci",
-            engine: "InnoDB",
-            freezeTableName: true
-          }
-        : config.dialect === "mssql"
-        ? {
-            freezeTableName: true
-          }
-        : undefined;
+    const define: Sequelize.DefineOptions<any> | undefined = config.define
+      ? config.define
+      : config.dialect === "mysql"
+      ? {
+          charset: "utf8mb4",
+          collate: "utf8mb4_unicode_ci",
+          engine: "InnoDB",
+          freezeTableName: true
+        }
+      : undefined;
 
     // 创建
     return new Sequelize(config.database, config.username, config.password, {

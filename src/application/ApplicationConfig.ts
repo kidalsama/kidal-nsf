@@ -168,12 +168,14 @@ export interface IDatabaseConfig {
   alias?: string;
   pathToScan?: string;
   dialect: string;
+  dialectOptions?: any;
   host: string;
   port: number;
   username: string;
   password: string;
   database: string;
   timezone: string;
+  define?: any;
   disableMigration?: boolean;
   enableAutoUpdateChangedFields?: boolean;
 }
@@ -211,6 +213,12 @@ const completeDatabaseConfig = (key: string, config: any): IDatabaseConfig => {
       "**/entity/**/*.js"
     ),
     dialect: orElse(`server.databaseMap:${key}`, config, "dialect", "mysql"),
+    dialectOptions: orElse(
+      `server.databaseMap:${key}`,
+      config,
+      "dialectOptions",
+      undefined
+    ),
     host: orElse(`server.databaseMap:${key}`, config, "host", "192.168.93.222"),
     port: orElse(`server.databaseMap:${key}`, config, "port", 3306),
     username: orElse(`server.databaseMap:${key}`, config, "username", "mcg"),
@@ -227,6 +235,7 @@ const completeDatabaseConfig = (key: string, config: any): IDatabaseConfig => {
       "dev_node_server_foundation"
     ),
     timezone: orElse(`server.databaseMap:${key}`, config, "timezone", "+08:00"),
+    define: orElse(`server.databaseMap:${key}`, config, "define", undefined),
     disableMigration: orElse(
       `server.databaseMap:${key}`,
       config,
