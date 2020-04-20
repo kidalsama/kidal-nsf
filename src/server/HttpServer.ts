@@ -87,7 +87,7 @@ export default class HttpServer {
         origin: (requestOrigin, callback) => {
           callback(null, true);
         },
-        credentials: true
+        credentials: true,
       })
     );
 
@@ -105,10 +105,10 @@ export default class HttpServer {
     // TODO: 应当在cluster模块注册这个
     this.expressApp.post("/.nsf/rpc", (req, res) => {
       Rpc.S.httpCallLocalProcedure(req.body)
-        .then(ret => {
+        .then((ret) => {
           res.status(200).json(ret);
         })
-        .catch(e => {
+        .catch((e) => {
           if (e instanceof LudmilaError) {
             res
               .status(200)
@@ -117,11 +117,9 @@ export default class HttpServer {
             if (HttpServer.LOG.isDebugEnabled()) {
               HttpServer.LOG.error(e);
             }
-            res
-              .status(200)
-              .json({
-                error: { code: LudmilaErrors.FAIL, message: e.message }
-              });
+            res.status(200).json({
+              error: { code: LudmilaErrors.FAIL, message: e.message },
+            });
           }
         });
     });
@@ -229,18 +227,20 @@ export default class HttpServer {
     // 读取网卡的IP
     const networkInterfaces = os.networkInterfaces();
 
-    for (const networkInterfaceKey in networkInterfaces) {
-      if (!networkInterfaces.hasOwnProperty(networkInterfaceKey)) {
-        continue;
-      }
-      const networkInterface = networkInterfaces[networkInterfaceKey];
-      for (const alias of networkInterface) {
-        if (
-          alias.family === "IPv4" &&
-          alias.address !== "127.0.0.1" &&
-          !alias.internal
-        ) {
-          return alias.address;
+    if (networkInterfaces) {
+      for (const networkInterfaceKey in networkInterfaces) {
+        if (!networkInterfaces.hasOwnProperty(networkInterfaceKey)) {
+          continue;
+        }
+        const networkInterface = networkInterfaces[networkInterfaceKey];
+        for (const alias of networkInterface) {
+          if (
+            alias.family === "IPv4" &&
+            alias.address !== "127.0.0.1" &&
+            !alias.internal
+          ) {
+            return alias.address;
+          }
         }
       }
     }
