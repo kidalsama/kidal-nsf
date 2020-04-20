@@ -233,13 +233,15 @@ export default class HttpServer {
           continue;
         }
         const networkInterface = networkInterfaces[networkInterfaceKey];
-        for (const alias of networkInterface) {
-          if (
-            alias.family === "IPv4" &&
-            alias.address !== "127.0.0.1" &&
-            !alias.internal
-          ) {
-            return alias.address;
+        if (networkInterface) {
+          for (const alias of networkInterface) {
+            if (
+              alias.family === "IPv4" &&
+              alias.address !== "127.0.0.1" &&
+              !alias.internal
+            ) {
+              return alias.address;
+            }
           }
         }
       }
