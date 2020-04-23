@@ -1,4 +1,5 @@
 import * as lodash from "lodash";
+import yaml from "yaml";
 import { col, FindOptionsOrderArray, fn, literal } from "sequelize";
 
 export default {
@@ -54,7 +55,7 @@ export default {
     const orderValues: Array<
       string | col | literal | FindOptionsOrderArray | fn
     > = [];
-    values.forEach(instruction => {
+    values.forEach((instruction) => {
       let orderValue;
       if (instruction.startsWith(".") && builder) {
         orderValue = builder(instruction);
@@ -83,7 +84,7 @@ export default {
       return val;
     }
     if (lodash.isArray(val)) {
-      return { $like: val.map(it => `%${it}%`) };
+      return { $or: val.map((it: string) => ({ $like: `%${it}%` })) };
     } else {
       return { $like: `%${val}%` };
     }
@@ -106,5 +107,19 @@ export default {
     } else {
       return { $between: [val[0], val[1]] };
     }
-  }
+  },
+
+  /** */
+  yamlToAny<T>(s: string | null | undefined, defaultValue: T): T {
+    try {
+      return s && s !== "" ? yaml.parse(s) : {};
+    } catch (e) {
+      return defaultValue;
+    }
+  },
+
+  /** */
+  anyToYaml<T>(s: T | null | undefined): string {
+    return s ? yaml.stringify(s) : "";
+  },
 };
