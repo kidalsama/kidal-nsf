@@ -108,7 +108,7 @@ export default {
   /** */
   yamlToAny<T>(s: string | null | undefined, defaultValue: T): T {
     try {
-      return s && s !== "" ? yaml.parse(s) : {};
+      return s && s.trim() !== "" ? yaml.parse(s) : defaultValue;
     } catch (e) {
       return defaultValue;
     }

@@ -1,6 +1,6 @@
 {
   "name": "kidal-nsf",
-  "version": "0.19.1",
+  "version": "0.19.2",
   "repository": "https://github.com/kidalsama/kidal-nsf",
   "author": "MCG RND DEPARTMENT",
   "main": "./index.js",
