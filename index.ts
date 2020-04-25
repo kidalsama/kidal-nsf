@@ -10,13 +10,13 @@ export {
   IClusterConfig,
   IClusterZookeeperConfig,
   IJavaClusterEndpoint,
-  mergeConfig
+  mergeConfig,
 } from "./src/application//ApplicationConfig";
 
 export {
   default as Environment,
   default as Env,
-  IFoundationConfig
+  IFoundationConfig,
 } from "./src/application//Environment";
 
 export { default as Logs } from "./src/application//Logs";
@@ -26,7 +26,7 @@ export * from "./src/application//bind/ConfigValue";
 export {
   default as DiscoveryClient,
   INodeData,
-  INode
+  INode,
 } from "./src/cluster/DiscoveryClient";
 
 export { default as Rpc } from "./src/cluster/Rpc";
@@ -36,24 +36,15 @@ export { default as Database } from "./src/data/Database";
 export * from "./src/data/DatabaseManager";
 export { default as DatabaseUtils } from "./src/data/DatabaseUtils";
 
-export { EntityEvents } from "./src/data/EntityEvents";
-
-export {
-  EntityLoadOneFunction,
-  EntityLoadManyFunction
-} from "./src/data/EntityFunction";
-
 export { IDatabaseInitializer } from "./src/data/IDatabaseInitializer";
 
 export {
   IEntityBase,
   IEntityMigration,
-  IEntityRegistry
+  IEntityRegistry,
 } from "./src/data/IEntity";
 
-export { default as IEntityCache } from "./src/data/IEntityCache";
-
-export { IMigration } from "./src/data/Migration";
+export { Migration } from "./src/data/Migration";
 
 export { default as LudmilaError } from "./src/error/LudmilaError";
 
@@ -85,19 +76,19 @@ export { default as GraphQLUtils } from "./src/server/graphql/GraphQLUtils";
 
 export {
   default as IGraphQLContext,
-  IGraphQLInnerContext
+  IGraphQLInnerContext,
 } from "./src/server/graphql/IGraphQLContext";
 
 export * from "./src/server/websocket/WebSocketLogoutReason";
 export {
   IPayloadData,
   IPayload,
-  WebSocketPayloads
+  WebSocketPayloads,
 } from "./src/server/websocket/WebSocketPayloads";
 
 export {
   default as WebSocketServer,
-  WebSocketMessageHandler
+  WebSocketMessageHandler,
 } from "./src/server/websocket/WebSocketServer";
 
 export { default as WebSocketSession } from "./src/server/websocket/WebSocketSession";

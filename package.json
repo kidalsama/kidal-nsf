@@ -9,7 +9,7 @@
     "postinstall": "tsc -p .",
     "lint": "tslint './**/*.ts' -c tslint.json -e './node_modules/**/*.ts'",
     "build": "tsc -p .",
-    "test": "./petest-init-database.sh && jest --runInBand --forceExit --detectOpenHandles",
+    "test": "./pretest-init-database.sh && jest --runInBand --forceExit --detectOpenHandles",
     "test:basic": "jest --runInBand --forceExit --detectOpenHandles --config=jest-basic.config.js",
     "test:ioc": "jest --runInBand --forceExit --detectOpenHandles --config=jest-ioc.config.js",
     "test:server": "jest --runInBand --forceExit --detectOpenHandles --config=jest-server.config.js",
@@ -21,6 +21,7 @@
   "dependencies": {
     "@babel/core": "7.9.0",
     "@babel/preset-env": "7.9.5",
+    "@types/bluebird": "3.5.30",
     "@types/cookie-parser": "1.4.2",
     "@types/cors": "2.8.6",
     "@types/express": "4.17.6",
@@ -34,7 +35,6 @@
     "@types/node": "11.15.11",
     "@types/node-fetch": "2.5.6",
     "@types/node-zookeeper-client": "0.2.7",
-    "@types/sequelize": "4.28.8",
     "@types/supertest": "2.0.8",
     "@types/uuid": "3.4.8",
     "@types/ws": "6.0.4",
@@ -55,20 +55,22 @@
     "log4js": "3.0.6",
     "md5": "2.2.1",
     "merge-graphql-schemas": "1.7.8",
-    "mysql2": "1.7.0",
     "node-fetch": "2.6.0",
     "node-zookeeper-client": "0.2.3",
     "prettier": "2.0.4",
     "reflect-metadata": "0.1.13",
     "require-glob": "3.2.0",
-    "sequelize": "4.44.4",
+    "sequelize": "5.21.7",
     "superagent": "4.1.0",
     "supertest": "3.4.2",
-    "tedious": "5.0.3",
     "tslint": "5.20.1",
     "typescript": "3.8.3",
     "uuid": "3.4.0",
     "ws": "6.2.1",
     "yaml": "1.8.3"
+  },
+  "devDependencies": {
+    "mysql2": "1.7.0",
+    "tedious": "6.0.0"
   }
 }

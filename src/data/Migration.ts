@@ -1,18 +1,18 @@
-import {IEntityBase} from "./IEntity";
+import { IEntityBase } from "./IEntity";
 import Database from "./Database";
 import Sequelize from "sequelize";
 
-export interface IMigration extends IEntityBase<number> {
-  id: number;
-  modelName: string;
-  migrationName: string;
-  createdAt: Date;
-  updatedAt: Date;
+export class Migration extends Sequelize.Model<number, Migration>
+  implements IEntityBase<number> {
+  public id: number;
+  public modelName: string;
+  public migrationName: string;
+  public createdAt: Date;
+  public updatedAt: Date;
 }
 
-export const createMigrationModel = async (database: Database): Promise<Sequelize.Model<IMigration, any>> => {
-  const model = database.sequelize.define<IMigration, any>(
-    "migration",
+export function initializeMigrationModel(database: Database) {
+  Migration.init(
     {
       id: {
         type: Sequelize.INTEGER,
@@ -29,6 +29,7 @@ export const createMigrationModel = async (database: Database): Promise<Sequeliz
       },
     },
     {
+      modelName: "migration",
       indexes: [
         {
           name: "unique_modelName_migrationName",
@@ -36,7 +37,8 @@ export const createMigrationModel = async (database: Database): Promise<Sequeliz
           fields: ["modelName", "migrationName"],
         },
       ],
-    });
-  await model.sync()
-  return model
+      sequelize: database.sequelize,
+    }
+  );
+  Migration.sync();
 }

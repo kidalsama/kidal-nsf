@@ -2,40 +2,23 @@ import Sequelize = require("sequelize");
 import Logs from "../application/Logs";
 import Environment from "../application/Environment";
 import { IEntityBase, IEntityMigration, IEntityRegistry } from "./IEntity";
-import EntityCacheImpl from "./EntityCacheImpl";
 import * as events from "events";
 import { IDatabaseConfig } from "../application/ApplicationConfig";
-import IEntityCache from "./IEntityCache";
-import { createMigrationModel, IMigration } from "./Migration";
 import { Component } from "../ioc/Annotation";
 import glob from "glob";
 import PathUtils from "../util/PathUtils";
 import { IDatabaseInitializer } from "./IDatabaseInitializer";
+import { initializeMigrationModel, Migration } from "./Migration";
 
 /**
  * @author tengda
  */
 @Component
 export default class Database extends events.EventEmitter {
-  /**
-   * 日志
-   */
-  private static readonly LOG = Logs.S.getFoundationLogger(
-    __dirname,
-    "Database"
-  );
+  private readonly log = Logs.S.getFoundationLogger(__dirname, "Database");
 
-  private _migrationModel?: Sequelize.Model<IMigration, any>;
-  private readonly cacheMap: Map<string, IEntityCache<any, any>> = new Map();
-  private readonly modelMap: Map<string, Sequelize.Model<any, any>> = new Map();
-  private readonly registryMap: Map<
-    string,
-    IEntityRegistry<any, any>
-  > = new Map();
-
-  public get migrationModel(): Sequelize.Model<IMigration, any> {
-    return this._migrationModel!;
-  }
+  private readonly modelMap: Map<string, typeof Sequelize.Model> = new Map();
+  private readonly registryMap = new Map<string, IEntityRegistry<any, any>>();
 
   /**
    *
@@ -57,26 +40,12 @@ export default class Database extends events.EventEmitter {
   }
 
   /**
-   * 获取缓存
-   */
-  public getCache<
-    TKey extends number | string,
-    TEntity extends IEntityBase<TKey>
-  >(name: string): IEntityCache<TKey, TEntity> {
-    const cache = this.cacheMap.get(name);
-    if (!cache) {
-      throw new Error(`Entity cache ${name} not found`);
-    }
-    return cache;
-  }
-
-  /**
    * 获取模型
    */
   public getModel<
     TKey extends number | string,
     TEntity extends IEntityBase<TKey>
-  >(name: string): Sequelize.Model<TEntity, any> {
+  >(name: string): typeof Sequelize.Model {
     const model = this.modelMap.get(name);
     if (!model) {
       throw new Error(`Entity model ${name} not found`);
@@ -108,25 +77,16 @@ export default class Database extends events.EventEmitter {
       const name = registry.model.name;
 
       // 检查
-      if (this.cacheMap.has(name)) {
-        throw new Error(`Entity cache for model ${name} already registered`);
+      if (this.modelMap.has(name)) {
+        throw new Error(`Entity model ${name} already registered`);
       }
 
-      // 创建缓存
-      const cache = new EntityCacheImpl(this, registry.model);
-
       // 保存参数
-      this.cacheMap.set(name, cache);
       this.modelMap.set(name, registry.model);
       this.registryMap.set(name, registry);
 
-      // 初始化
-      Reflect.set(registry, "cache", cache);
-
       // log
-      if (Database.LOG.isDebugEnabled()) {
-        Database.LOG.debug(`Registered cache: ${name}`);
-      }
+      this.log.debug(`Registered cache: ${name}`);
     }
   }
 
@@ -138,11 +98,11 @@ export default class Database extends events.EventEmitter {
     }
 
     // 创建迁移记录模型
-    this._migrationModel = await createMigrationModel(this);
+    await initializeMigrationModel(this);
 
     // 读取全部迁移记录并分类
-    const allMigrations = await this.migrationModel.findAll();
-    const ranDict: Map<string, IMigration[]> = new Map();
+    const allMigrations: Migration[] = await Migration.findAll();
+    const ranDict: Map<string, Migration[]> = new Map();
     for (const m of allMigrations) {
       const list = ranDict.get(m.modelName) || [];
       list.push(m);
@@ -176,13 +136,13 @@ export default class Database extends events.EventEmitter {
 
   // 升级单个模型
   private async migrateUpSingleModel(
-    ran: IMigration[],
+    ran: Migration[],
     modelName: string,
     migrations: { [key: string]: IEntityMigration }
   ) {
     for (const migrationName in migrations) {
       // 跳过已经迁移过的
-      if (ran.find((it: IMigration) => it.migrationName === migrationName)) {
+      if (ran.find((it: Migration) => it.migrationName === migrationName)) {
         continue;
       }
 
@@ -190,7 +150,7 @@ export default class Database extends events.EventEmitter {
       await migrations[migrationName].up();
 
       // 记录
-      await this.migrationModel.create({ modelName, migrationName });
+      await Migration.create({ modelName, migrationName });
     }
   }
 

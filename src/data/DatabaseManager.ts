@@ -3,7 +3,7 @@ import Logs from "../application/Logs";
 import Database from "./Database";
 import Environment from "../application/Environment";
 import { IDatabaseConfig } from "../application/ApplicationConfig";
-import Sequelize from "sequelize";
+import Sequelize, { ModelOptions } from "sequelize";
 import PathUtils from "../util/PathUtils";
 import * as fs from "fs";
 import { IDatabaseInitializer } from "./IDatabaseInitializer";
@@ -13,21 +13,13 @@ import { IDatabaseInitializer } from "./IDatabaseInitializer";
  */
 @Service
 export class DatabaseManager {
-  /**
-   * 日志
-   */
-  private static readonly LOG = Logs.S.getFoundationLogger(
+  private readonly log = Logs.S.getFoundationLogger(
     __dirname,
     "DatabaseManager"
   );
-  /**
-   * 数据库列表
-   */
   private readonly databaseMap: Map<string, Database> = new Map();
 
-  /**
-   *
-   */
+  /** */
   public constructor(@Autowired public readonly env: Environment) {}
 
   /**
@@ -74,10 +66,10 @@ export class DatabaseManager {
       await sequelize.authenticate();
 
       // 日志
-      if (DatabaseManager.LOG.isInfoEnabled()) {
-        const options = sequelize.options;
-        DatabaseManager.LOG.info(
-          `Connect database ${options.dialect}://${options.host}:${options.port}/${options.database} successful`
+      if (this.log.isInfoEnabled()) {
+        const config = sequelize.config;
+        this.log.info(
+          `Connect database ${config.protocol}://${config.host}:${config.port}/${config.database} successful`
         );
       }
 
@@ -121,7 +113,7 @@ export class DatabaseManager {
       try {
         await database.shutdown();
       } catch (e) {
-        DatabaseManager.LOG.warn(e);
+        this.log.warn(e);
       }
     }
   }
@@ -146,7 +138,7 @@ export class DatabaseManager {
    */
   public createSequelize(
     config: IDatabaseConfig,
-    logFunc?: (message: any) => void
+    logFunc?: (sql: string, timing?: number) => void
   ): Sequelize.Sequelize {
     // 修正老版本的时区问题
     const timezone =
@@ -158,31 +150,31 @@ export class DatabaseManager {
       : config.dialect === "mysql"
       ? {
           supportBigNumbers: true,
-          bigNumberStrings: true
+          bigNumberStrings: true,
         }
       : undefined;
 
     // 定义
-    const define: Sequelize.DefineOptions<any> | undefined = config.define
+    const define: Sequelize.ModelOptions = config.define
       ? config.define
       : config.dialect === "mysql"
       ? {
           charset: "utf8mb4",
           collate: "utf8mb4_unicode_ci",
           engine: "InnoDB",
-          freezeTableName: true
+          freezeTableName: true,
         }
       : undefined;
 
     // 创建
-    return new Sequelize({
+    return new Sequelize.Sequelize({
       host: config.host,
       port: config.port,
       username: config.username,
       password: config.password,
       database: config.database,
       timezone,
-      dialect: config.dialect,
+      dialect: config.dialect as Sequelize.Dialect,
       dialectOptions,
       operatorsAliases: {
         $eq: Sequelize.Op.eq,
@@ -219,25 +211,24 @@ export class DatabaseManager {
         $all: Sequelize.Op.all,
         $values: Sequelize.Op.values,
         $col: Sequelize.Op.col,
-        $raw: Sequelize.Op.raw
       },
       define,
       query: {
-        raw: true
+        raw: true,
       },
       pool: {
         max: 10,
         min: 0,
         acquire: 5 * 1000, // 等待多少毫秒后拿不到连接抛异常
-        idle: 10 * 1000 // 最长线程空闲时间
+        idle: 10 * 1000, // 最长线程空闲时间
       },
-      logging: (message: any) => {
+      logging: (sql: string, timing?: number) => {
         if (logFunc) {
-          logFunc(message);
+          logFunc(sql, timing);
         } else {
-          DatabaseManager.LOG.trace(message);
+          this.log.trace(sql, timing);
         }
-      }
+      },
     });
   }
 }

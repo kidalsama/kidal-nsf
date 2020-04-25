@@ -1,6 +1,6 @@
 import * as lodash from "lodash";
 import yaml from "yaml";
-import { col, FindOptionsOrderArray, fn, literal } from "sequelize";
+import { OrderItem } from "sequelize";
 
 export default {
   /**
@@ -45,18 +45,14 @@ export default {
   normalizeOrderValues(
     values: string[] | undefined | null,
     allows?: string[],
-    builder?: (
-      instruction: string
-    ) => string | col | literal | FindOptionsOrderArray | fn | undefined
-  ): Array<string | col | literal | FindOptionsOrderArray | fn> {
+    builder?: (instruction: string) => OrderItem
+  ): Array<OrderItem> {
     if (values === undefined || values === null || values.length === 0) {
       return [];
     }
-    const orderValues: Array<
-      string | col | literal | FindOptionsOrderArray | fn
-    > = [];
+    const orderValues: Array<OrderItem> = [];
     values.forEach((instruction) => {
-      let orderValue;
+      let orderValue: OrderItem | undefined;
       if (instruction.startsWith(".") && builder) {
         orderValue = builder(instruction);
       } else {
