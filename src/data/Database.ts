@@ -63,7 +63,7 @@ export default class Database extends events.EventEmitter {
     // 注册缓存
     const registryList: Array<IEntityRegistry<any, any>> = glob
       .sync(PathUtils.path.join(this.env.srcDir, this.config.pathToScan))
-      .map((it: string) => require(it).default)
+      .map((it: string) => require(it).registry)
       .filter((it: any) => !!it);
 
     // 创建缓存

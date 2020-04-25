@@ -6,7 +6,7 @@ describe("Basic: IEntityCache", () => {
   beforeAll(async () => {
     await Application.runTest("basic", "test-database");
     User = require("../../test-services/basic/src/module/user/entity/User")
-      .default;
+      .registry;
   });
 
   afterAll(async () => {

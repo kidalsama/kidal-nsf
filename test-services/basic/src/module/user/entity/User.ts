@@ -10,7 +10,8 @@ import { DatabaseManager } from "../../../../../../src/data/DatabaseManager";
 import { Lazy } from "../../../../../../src/ioc/Lazy";
 import { Container } from "../../../../../../src/ioc/Container";
 
-export class UserModel extends Sequelize.Model implements IEntityBase<number> {
+export default class UserModel extends Sequelize.Model
+  implements IEntityBase<number> {
   id: number;
   username: string;
   password: string;
@@ -77,4 +78,4 @@ class Registry implements IEntityRegistry<number, UserModel> {
   };
 }
 
-export default Container.get(Registry);
+export const registry = Container.get(Registry);

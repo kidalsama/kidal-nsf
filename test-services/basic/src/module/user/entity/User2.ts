@@ -10,7 +10,8 @@ import { Autowired, Component } from "../../../../../../src/ioc/Annotation";
 import { Lazy } from "../../../../../../src/ioc/Lazy";
 import { Container } from "../../../../../../src/ioc/Container";
 
-export class User2Model extends Sequelize.Model implements IEntityBase<number> {
+export default class User2Model extends Sequelize.Model
+  implements IEntityBase<number> {
   id: number;
   username: string;
   password: string;
@@ -65,4 +66,4 @@ class Registry implements IEntityRegistry<number, User2Model> {
   }
 }
 
-export default Container.get(Registry);
+export const registry = Container.get(Registry);
