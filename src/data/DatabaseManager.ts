@@ -226,7 +226,8 @@ export class DatabaseManager {
         if (logFunc) {
           logFunc(sql, timing);
         } else {
-          this.log.trace(sql, timing);
+          // this.log.trace(sql, timing);
+          this.log.trace(sql);
         }
       },
     });
