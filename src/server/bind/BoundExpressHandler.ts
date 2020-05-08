@@ -1,6 +1,6 @@
 import * as Express from "express";
 import * as _ from "lodash";
-import {MetadataKeys} from "./ServerBindingRegistry";
+import { MetadataKeys } from "./ServerBindingRegistry";
 
 /**
  * 转换类型
@@ -8,31 +8,31 @@ import {MetadataKeys} from "./ServerBindingRegistry";
 function convert(val: any, to: Function) {
   // 空参数原样返回
   if (val === undefined || val === null) {
-    return val
+    return val;
   }
 
   // 如果值不是字符串则可能已经被自定义转换方法转换过了
   if (typeof val !== "string") {
-    return val
+    return val;
   }
 
   // 布尔
   if (to === Boolean) {
-    return ["true", "1", "✔"].includes(val)
+    return ["true", "1", "✔"].includes(val);
   }
 
   // 数字
   if (to === Number) {
-    return Number(val)
+    return Number(val);
   }
 
   // 对象
   if (to === Object) {
-    return JSON.parse(val)
+    return JSON.parse(val);
   }
 
   // 字符串直接返回
-  return val
+  return val;
 }
 
 /**
@@ -45,110 +45,177 @@ export function createHandlers(
   funcName: string,
   beforeAllHook?: Express.Handler,
   afterAllHook?: Express.Handler,
-  onErrorHook?: Express.ErrorRequestHandler,
+  onErrorHook?: Express.ErrorRequestHandler
 ): Express.Handler[] {
   // 钩子
-  const middlewareHook: Express.Handler | Express.Handler[] | undefined =
-    Reflect.getMetadata(MetadataKeys.Middleware, controllerType.prototype, funcName)
-  const beforeHook: Express.Handler | undefined =
-    Reflect.getMetadata(MetadataKeys.Before, controllerType.prototype, funcName)
-  const afterHook: Express.Handler | undefined =
-    Reflect.getMetadata(MetadataKeys.After, controllerType.prototype, funcName)
+  const middlewareHook:
+    | Express.Handler
+    | Express.Handler[]
+    | undefined = Reflect.getMetadata(
+    MetadataKeys.Middleware,
+    controllerType.prototype,
+    funcName
+  );
+  const beforeHook: Express.Handler | undefined = Reflect.getMetadata(
+    MetadataKeys.Before,
+    controllerType.prototype,
+    funcName
+  );
+  const afterHook: Express.Handler | undefined = Reflect.getMetadata(
+    MetadataKeys.After,
+    controllerType.prototype,
+    funcName
+  );
 
   // 元数据
-  const parameterTypes = Reflect.getMetadata("design:paramtypes", controllerType.prototype, funcName)
-  const param = Reflect.getMetadata(MetadataKeys.Param, controllerType.prototype, funcName)
-  const queryParam = Reflect.getMetadata(MetadataKeys.QueryParam, controllerType.prototype, funcName)
-  const bodyParam = Reflect.getMetadata(MetadataKeys.BodyParam, controllerType.prototype, funcName)
-  const query = Reflect.getMetadata(MetadataKeys.Query, controllerType.prototype, funcName)
-  const body = Reflect.getMetadata(MetadataKeys.Body, controllerType.prototype, funcName)
-  const httpRequest = Reflect.getMetadata(MetadataKeys.HttpRequest, controllerType.prototype, funcName)
-  const httpResponse = Reflect.getMetadata(MetadataKeys.HttpResponse, controllerType.prototype, funcName)
-  const nextFunc = Reflect.getMetadata(MetadataKeys.Next, controllerType.prototype, funcName)
+  const parameterTypes = Reflect.getMetadata(
+    "design:paramtypes",
+    controllerType.prototype,
+    funcName
+  );
+  const param = Reflect.getMetadata(
+    MetadataKeys.Param,
+    controllerType.prototype,
+    funcName
+  );
+  const queryParam = Reflect.getMetadata(
+    MetadataKeys.QueryParam,
+    controllerType.prototype,
+    funcName
+  );
+  const bodyParam = Reflect.getMetadata(
+    MetadataKeys.BodyParam,
+    controllerType.prototype,
+    funcName
+  );
+  const query = Reflect.getMetadata(
+    MetadataKeys.Query,
+    controllerType.prototype,
+    funcName
+  );
+  const body = Reflect.getMetadata(
+    MetadataKeys.Body,
+    controllerType.prototype,
+    funcName
+  );
+  const httpRequest = Reflect.getMetadata(
+    MetadataKeys.HttpRequest,
+    controllerType.prototype,
+    funcName
+  );
+  const httpResponse = Reflect.getMetadata(
+    MetadataKeys.HttpResponse,
+    controllerType.prototype,
+    funcName
+  );
+  const nextFunc = Reflect.getMetadata(
+    MetadataKeys.Next,
+    controllerType.prototype,
+    funcName
+  );
 
   const handler: Express.Handler = (req, res, next) => {
     // nex需要使用控制器错误处理方法给钩住
     if (onErrorHook) {
-      const originalNext = next
-      next = (err?: Error) => {
+      const originalNext = next;
+      next = (err?: any) => {
         if (err) {
-          onErrorHook.apply(controller, [err, req, res, originalNext])
+          onErrorHook.apply(controller, [err, req, res, originalNext]);
         } else {
-          originalNext()
+          originalNext();
         }
-      }
+      };
     }
 
     // 获取参数
-    const args: any = []
+    const args: any = [];
     // Path param
     if (param && req.params) {
       Object.keys(param).map(
-        (key) => args[param[key]] = convert(req.params[key], parameterTypes[param[key]]))
+        (key) =>
+          (args[param[key]] = convert(
+            req.params[key],
+            parameterTypes[param[key]]
+          ))
+      );
     }
     // Query param
     if (queryParam && req.query) {
       Object.keys(queryParam).map(
-        (key) => args[queryParam[key]] = convert(req.query[key], parameterTypes[queryParam[key]]))
+        (key) =>
+          (args[queryParam[key]] = convert(
+            req.query[key],
+            parameterTypes[queryParam[key]]
+          ))
+      );
     }
     // Body param
     if (bodyParam && req.body) {
       Object.keys(bodyParam).map(
-        (key) => args[bodyParam[key]] = convert(req.body[key], parameterTypes[bodyParam[key]]))
+        (key) =>
+          (args[bodyParam[key]] = convert(
+            req.body[key],
+            parameterTypes[bodyParam[key]]
+          ))
+      );
     }
     // Query data
     if (query) {
-      query.map((index: number) => args[index] = req.query)
+      query.map((index: number) => (args[index] = req.query));
     }
     // Body data
     if (body) {
-      body.map((index: number) => args[index] = req.body)
+      body.map((index: number) => (args[index] = req.body));
     }
     // Http request
     if (httpRequest) {
-      httpRequest.map((index: number) => args[index] = req)
+      httpRequest.map((index: number) => (args[index] = req));
     }
     // Http response
     if (httpResponse) {
-      httpResponse.map((index: number) => args[index] = res)
+      httpResponse.map((index: number) => (args[index] = res));
     }
     // Next function
     if (nextFunc) {
-      nextFunc.map((index: number) => args[index] = next)
+      nextFunc.map((index: number) => (args[index] = next));
     }
 
     (async (): Promise<any> => {
       // 前置钩子
       if (beforeAllHook && typeof beforeAllHook === "function") {
-        await Promise.resolve(beforeAllHook.apply(controller, [req, res, next]))
+        await Promise.resolve(
+          beforeAllHook.apply(controller, [req, res, next])
+        );
       }
       if (beforeHook && typeof beforeHook === "function") {
-        await Promise.resolve(beforeHook.apply(controller, [req, res, next]))
+        await Promise.resolve(beforeHook.apply(controller, [req, res, next]));
       }
 
       // 本体
-      const resp: any = await Promise.resolve(func.apply(controller, args))
+      const resp: any = await Promise.resolve(func.apply(controller, args));
 
       // 前置钩子
       if (afterHook && typeof afterHook === "function") {
-        await Promise.resolve(afterHook.apply(controller, [req, res, next]))
+        await Promise.resolve(afterHook.apply(controller, [req, res, next]));
       }
       if (afterAllHook && typeof afterAllHook === "function") {
-        await Promise.resolve(afterAllHook.apply(controller, [req, res, next]))
+        await Promise.resolve(afterAllHook.apply(controller, [req, res, next]));
       }
 
       // 应答
       if (_.isUndefined(resp) || _.isNull(resp)) {
-        res.end()
+        res.end();
       } else if (_.isObject(resp)) {
-        res.json(resp)
+        res.json(resp);
       } else {
-        res.send(resp.toString())
+        res.send(resp.toString());
       }
-    })().then(null, next)
-  }
+    })().then(null, next);
+  };
 
-  return middlewareHook ?
-    (_.isArray(middlewareHook) ? [...middlewareHook, handler] : [middlewareHook, handler]) :
-    [handler]
+  return middlewareHook
+    ? _.isArray(middlewareHook)
+      ? [...middlewareHook, handler]
+      : [middlewareHook, handler]
+    : [handler];
 }
