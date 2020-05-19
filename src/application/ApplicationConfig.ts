@@ -54,7 +54,7 @@ export const completeApplicationConfig = (config: any): IApplicationConfig => {
     server: completeServerConfig(config.server || {}),
     data: completeDataConfig(config.data || {}),
     cluster: completeClusterConfig(config.cluster || {}),
-    settings: config.settings
+    settings: config.settings,
   };
 };
 
@@ -75,7 +75,7 @@ export const completeConfigServerConfig = (config: any): IConfigServer => {
     uri: orElse("configServer", config, "uri", undefined),
     username: orElse("configServer", config, "username", undefined),
     password: orElse("configServer", config, "password", undefined),
-    token: orElse("configServer", config, "token", undefined)
+    token: orElse("configServer", config, "token", undefined),
   };
 };
 
@@ -93,6 +93,7 @@ export interface IHttpServerConfig {
   logError?: boolean;
   pathToScan?: string;
   jsonSpaces?: number;
+  limit?: string;
   graphQLEndpoint?: string;
   graphQLSubscriptionEndpoint?: string;
   webSocketEndpoint?: string;
@@ -107,11 +108,11 @@ const completeServerConfig = (config: any): IServerConfig => {
       "httpServerMap",
       {
         primary: {
-          port: 8080
-        }
+          port: 8080,
+        },
       },
       completeHttpServerConfig
-    )
+    ),
   };
 };
 
@@ -135,6 +136,12 @@ const completeHttpServerConfig = (
       "jsonSpaces",
       undefined
     ),
+    limit: orElse(
+      `server.httpServerMap:${key}`,
+      config,
+      "limit",
+      undefined
+    ),
     graphQLEndpoint: orElse(
       `server.httpServerMap:${key}`,
       config,
@@ -152,7 +159,7 @@ const completeHttpServerConfig = (
       config,
       "webSocketEndpoint",
       undefined
-    )
+    ),
   };
 };
 
@@ -195,11 +202,11 @@ const completeDataConfig = (config: any): IDataConfig => {
           username: "mcg",
           password: "Mcg!2345",
           database: "mcg_games_servers",
-          timezone: "Asia/Shanghai"
-        }
+          timezone: "Asia/Shanghai",
+        },
       },
       completeDatabaseConfig
-    )
+    ),
   };
 };
 
@@ -247,7 +254,7 @@ const completeDatabaseConfig = (key: string, config: any): IDatabaseConfig => {
       config,
       "enableAutoUpdateChangedFields",
       undefined
-    )
+    ),
   };
 };
 
@@ -294,11 +301,11 @@ const completeClusterConfig = (config: any): IClusterConfig => {
       {
         oa: {
           host: "192.168.93.222",
-          port: 22130
-        }
+          port: 22130,
+        },
       },
       completeJavaClusterEndpointConfig
-    )
+    ),
   };
 };
 
@@ -311,7 +318,7 @@ const completeClusterZookeeperConfig = (
       config,
       "connectionString",
       "39.106.136.198:2181"
-    )
+    ),
   };
 };
 
@@ -322,7 +329,7 @@ const completeJavaClusterEndpointConfig = (
   return {
     host: required(`cluster.javaClusterMap:${key}`, config, "host"),
     port: required(`cluster.javaClusterMap:${key}`, config, "port"),
-    path: orElse(`cluster.javaClusterMap:${key}`, config, "path", undefined)
+    path: orElse(`cluster.javaClusterMap:${key}`, config, "path", undefined),
   };
 };
 

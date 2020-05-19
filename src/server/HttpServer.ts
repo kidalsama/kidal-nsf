@@ -67,8 +67,10 @@ export default class HttpServer {
     this.server = http.createServer(this.expressApp);
 
     // 注册Express中间件
-    this.expressApp.use(bodyParser.urlencoded({ extended: false }));
-    this.expressApp.use(bodyParser.json());
+    this.expressApp.use(
+      bodyParser.urlencoded({ extended: false, limit: config.limit })
+    );
+    this.expressApp.use(bodyParser.json({ limit: config.limit }));
     this.expressApp.use(cookieParser());
     this.expressApp.use(helmet());
 
