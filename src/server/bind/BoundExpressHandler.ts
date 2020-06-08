@@ -70,7 +70,7 @@ export function createHandlers(
     // nex需要使用控制器错误处理方法给钩住
     if (onErrorHook) {
       const originalNext = next
-      next = (err?: Error) => {
+      next = (err?: any) => {
         if (err) {
           onErrorHook.apply(controller, [err, req, res, originalNext])
         } else {
