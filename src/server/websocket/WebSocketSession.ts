@@ -6,7 +6,7 @@ import {IPayload, IPayloadData, WebSocketPayloads} from "./WebSocketPayloads";
 import {WebSocketLogoutReason} from "./WebSocketLogoutReason";
 
 /**
- * @author tengda
+ * @author kidal
  */
 export default class WebSocketSession {
   /**

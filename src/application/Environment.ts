@@ -28,7 +28,7 @@ export const DEFAULT_FOUNDATION_CONFIG: IFoundationConfig = {
 }
 
 /**
- * @author tengda
+ * @author kidal
  */
 export default class Environment {
   private static LOG: log4js.Logger;

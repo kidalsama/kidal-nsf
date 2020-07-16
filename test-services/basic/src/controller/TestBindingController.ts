@@ -17,7 +17,7 @@ import {
   RequestMapping,
 } from "../../../../src/server/bind/ControllerBinding";
 import {BaseController} from "./BaseController";
-import LudmilaError from "../../../../src/error/LudmilaError";
+import {LudmilaError} from "../../../../src/error/LudmilaError";
 
 /**
  *
@@ -191,6 +191,6 @@ class TestBindingController extends BaseController {
    */
   @GetMapping("ludmila-error")
   public async ludmilaError() {
-    throw new LudmilaError(1, "testing")
+    throw new LudmilaError({id: 1, code: "1", message: "testing"})
   }
 }

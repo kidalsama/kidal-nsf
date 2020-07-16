@@ -1,16 +1,13 @@
-/**
- * @author tengda
- */
 import Environment from "../application/Environment";
 import {IJavaClusterEndpoint} from "../application/ApplicationConfig";
-import LudmilaError from "../error/LudmilaError";
-import LudmilaErrors from "../error/LudmilaErrors";
+import {LudmilaError} from "../error/LudmilaError";
+import {LudmilaErrors} from "../error/LudmilaErrors";
 import fetch from "node-fetch";
 import md5 from "md5";
 import Logs from "../application/Logs";
 
 /**
- * @author tengda
+ * @author kidal
  */
 export interface IJavaTarget {
   config: IJavaClusterEndpoint,
@@ -19,7 +16,7 @@ export interface IJavaTarget {
 }
 
 /**
- * @author tengda
+ * @author kidal
  */
 export interface IJavaMethod {
   target: IJavaTarget,
@@ -27,7 +24,7 @@ export interface IJavaMethod {
 }
 
 /**
- * @author tengda
+ * @author kidal
  */
 export class JavaRpcInvoker {
   private static readonly LOG = Logs.S.getFoundationLogger(__dirname, "JavaRpcInvoker")
@@ -92,11 +89,11 @@ export class JavaRpcInvoker {
       try {
         error = await resp.json()
       } catch (e) {
-        throw new LudmilaError(LudmilaErrors.CLUSTER_208)
+        throw new LudmilaError(LudmilaErrors.InternalError)
       }
-      throw new LudmilaError(LudmilaErrors.CLUSTER_209, `${error.message}(${error.code})`)
+      throw new LudmilaError(LudmilaErrors.InternalError, `${error.message}(${error.code})`)
     } else if (status !== 200) {
-      throw new LudmilaError(LudmilaErrors.CLUSTER_207)
+      throw new LudmilaError(LudmilaErrors.InternalError)
     }
 
     // 解包返回消息
@@ -121,7 +118,7 @@ export class JavaRpcInvoker {
 }
 
 /**
- * @author tengda
+ * @author kidal
  */
 export default class JavaRpcClientManager {
   public static readonly S = new JavaRpcClientManager()
@@ -132,11 +129,11 @@ export default class JavaRpcClientManager {
   public acquire(endpoint: string): JavaRpcInvoker {
     const map = Environment.S.applicationConfig.cluster.javaClusterMap
     if (!map) {
-      throw new LudmilaError(LudmilaErrors.CLUSTER_203)
+      throw new LudmilaError(LudmilaErrors.InternalError)
     }
     const config: IJavaClusterEndpoint | undefined = map[endpoint]
     if (config === undefined) {
-      throw new LudmilaError(LudmilaErrors.CLUSTER_203)
+      throw new LudmilaError(LudmilaErrors.InternalError)
     }
     return new JavaRpcInvoker(config)
   }

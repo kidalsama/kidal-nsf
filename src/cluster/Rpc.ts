@@ -3,14 +3,14 @@ import * as http from "http";
 import * as LB_Pool from "lb_pool";
 import DiscoveryClient from "./DiscoveryClient";
 import Logs from "../application/Logs";
-import LudmilaError from "../error/LudmilaError";
-import LudmilaErrors from "../error/LudmilaErrors";
+import {LudmilaError} from "../error/LudmilaError";
+import {LudmilaErrors} from "../error/LudmilaErrors";
 import Environment from "../application/Environment";
 import RpcApiManager from "./RpcApiManager";
 import IRpcPayload from "./IRpcPayload";
 
 /**
- * @author tengda
+ * @author kidal
  */
 export default class Rpc {
   // 单例
@@ -83,7 +83,7 @@ export default class Rpc {
     // 获取连接池
     const pool = this._getPool(id)
     if (!pool) {
-      throw new LudmilaError(LudmilaErrors.CLUSTER_201);
+      throw new LudmilaError(LudmilaErrors.InternalError);
     }
 
     // 准备载荷
@@ -105,11 +105,11 @@ export default class Rpc {
         (err: Error | null, res: http.IncomingMessage, bodyString: string | null) => {
           if (err) {
             Rpc.LOG.warn(err);
-            reject(new LudmilaError(LudmilaErrors.CLUSTER_203));
+            reject(new LudmilaError(LudmilaErrors.InternalError));
           } else {
             if (res.statusCode !== 200) {
               Rpc.LOG.error("Rpc response none status 200: %s, %s", res.statusCode, bodyString);
-              reject(new LudmilaError(LudmilaErrors.CLUSTER_202));
+              reject(new LudmilaError(LudmilaErrors.InternalError));
             } else {
               if (bodyString === null) {
                 resolve(undefined);
@@ -119,7 +119,7 @@ export default class Rpc {
                   body = JSON.parse(bodyString);
                 } catch (e) {
                   Rpc.LOG.warn(e);
-                  reject(new LudmilaError(LudmilaErrors.CLUSTER_204));
+                  reject(new LudmilaError(LudmilaErrors.InternalError));
                 }
                 if (body.hasOwnProperty("error")) {
                   reject(new LudmilaError(body.error.code, body.error.message));
@@ -140,7 +140,7 @@ export default class Rpc {
     // 获取定义
     const registry = RpcApiManager.S.getRegistryByModuleMethod(module, method)
     if (!registry) {
-      throw new LudmilaError(LudmilaErrors.CLUSTER_205);
+      throw new LudmilaError(LudmilaErrors.InternalError);
     }
 
     // 处理

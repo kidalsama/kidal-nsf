@@ -11,7 +11,7 @@ import { IDatabaseInitializer } from "./IDatabaseInitializer";
 import { initializeMigrationModel, Migration } from "./Migration";
 
 /**
- * @author tengda
+ * @author kidal
  */
 @Component
 export default class Database extends events.EventEmitter {

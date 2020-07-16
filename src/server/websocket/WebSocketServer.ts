@@ -10,8 +10,8 @@ import {
   PrettyJsonPayloadSerializer,
   WebSocketPayloads,
 } from "./WebSocketPayloads";
-import LudmilaError from "../../error/LudmilaError";
-import LudmilaErrors from "../../error/LudmilaErrors";
+import {LudmilaError} from "../../error/LudmilaError";
+import {LudmilaErrors} from "../../error/LudmilaErrors";
 import uuid = require("uuid");
 
 /**
@@ -21,7 +21,7 @@ export type WebSocketMessageHandler =
   (payload: IPayload, session: WebSocketSession) => Promise<IPayloadData | undefined | void>;
 
 /**
- * @author tengda
+ * @author kidal
  */
 export default class WebSocketServer {
   /**
@@ -204,7 +204,7 @@ export default class WebSocketServer {
       try {
         if (e instanceof LudmilaError) {
           // 准备错误消息体
-          const error = {code: e.code, message: e.message}
+          const error = {code: e.data, message: e.message}
           if (error.message === "") {
             delete error.message
           }
@@ -217,7 +217,7 @@ export default class WebSocketServer {
           WebSocketServer.LOG.error("WebSocket Internal Error")
 
           // 发送错误
-          const data: any = {error: {code: LudmilaErrors.INTERNAL_ERROR}}
+          const data: any = {error: LudmilaErrors.InternalError}
           await session.sendPayload(WebSocketPayloads.createReplyPayload(payload, data))
         }
       } catch (e) {

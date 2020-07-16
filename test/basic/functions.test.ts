@@ -1,7 +1,7 @@
 import Application from "../../src/application/Application";
 import Environment from "../../src/application/Environment";
-import LudmilaError from "../../src/error/LudmilaError";
-import LudmilaErrors from "../../src/error/LudmilaErrors";
+import {LudmilaError} from "../../src/error/LudmilaError";
+import {LudmilaErrors} from "../../src/error/LudmilaErrors";
 import DiscoveryClient from "../../src/cluster/DiscoveryClient";
 import GraphQLUtils from "../../src/server/graphql/GraphQLUtils";
 
@@ -26,7 +26,7 @@ describe("Basic: Functions", () => {
 
   it("Error", async () => {
     try {
-      throw new LudmilaError(LudmilaErrors.FAIL)
+      throw new LudmilaError(LudmilaErrors.Fail)
     } catch (e) {
       // ignored
     }

@@ -1,13 +1,10 @@
-/**
- * @author tengda
- */
 import Logs from "../application/Logs";
-import LudmilaError from "../error/LudmilaError";
-import LudmilaErrors from "../error/LudmilaErrors";
+import {LudmilaError} from "../error/LudmilaError";
+import {LudmilaErrors} from "../error/LudmilaErrors";
 import Maybe from "./Maybe";
 
 /**
- * @author tengda
+ * @author kidal
  */
 export class Passport {
   /**
@@ -46,7 +43,7 @@ export class Passport {
   public static parse(s: Maybe<string>): Passport {
     // 不能为空
     if (!s || s.length === 0) {
-      throw new LudmilaError(LudmilaErrors.INCORRECT_PASSPORT)
+      throw new LudmilaError(LudmilaErrors.IncorrectPassport)
     }
 
     // 解码
@@ -55,12 +52,12 @@ export class Passport {
     // 分割版本和内容
     const pos = ds.indexOf("-")
     if (pos === -1) {
-      throw new LudmilaError(LudmilaErrors.INCORRECT_PASSPORT)
+      throw new LudmilaError(LudmilaErrors.IncorrectPassport)
     }
     const version = ds.substring(0, pos)
     const text = ds.substring(pos + 1)
     if (version.length === 0 || text.length === 1) {
-      throw new LudmilaError(LudmilaErrors.INCORRECT_PASSPORT)
+      throw new LudmilaError(LudmilaErrors.IncorrectPassport)
     }
 
     try {
@@ -70,14 +67,14 @@ export class Passport {
     } catch (e) {
       this.LOG.error(e)
     }
-    throw new LudmilaError(LudmilaErrors.INCORRECT_PASSPORT)
+    throw new LudmilaError(LudmilaErrors.IncorrectPassport)
   }
 
   // 版本 #1
   private static parseVer1(text: string): Passport {
     const parts = text.split("-", 2)
     if (parts.length < 2 || parts[0].length === 0 || parts[1].length === 1) {
-      throw new LudmilaError(LudmilaErrors.INCORRECT_PASSPORT)
+      throw new LudmilaError(LudmilaErrors.IncorrectPassport)
     }
     const [id, token] = parts
     return new Passport(Number(id), token)

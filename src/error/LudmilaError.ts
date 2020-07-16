@@ -1,18 +1,23 @@
 /**
- * @author tengda
+ * 错误数据
  */
-export default class LudmilaError extends Error {
+export type LudmilaErrorData = { id: number, code: string, message: string }
+
+/**
+ * @author kidal
+ */
+export class LudmilaError extends Error {
   /**
    * 错误码
    */
-  public readonly code: string | number;
+  public readonly data: LudmilaErrorData;
 
   /**
    *
    */
-  constructor(code: string | number, message?: string) {
+  constructor(data: LudmilaErrorData, message?: string) {
     super(message);
-    this.code = code;
+    this.data = data;
     Error.captureStackTrace(this, this.constructor)
   }
 }

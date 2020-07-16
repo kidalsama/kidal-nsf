@@ -2,7 +2,7 @@ import Sequelize = require("sequelize");
 import Database from "./Database";
 
 /**
- * @author tengda
+ * @author kidal
  */
 export interface IEntityBase<TKey extends number | string> {
   /**
@@ -12,7 +12,7 @@ export interface IEntityBase<TKey extends number | string> {
 }
 
 /**
- * @author tengda
+ * @author kidal
  */
 export interface IEntityMigration {
   /**
@@ -26,7 +26,7 @@ export interface IEntityMigration {
 }
 
 /**
- * @author tengda
+ * @author kidal
  */
 export interface IEntityRegistry<
   TKey extends number | string,

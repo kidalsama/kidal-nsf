@@ -1,25 +1,25 @@
 import * as bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import express from "express";
-import { NextFunction, Request, Response } from "express-serve-static-core";
+import {NextFunction, Request, Response} from "express-serve-static-core";
 import * as http from "http";
 import Logs from "../application/Logs";
 import Environment from "../application/Environment";
 import * as os from "os";
 import Rpc from "../cluster/Rpc";
-import LudmilaError from "../error/LudmilaError";
+import {LudmilaError} from "../error/LudmilaError";
 import cors from "cors";
-import LudmilaErrors from "../error/LudmilaErrors";
-import { IHttpServerConfig } from "../application/ApplicationConfig";
+import {LudmilaErrors} from "../error/LudmilaErrors";
+import {IHttpServerConfig} from "../application/ApplicationConfig";
 import GraphQLServer from "./graphql/GraphQLServer";
 import WebSocketServer from "./websocket/WebSocketServer";
-import { ServerBindingRegistry } from "./bind/ServerBindingRegistry";
-import { Component } from "../ioc/Annotation";
+import {ServerBindingRegistry} from "./bind/ServerBindingRegistry";
+import {Component} from "../ioc/Annotation";
 import IHttpServerInitializer from "./IServerInitializer";
 import helmet from "helmet";
 
 /**
- * @author tengda
+ * @author kidal
  */
 @Component
 export default class HttpServer {
@@ -68,9 +68,9 @@ export default class HttpServer {
 
     // 注册Express中间件
     this.expressApp.use(
-      bodyParser.urlencoded({ extended: false, limit: config.limit })
+      bodyParser.urlencoded({extended: false, limit: config.limit})
     );
-    this.expressApp.use(bodyParser.json({ limit: config.limit }));
+    this.expressApp.use(bodyParser.json({limit: config.limit}));
     this.expressApp.use(cookieParser());
     this.expressApp.use(helmet());
 
@@ -114,13 +114,13 @@ export default class HttpServer {
           if (e instanceof LudmilaError) {
             res
               .status(200)
-              .json({ error: { code: e.code, message: e.message } });
+              .json({error: e.data});
           } else {
             if (HttpServer.LOG.isDebugEnabled()) {
               HttpServer.LOG.error(e);
             }
             res.status(200).json({
-              error: { code: LudmilaErrors.FAIL, message: e.message },
+              error: {id: LudmilaErrors.InternalError.id, code: LudmilaErrors.InternalError.code, message: e.message},
             });
           }
         });

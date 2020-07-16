@@ -2,7 +2,7 @@ import { IEntityBase } from "./IEntity";
 import Database from "./Database";
 import Sequelize from "sequelize";
 
-export class Migration extends Sequelize.Model<number, Migration>
+export class Migration extends Sequelize.Model
   implements IEntityBase<number> {
   public id: number;
   public modelName: string;

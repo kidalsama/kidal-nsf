@@ -32,7 +32,7 @@ const fileUploadMiddleware = (uploadsConfig: any, server: any) => (req: any, res
 };
 
 /**
- * @author tengda
+ * @author kidal
  */
 export default class GraphQLApolloServer extends ApolloServer {
   constructor(config: ApolloServerExpressConfig) {

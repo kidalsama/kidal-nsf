@@ -1,5 +1,5 @@
 /**
- * @author tengda
+ * @author kidal
  */
 export default interface IRpcPayload {
   /**

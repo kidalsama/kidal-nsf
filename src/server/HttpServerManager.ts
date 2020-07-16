@@ -7,7 +7,7 @@ import PathUtils from "../util/PathUtils";
 import IServerInitializer from "./IServerInitializer";
 
 /**
- * @author tengda
+ * @author kidal
  */
 @Service
 export class HttpServerManager {

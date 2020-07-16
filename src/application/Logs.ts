@@ -4,7 +4,7 @@ import * as path from "path";
 import {Container} from "../ioc/Container";
 
 /**
- * @author tengda
+ * @author kidal
  */
 export default class Logs {
   /**

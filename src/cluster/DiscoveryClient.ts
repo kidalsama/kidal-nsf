@@ -6,7 +6,7 @@ import {Container} from "../ioc/Container";
 import {HttpServerManager} from "../server/HttpServerManager";
 
 /**
- * @author tengda
+ * @author kidal
  */
 export default class DiscoveryClient extends events.EventEmitter {
   // 单例
@@ -314,7 +314,7 @@ export default class DiscoveryClient extends events.EventEmitter {
 }
 
 /**
- * @author tengda
+ * @author kidal
  */
 export interface INodeData {
   version: number;
@@ -326,7 +326,7 @@ export interface INodeData {
 }
 
 /**
- * @author tengda
+ * @author kidal
  */
 export interface INode {
   /**

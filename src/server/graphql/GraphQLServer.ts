@@ -1,8 +1,8 @@
 import {formatError, GraphQLError, GraphQLFormattedError, printError} from "graphql";
 import HttpServer from "../HttpServer";
 import Logs from "../../application/Logs";
-import LudmilaError from "../../error/LudmilaError";
-import LudmilaErrors from "../../error/LudmilaErrors";
+import {LudmilaError} from "../../error/LudmilaError";
+import {LudmilaErrors} from "../../error/LudmilaErrors";
 import GraphQLApolloServer from "./GraphQLApolloServer";
 import {GraphQLExtension} from "graphql-extensions";
 import {makeExecutableSchema, SchemaDirectiveVisitor} from "graphql-tools";
@@ -11,7 +11,7 @@ import {ByteDirective, ConnectionDirective, DateDirective, TimeDirective, UrlDir
 import {mergeResolver, mergeTypeDefs} from "./merges/merges";
 
 /**
- * @author tengda
+ * @author kidal
  */
 export default class GraphQLServer {
   /**
@@ -46,21 +46,22 @@ export default class GraphQLServer {
         if (this.httpServer.config.logError) {
           GraphQLServer.LOG.error(
             "LudmilaError",
-            originalError.code, originalError.message, originalError.stack,
+            originalError.data, originalError.stack,
             printError(error),
           )
         }
         // 返回
-        return Object.assign(
-          {}, formattedError, {code: originalError.code, message: originalError.message},
-        );
+        return Object.assign({}, formattedError, originalError.data);
       } else {
         // 打印错误
         if (this.httpServer.config.logError) {
           GraphQLServer.LOG.error("Error", formattedError, printError(error))
         }
         // 返回
-        return Object.assign({}, formattedError, {code: LudmilaErrors.FAIL});
+        return Object.assign({}, formattedError, {
+          id: LudmilaErrors.InternalError.id,
+          code: LudmilaErrors.InternalError.code
+        });
       }
     }
   }

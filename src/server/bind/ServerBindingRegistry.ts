@@ -60,7 +60,7 @@ export const MetadataKeys = {
 };
 
 /**
- * @author tengda
+ * @author kidal
  */
 export class ServerBindingRegistry {
   /**

@@ -46,9 +46,9 @@ export {
 
 export { Migration } from "./src/data/Migration";
 
-export { default as LudmilaError } from "./src/error/LudmilaError";
+export * from "./src/error/LudmilaError";
 
-export { default as LudmilaErrors } from "./src/error/LudmilaErrors";
+export * from "./src/error/LudmilaErrors";
 
 export * from "./src/ioc/Annotation";
 export { IProvider } from "./src/ioc/IProvider";

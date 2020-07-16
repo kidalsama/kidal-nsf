@@ -1,6 +1,6 @@
 import Application from "../../src/application/Application"
 import JavaRpcClientManager from "../../src/cluster/JavaClusterRpc";
-import LudmilaError from "../../src/error/LudmilaError";
+import {LudmilaError} from "../../src/error/LudmilaError";
 
 describe("Basic: Java Rpc", () => {
   it("Deprecated", () => {

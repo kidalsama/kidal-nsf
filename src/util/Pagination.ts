@@ -1,20 +1,20 @@
 /**
- * @author tengda
+ * @author kidal
  */
 export const DEFAULT_PAGE = 1;
 
 /**
- * @author tengda
+ * @author kidal
  */
 export const DEFAULT_LIMIT = 20;
 
 /**
- * @author tengda
+ * @author kidal
  */
 export const MAX_LIMIT = 1000;
 
 /**
- * @author tengda
+ * @author kidal
  */
 export class PageArgs {
   public readonly page: number;
@@ -25,7 +25,7 @@ export class PageArgs {
   public readonly before: string | null;
 
   /**
-   * @author tengda
+   * @author kidal
    */
   public constructor(
     page: number = DEFAULT_PAGE,
@@ -44,28 +44,28 @@ export class PageArgs {
   }
 
   /**
-   * @author tengda
+   * @author kidal
    */
   public static zero() {
     return new PageArgs(DEFAULT_PAGE, 0);
   }
 
   /**
-   * @author tengda
+   * @author kidal
    */
   public static one() {
     return new PageArgs(DEFAULT_PAGE, 1);
   }
 
   /**
-   * @author tengda
+   * @author kidal
    */
   public static max() {
     return new PageArgs(DEFAULT_PAGE, MAX_LIMIT);
   }
 
   /**
-   * @author tengda
+   * @author kidal
    */
   public static page(page: number = DEFAULT_PAGE, limit: number = MAX_LIMIT) {
     return new PageArgs(page, limit);
@@ -80,7 +80,7 @@ export class PageArgs {
 }
 
 /**
- * @author tengda
+ * @author kidal
  */
 export interface IEdge<TNode> {
   node?: TNode;
@@ -88,7 +88,7 @@ export interface IEdge<TNode> {
 }
 
 /**
- * @author tengda
+ * @author kidal
  */
 export class Connection<TNode> {
   public readonly edges: Array<IEdge<TNode>>;
@@ -98,7 +98,7 @@ export class Connection<TNode> {
   public readonly pageArgs: PageArgs;
 
   /**
-   * @author tengda
+   * @author kidal
    */
   public constructor(
     edges: Array<IEdge<TNode>>,
@@ -115,7 +115,7 @@ export class Connection<TNode> {
   }
 
   /**
-   * @author tengda
+   * @author kidal
    */
   public static async make<TNode>(
     nodes: TNode[] | (() => Promise<TNode[]>),
@@ -141,7 +141,7 @@ export class Connection<TNode> {
   }
 
   /**
-   * @author tengda
+   * @author kidal
    */
   public static empty<TNode>(pageArgs?: PageArgs): Connection<TNode> {
     return new Connection<TNode>(

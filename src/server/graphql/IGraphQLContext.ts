@@ -1,7 +1,7 @@
 import express from "express";
 
 /**
- * @author tengda
+ * @author kidal
  */
 export interface IGraphQLInnerContext {
   req: express.Request;
@@ -9,7 +9,7 @@ export interface IGraphQLInnerContext {
 }
 
 /**
- * @author tengda
+ * @author kidal
  */
 export default interface IGraphQLContext {
   /**

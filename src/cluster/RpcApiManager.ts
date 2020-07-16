@@ -3,7 +3,7 @@ import Environment from "../application/Environment";
 import glob from "glob";
 
 /**
- * @author tengda
+ * @author kidal
  */
 export interface IRpcApiRegistry<TArgs, TResults> {
   /**
@@ -18,7 +18,7 @@ export interface IRpcApiRegistry<TArgs, TResults> {
 }
 
 /**
- * @author tengda
+ * @author kidal
  */
 export default class RpcApiManager {
   public static readonly S = new RpcApiManager();

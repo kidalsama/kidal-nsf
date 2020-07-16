@@ -14,7 +14,7 @@ import { Container } from "../ioc/Container";
 import { Scope } from "../ioc/Scope";
 
 /**
- * @author tengda
+ * @author kidal
  */
 @Service
 export default class Application {

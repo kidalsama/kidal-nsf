@@ -1,6 +1,6 @@
 import * as Express from "express";
 import {AfterAll, BeforeAll, GetMapping, OnError} from "../../../../src/server/bind/ControllerBinding";
-import LudmilaError from "../../../../src/error/LudmilaError";
+import {LudmilaError} from "../../../../src/error/LudmilaError";
 
 export class BaseController {
   /**
@@ -37,7 +37,7 @@ export class BaseController {
   @OnError
   public onError(err: Error, req: Express.Request, res: Express.Response, next: Express.NextFunction) {
     if (err instanceof LudmilaError) {
-      res.json({code: err.code, message: err.message})
+      res.json(err.data)
     } else {
       next(err)
     }

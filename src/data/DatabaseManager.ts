@@ -9,7 +9,7 @@ import * as fs from "fs";
 import { IDatabaseInitializer } from "./IDatabaseInitializer";
 
 /**
- * @author tengda
+ * @author kidal
  */
 @Service
 export class DatabaseManager {

@@ -1,5 +1,5 @@
 import {PubSub} from "apollo-server";
-import LudmilaError from "../../../../src/error/LudmilaError";
+import {LudmilaError} from "../../../../src/error/LudmilaError";
 
 const pubsub = new PubSub();
 
@@ -13,7 +13,7 @@ export default {
   resolvers: {
     Query: {
       error() {
-        throw new LudmilaError("998", "test error")
+        throw new LudmilaError({id: 1, code: "998", message: "test error"})
       },
       async subType() {
         return {}
@@ -25,7 +25,7 @@ export default {
     },
     SubTypeError: {
       async error() {
-        throw new LudmilaError("998", "test sub type error")
+        throw new LudmilaError({id: 998, code: "998", message: "test sub type error"})
       },
     },
     Subscription: {
