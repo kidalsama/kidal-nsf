@@ -51,7 +51,7 @@
     "helmet": "3.22.0",
     "jest": "24.9.0",
     "lb_pool": "1.8.0",
-    "lodash": "4.17.15",
+    "lodash": "4.17.19",
     "log4js": "3.0.6",
     "md5": "2.2.1",
     "merge-graphql-schemas": "1.7.8",
