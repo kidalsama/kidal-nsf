@@ -93,6 +93,7 @@ export interface IHttpServerConfig {
   logError?: boolean;
   pathToScan?: string;
   jsonSpaces?: number;
+  limit?: string;
   graphQLEndpoint?: string;
   graphQLSubscriptionEndpoint?: string;
   webSocketEndpoint?: string;
@@ -133,6 +134,12 @@ const completeHttpServerConfig = (
       `server.httpServerMap:${key}`,
       config,
       "jsonSpaces",
+      undefined
+    ),
+    limit: orElse(
+      `server.httpServerMap:${key}`,
+      config,
+      "limit",
       undefined
     ),
     graphQLEndpoint: orElse(
