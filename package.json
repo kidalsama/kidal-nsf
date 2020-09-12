@@ -55,7 +55,7 @@
     "log4js": "3.0.6",
     "md5": "2.2.1",
     "merge-graphql-schemas": "1.7.8",
-    "node-fetch": "2.6.0",
+    "node-fetch": "2.6.1",
     "node-zookeeper-client": "0.2.3",
     "prettier": "2.0.4",
     "reflect-metadata": "0.1.13",
